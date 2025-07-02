@@ -7,3 +7,24 @@ full_adder_structural.vhd
 2) if you are making a binary adder using generate blocks the file name should be 
 binary_adder_generate.vhd
 ----------------------------------------------------------------------------------------------------------------------------------------------------------
+if you are not doing a testbench and you want to make the wave show all the possible values in the way you know in the truth table 
+A |  B  | C 
+  |     |
+  |     |
+  |     | 
+  |     |
+  |     |
+
+1) make all signals start with 0 
+2) decide a time t (any time is okay)
+3) make the time of the least significant variable with that time
+4) the variable left to the variable from 3) with 2t and the one left to it by 4t and so on 
+so
+A time will be 4t
+B time will be 2t 
+C time will be t 
+and so on...
+5)then since in the period t every variables toggles t/2 0 (you set it at 1) )
+and then t/2 to t from 0 to 1
+so if you have 4 variables you will have 16 possible combinations 
+but from 5 you will press run only 8 times 
