@@ -1,0 +1,9 @@
+the naming rules should be as follows 
+try to be descibtive and use _ 
+professional teams and most standards prefer lowercase with underscores for example (fa_behavioral) for clarity, consistency, and compatibility.
+so for example 
+1)if you are making a full adder using structural modeling the file name should be 
+Full_adder_structural.vhd
+2) if you are making a binary adder using generate blocks the file name should be 
+Binary_adder_generate.vhd
+----------------------------------------------------------------------------------------------------------------------------------------------------------
