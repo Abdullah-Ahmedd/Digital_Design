@@ -1,40 +1,137 @@
-name: Verilog CI
+name: Verilog/VHDL Compilation Check
 
-on: [push, pull_request]
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
 
 jobs:
-  compile-verilog:
+  compile-hdl:
     runs-on: ubuntu-latest
-
+    
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
 
-    - name: Install Icarus Verilog
-      run: sudo apt-get install -y iverilog
-
-    - name: Compile all Verilog testbenches
+    - name: Install HDL tools
       run: |
-        echo "🔍 Searching for testbenches..."
+        sudo apt-get update
+        sudo apt-get install -y iverilog ghdl
 
-        # Find all testbenches (files ending with _tb.v)
-        TB_FILES=$(find . -type f -name "*_tb.v")
+    - name: Find all HDL files
+      run: |
+        echo "Finding all .v and .vhdl files..."
+        find . -name "*.v" -type f > verilog_files.txt
+        find . -name "*.vhdl" -type f > vhdl_files.txt
+        find . -name "*.vhd" -type f >> vhdl_files.txt
+        
+        echo "Found Verilog files:"
+        cat verilog_files.txt
+        echo "Found VHDL files:"
+        cat vhdl_files.txt
+        
+        echo "VERILOG_COUNT=$(wc -l < verilog_files.txt)" >> $GITHUB_ENV
+        echo "VHDL_COUNT=$(wc -l < vhdl_files.txt)" >> $GITHUB_ENV
 
-        if [ -z "$TB_FILES" ]; then
-          echo "❌ No testbenches found. Make sure files end with _tb.v"
-          exit 1
+    - name: Compile Verilog files
+      if: env.VERILOG_COUNT != '0'
+      run: |
+        echo "Compiling Verilog files..."
+        failed_files=""
+        success_count=0
+        
+        while IFS= read -r file; do
+          if [ -n "$file" ]; then
+            echo "Compiling: $file"
+            if iverilog -t null "$file" 2>&1; then
+              echo "✓ Success: $file"
+              ((success_count++))
+            else
+              echo "✗ Failed: $file"
+              failed_files="$failed_files$file\n"
+            fi
+          fi
+        done < verilog_files.txt
+        
+        echo "Verilog compilation summary:"
+        echo "Successfully compiled: $success_count files"
+        
+        if [ -n "$failed_files" ]; then
+          echo "Failed files:"
+          echo -e "$failed_files"
+          echo "VERILOG_FAILED=true" >> $GITHUB_ENV
+        else
+          echo "All Verilog files compiled successfully!"
+          echo "VERILOG_FAILED=false" >> $GITHUB_ENV
         fi
 
-        # Find all .v files (design + testbenches)
-        ALL_V=$(find . -type f -name "*.v")
+    - name: Compile VHDL files
+      if: env.VHDL_COUNT != '0'
+      run: |
+        echo "Compiling VHDL files..."
+        failed_files=""
+        success_count=0
+        
+        while IFS= read -r file; do
+          if [ -n "$file" ]; then
+            echo "Compiling: $file"
+            if ghdl -s "$file" 2>&1; then
+              echo "✓ Success: $file"
+              ((success_count++))
+            else
+              echo "✗ Failed: $file"
+              failed_files="$failed_files$file\n"
+            fi
+          fi
+        done < vhdl_files.txt
+        
+        echo "VHDL compilation summary:"
+        echo "Successfully compiled: $success_count files"
+        
+        if [ -n "$failed_files" ]; then
+          echo "Failed files:"
+          echo -e "$failed_files"
+          echo "VHDL_FAILED=true" >> $GITHUB_ENV
+        else
+          echo "All VHDL files compiled successfully!"
+          echo "VHDL_FAILED=false" >> $GITHUB_ENV
+        fi
 
-        echo "🧪 Found testbenches:"
-        echo "$TB_FILES"
+    - name: Generate compilation report
+      run: |
+        echo "## HDL Compilation Report" > compilation_report.md
+        echo "" >> compilation_report.md
+        echo "### Summary" >> compilation_report.md
+        echo "- Verilog files found: $VERILOG_COUNT" >> compilation_report.md
+        echo "- VHDL files found: $VHDL_COUNT" >> compilation_report.md
+        echo "" >> compilation_report.md
+        
+        if [ "$VERILOG_FAILED" = "true" ] || [ "$VHDL_FAILED" = "true" ]; then
+          echo "### ❌ Compilation Status: FAILED" >> compilation_report.md
+          echo "Some files failed to compile. Check the logs above for details." >> compilation_report.md
+        else
+          echo "### ✅ Compilation Status: SUCCESS" >> compilation_report.md
+          echo "All HDL files compiled successfully!" >> compilation_report.md
+        fi
+        
+        cat compilation_report.md
 
-        # Compile each testbench with all .v files
-        for tb in $TB_FILES; do
-          echo "🚀 Compiling testbench: $tb"
-          iverilog -g2012 -Wall -o sim_out $ALL_V
-        done
+    - name: Upload compilation report
+      uses: actions/upload-artifact@v4
+      with:
+        name: compilation-report
+        path: compilation_report.md
 
-        echo "✅ All testbenches compiled successfully."
+    - name: Fail job if compilation failed
+      if: env.VERILOG_FAILED == 'true' || env.VHDL_FAILED == 'true'
+      run: |
+        echo "Compilation failed for some files. Check the logs above."
+        exit 1
+
+    - name: Success message
+      if: env.VERILOG_FAILED == 'false' && env.VHDL_FAILED == 'false'
+      run: |
+        echo "🎉 All HDL files compiled successfully!"
