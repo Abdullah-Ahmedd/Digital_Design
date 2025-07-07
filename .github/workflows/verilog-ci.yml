@@ -1,0 +1,35 @@
+name: Verilog Full Build CI
+
+on: [push, pull_request]
+
+jobs:
+  build-verilog:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v3
+
+    - name: Install Icarus Verilog
+      run: sudo apt-get install -y iverilog
+
+    - name: Find and Compile All Verilog Testbenches
+      run: |
+        echo "🔍 Searching for testbenches..."
+        TB_FILES=$(find . -type f -name '*_tb.v')
+
+        if [ -z "$TB_FILES" ]; then
+          echo "❌ No testbenches found. Please name testbenches as *_tb.v"
+          exit 1
+        fi
+
+        echo "🧪 Found testbenches:"
+        echo "$TB_FILES"
+
+        echo "🔧 Compiling each testbench with full source tree..."
+        for tb in $TB_FILES; do
+          echo "🚀 Compiling $tb"
+          iverilog -g2012 -Wall -o sim_out "$tb" $(find . -type f -name '*.v' ! -name '*_tb.v')
+        done
+
+        echo "✅ Syntax check complete."
