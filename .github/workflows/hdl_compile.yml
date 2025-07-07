@@ -240,6 +240,8 @@ jobs:
         fi
         
         echo "========================================="
+
+    - name: Generate compilation report
       run: |
         echo "## 📊 HDL Compilation Report" > compilation_report.md
         echo "" >> compilation_report.md
