@@ -29,12 +29,19 @@ jobs:
         find . -name "*.vhd" -type f >> vhdl_files.txt
         
         echo "Found Verilog files:"
-        cat verilog_files.txt
+        cat verilog_files.txt || echo "No Verilog files found"
         echo "Found VHDL files:"
-        cat vhdl_files.txt
+        cat vhdl_files.txt || echo "No VHDL files found"
         
-        echo "VERILOG_COUNT=$(wc -l < verilog_files.txt)" >> $GITHUB_ENV
-        echo "VHDL_COUNT=$(wc -l < vhdl_files.txt)" >> $GITHUB_ENV
+        # Count files properly, handling empty files
+        VERILOG_COUNT=$(wc -l < verilog_files.txt | tr -d ' ')
+        VHDL_COUNT=$(wc -l < vhdl_files.txt | tr -d ' ')
+        
+        echo "VERILOG_COUNT=$VERILOG_COUNT" >> $GITHUB_ENV
+        echo "VHDL_COUNT=$VHDL_COUNT" >> $GITHUB_ENV
+        
+        echo "Verilog files count: $VERILOG_COUNT"
+        echo "VHDL files count: $VHDL_COUNT"
 
     - name: Compile Verilog files
       if: env.VERILOG_COUNT != '0'
@@ -42,41 +49,65 @@ jobs:
         echo "========================================="
         echo "           VERILOG COMPILATION"
         echo "========================================="
-        failed_files=""
+        
+        # Initialize variables
         success_count=0
         error_count=0
         successful_files=""
+        failed_files=""
         failed_details=""
+        overall_success=true
+        
+        # Check if file exists and has content
+        if [ ! -s "verilog_files.txt" ]; then
+          echo "No Verilog files to compile"
+          echo "VERILOG_FAILED=false" >> $GITHUB_ENV
+          exit 0
+        fi
         
         while IFS= read -r file; do
-          if [ -n "$file" ]; then
+          # Skip empty lines
+          if [ -z "$file" ]; then
+            continue
+          fi
+          
+          echo ""
+          echo "🔧 Compiling: $file"
+          echo "----------------------------------------"
+          
+          # Check if file exists
+          if [ ! -f "$file" ]; then
+            echo "❌ FILE NOT FOUND: $file"
+            failed_files="$failed_files$file\n"
+            failed_details="$failed_details• $file: File not found\n"
+            ((error_count++))
+            overall_success=false
+            continue
+          fi
+          
+          # Compile with iverilog
+          if output=$(iverilog -t null "$file" 2>&1); then
+            echo "✅ SUCCESS: $file"
+            successful_files="$successful_files$file\n"
+            ((success_count++))
+          else
+            echo "❌ COMPILATION FAILED: $file"
             echo ""
-            echo "🔧 Compiling: $file"
+            echo "📍 Error Details:"
+            echo "$output" | sed 's/^/   /'
+            echo ""
+            echo "💡 Common Issues:"
+            echo "   • Check syntax errors (missing semicolons, parentheses)"
+            echo "   • Verify module declarations and port lists"
+            echo "   • Ensure all referenced modules are available"
+            echo "   • Check for undeclared variables or signals"
             echo "----------------------------------------"
-            
-            # Capture both stdout and stderr
-            if output=$(iverilog -t null "$file" 2>&1); then
-              echo "✅ SUCCESS: $file"
-              successful_files="$successful_files$file\n"
-              ((success_count++))
-            else
-              echo "❌ COMPILATION FAILED: $file"
-              echo ""
-              echo "📍 Error Details:"
-              echo "$output" | sed 's/^/   /'
-              echo ""
-              echo "💡 Common Issues:"
-              echo "   • Check syntax errors (missing semicolons, parentheses)"
-              echo "   • Verify module declarations and port lists"
-              echo "   • Ensure all referenced modules are available"
-              echo "   • Check for undeclared variables or signals"
-              echo "----------------------------------------"
-              failed_files="$failed_files$file\n"
-              # Store first line of error for summary
-              error_line=$(echo "$output" | head -1)
-              failed_details="$failed_details• $file: $error_line\n"
-              ((error_count++))
-            fi
+            failed_files="$failed_files$file\n"
+            # Store first line of error for summary
+            error_line=$(echo "$output" | head -1 | tr -d '\n')
+            failed_details="$failed_details• $file: $error_line\n"
+            ((error_count++))
+            overall_success=false
           fi
         done < verilog_files.txt
         
@@ -87,30 +118,33 @@ jobs:
         echo "✅ Successfully compiled: $success_count files"
         echo "❌ Failed to compile: $error_count files"
         
-        echo ""
-        echo "📋 DETAILED COMPILATION REPORT:"
-        echo "----------------------------------------"
-        
         if [ -n "$successful_files" ]; then
+          echo ""
           echo "✅ Successfully compiled files:"
           echo -e "$successful_files" | sed 's/^/   /'
-          echo ""
         fi
         
         if [ -n "$failed_files" ]; then
+          echo ""
           echo "❌ Failed files with errors:"
           echo -e "$failed_details" | sed 's/^/   /'
-          echo "VERILOG_FAILED=true" >> $GITHUB_ENV
-          echo "VERILOG_FAILED_DETAILS<<EOF" >> $GITHUB_ENV
-          echo -e "$failed_details" >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
-        else
-          echo "🎉 All Verilog files compiled successfully!"
-          echo "VERILOG_FAILED=false" >> $GITHUB_ENV
         fi
         
+        # Set environment variables
+        if [ "$overall_success" = true ]; then
+          echo "VERILOG_FAILED=false" >> $GITHUB_ENV
+          echo "🎉 All Verilog files compiled successfully!"
+        else
+          echo "VERILOG_FAILED=true" >> $GITHUB_ENV
+        fi
+        
+        # Store results for final summary
         echo "VERILOG_SUCCESS_FILES<<EOF" >> $GITHUB_ENV
         echo -e "$successful_files" >> $GITHUB_ENV
+        echo "EOF" >> $GITHUB_ENV
+        
+        echo "VERILOG_FAILED_DETAILS<<EOF" >> $GITHUB_ENV
+        echo -e "$failed_details" >> $GITHUB_ENV
         echo "EOF" >> $GITHUB_ENV
 
     - name: Compile VHDL files
@@ -119,42 +153,66 @@ jobs:
         echo "========================================="
         echo "            VHDL COMPILATION"
         echo "========================================="
-        failed_files=""
+        
+        # Initialize variables
         success_count=0
         error_count=0
         successful_files=""
+        failed_files=""
         failed_details=""
+        overall_success=true
+        
+        # Check if file exists and has content
+        if [ ! -s "vhdl_files.txt" ]; then
+          echo "No VHDL files to compile"
+          echo "VHDL_FAILED=false" >> $GITHUB_ENV
+          exit 0
+        fi
         
         while IFS= read -r file; do
-          if [ -n "$file" ]; then
+          # Skip empty lines
+          if [ -z "$file" ]; then
+            continue
+          fi
+          
+          echo ""
+          echo "🔧 Compiling: $file"
+          echo "----------------------------------------"
+          
+          # Check if file exists
+          if [ ! -f "$file" ]; then
+            echo "❌ FILE NOT FOUND: $file"
+            failed_files="$failed_files$file\n"
+            failed_details="$failed_details• $file: File not found\n"
+            ((error_count++))
+            overall_success=false
+            continue
+          fi
+          
+          # Compile with ghdl
+          if output=$(ghdl -s "$file" 2>&1); then
+            echo "✅ SUCCESS: $file"
+            successful_files="$successful_files$file\n"
+            ((success_count++))
+          else
+            echo "❌ COMPILATION FAILED: $file"
             echo ""
-            echo "🔧 Compiling: $file"
+            echo "📍 Error Details:"
+            echo "$output" | sed 's/^/   /'
+            echo ""
+            echo "💡 Common Issues:"
+            echo "   • Check entity/architecture declarations"
+            echo "   • Verify port maps and signal assignments"
+            echo "   • Ensure library and package declarations"
+            echo "   • Check for syntax errors and missing keywords"
+            echo "   • Verify data type compatibility"
             echo "----------------------------------------"
-            
-            # Capture both stdout and stderr
-            if output=$(ghdl -s "$file" 2>&1); then
-              echo "✅ SUCCESS: $file"
-              successful_files="$successful_files$file\n"
-              ((success_count++))
-            else
-              echo "❌ COMPILATION FAILED: $file"
-              echo ""
-              echo "📍 Error Details:"
-              echo "$output" | sed 's/^/   /'
-              echo ""
-              echo "💡 Common Issues:"
-              echo "   • Check entity/architecture declarations"
-              echo "   • Verify port maps and signal assignments"
-              echo "   • Ensure library and package declarations"
-              echo "   • Check for syntax errors and missing keywords"
-              echo "   • Verify data type compatibility"
-              echo "----------------------------------------"
-              failed_files="$failed_files$file\n"
-              # Store first line of error for summary
-              error_line=$(echo "$output" | head -1)
-              failed_details="$failed_details• $file: $error_line\n"
-              ((error_count++))
-            fi
+            failed_files="$failed_files$file\n"
+            # Store first line of error for summary
+            error_line=$(echo "$output" | head -1 | tr -d '\n')
+            failed_details="$failed_details• $file: $error_line\n"
+            ((error_count++))
+            overall_success=false
           fi
         done < vhdl_files.txt
         
@@ -165,30 +223,33 @@ jobs:
         echo "✅ Successfully compiled: $success_count files"
         echo "❌ Failed to compile: $error_count files"
         
-        echo ""
-        echo "📋 DETAILED COMPILATION REPORT:"
-        echo "----------------------------------------"
-        
         if [ -n "$successful_files" ]; then
+          echo ""
           echo "✅ Successfully compiled files:"
           echo -e "$successful_files" | sed 's/^/   /'
-          echo ""
         fi
         
         if [ -n "$failed_files" ]; then
+          echo ""
           echo "❌ Failed files with errors:"
           echo -e "$failed_details" | sed 's/^/   /'
-          echo "VHDL_FAILED=true" >> $GITHUB_ENV
-          echo "VHDL_FAILED_DETAILS<<EOF" >> $GITHUB_ENV
-          echo -e "$failed_details" >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
-        else
-          echo "🎉 All VHDL files compiled successfully!"
-          echo "VHDL_FAILED=false" >> $GITHUB_ENV
         fi
         
+        # Set environment variables
+        if [ "$overall_success" = true ]; then
+          echo "VHDL_FAILED=false" >> $GITHUB_ENV
+          echo "🎉 All VHDL files compiled successfully!"
+        else
+          echo "VHDL_FAILED=true" >> $GITHUB_ENV
+        fi
+        
+        # Store results for final summary
         echo "VHDL_SUCCESS_FILES<<EOF" >> $GITHUB_ENV
         echo -e "$successful_files" >> $GITHUB_ENV
+        echo "EOF" >> $GITHUB_ENV
+        
+        echo "VHDL_FAILED_DETAILS<<EOF" >> $GITHUB_ENV
+        echo -e "$failed_details" >> $GITHUB_ENV
         echo "EOF" >> $GITHUB_ENV
 
     - name: Generate final summary
@@ -199,25 +260,35 @@ jobs:
         echo "========================================="
         echo ""
         
-        # Build comprehensive summary
-        total_success=0
-        total_failed=0
+        # Calculate totals
+        total_verilog_files=${VERILOG_COUNT:-0}
+        total_vhdl_files=${VHDL_COUNT:-0}
+        total_files=$((total_verilog_files + total_vhdl_files))
         
-        if [ "$VERILOG_COUNT" -gt 0 ]; then
-          total_success=$((total_success + $(echo -e "$VERILOG_SUCCESS_FILES" | grep -c "\.v$" || echo 0)))
+        # Count successful files
+        verilog_success_count=0
+        vhdl_success_count=0
+        
+        if [ -n "$VERILOG_SUCCESS_FILES" ]; then
+          verilog_success_count=$(echo -e "$VERILOG_SUCCESS_FILES" | grep -c "\.v$" || echo 0)
         fi
         
-        if [ "$VHDL_COUNT" -gt 0 ]; then
-          total_success=$((total_success + $(echo -e "$VHDL_SUCCESS_FILES" | grep -c -E "\.(vhdl|vhd)$" || echo 0)))
+        if [ -n "$VHDL_SUCCESS_FILES" ]; then
+          vhdl_success_count=$(echo -e "$VHDL_SUCCESS_FILES" | grep -c -E "\.(vhdl|vhd)$" || echo 0)
         fi
+        
+        total_success=$((verilog_success_count + vhdl_success_count))
+        total_failed=$((total_files - total_success))
         
         echo "📊 OVERALL RESULTS:"
-        echo "   • Total files processed: $((VERILOG_COUNT + VHDL_COUNT))"
+        echo "   • Total files processed: $total_files"
+        echo "   • Verilog files: $total_verilog_files"
+        echo "   • VHDL files: $total_vhdl_files"
         echo "   • Successfully compiled: $total_success"
-        echo "   • Failed compilation: $((VERILOG_COUNT + VHDL_COUNT - total_success))"
+        echo "   • Failed compilation: $total_failed"
         echo ""
         
-        if [ -n "$VERILOG_SUCCESS_FILES" ] || [ -n "$VHDL_SUCCESS_FILES" ]; then
+        if [ $total_success -gt 0 ]; then
           echo "✅ FILES COMPILED SUCCESSFULLY:"
           if [ -n "$VERILOG_SUCCESS_FILES" ]; then
             echo -e "$VERILOG_SUCCESS_FILES" | sed 's/^/   📄 /' | sed 's/$/  ✓/'
@@ -246,15 +317,29 @@ jobs:
         echo "## 📊 HDL Compilation Report" > compilation_report.md
         echo "" >> compilation_report.md
         echo "### 📋 Summary" >> compilation_report.md
-        echo "- **Verilog files found:** $VERILOG_COUNT" >> compilation_report.md
-        echo "- **VHDL files found:** $VHDL_COUNT" >> compilation_report.md
+        echo "- **Verilog files found:** ${VERILOG_COUNT:-0}" >> compilation_report.md
+        echo "- **VHDL files found:** ${VHDL_COUNT:-0}" >> compilation_report.md
+        echo "- **Total files:** $((${VERILOG_COUNT:-0} + ${VHDL_COUNT:-0}))" >> compilation_report.md
         echo "" >> compilation_report.md
         
-        if [ "$VERILOG_FAILED" = "true" ] || [ "$VHDL_FAILED" = "true" ]; then
+        if [ "${VERILOG_FAILED:-false}" = "true" ] || [ "${VHDL_FAILED:-false}" = "true" ]; then
           echo "### ❌ Compilation Status: FAILED" >> compilation_report.md
           echo "" >> compilation_report.md
           echo "**Issues detected during compilation.**" >> compilation_report.md
           echo "" >> compilation_report.md
+          
+          if [ -n "$VERILOG_FAILED_DETAILS" ]; then
+            echo "#### Verilog Errors:" >> compilation_report.md
+            echo -e "$VERILOG_FAILED_DETAILS" | sed 's/^/- /' >> compilation_report.md
+            echo "" >> compilation_report.md
+          fi
+          
+          if [ -n "$VHDL_FAILED_DETAILS" ]; then
+            echo "#### VHDL Errors:" >> compilation_report.md
+            echo -e "$VHDL_FAILED_DETAILS" | sed 's/^/- /' >> compilation_report.md
+            echo "" >> compilation_report.md
+          fi
+          
           echo "#### 🔍 Troubleshooting Steps:" >> compilation_report.md
           echo "1. Review the detailed error messages above" >> compilation_report.md
           echo "2. Check syntax and module/entity declarations" >> compilation_report.md
@@ -286,32 +371,48 @@ jobs:
         name: compilation-report
         path: compilation_report.md
 
-    - name: Fail job if compilation failed
-      if: env.VERILOG_FAILED == 'true' || env.VHDL_FAILED == 'true'
+    - name: Final status check
       run: |
-        echo ""
-        echo "========================================="
-        echo "           COMPILATION FAILED"
-        echo "========================================="
-        echo ""
-        echo "❌ Build failed due to compilation errors."
-        echo ""
-        echo "🔍 Review the detailed error messages above to identify:"
-        echo "   • Syntax errors and their exact locations"
-        echo "   • Missing declarations or undefined signals"
-        echo "   • Type mismatches or compatibility issues"
-        echo "   • Structural problems in your HDL code"
-        echo ""
-        echo "📝 To fix these issues:"
-        echo "   1. Check the specific error messages for each file"
-        echo "   2. Verify your code follows proper HDL syntax"
-        echo "   3. Ensure all modules/entities are properly declared"
-        echo "   4. Test compilation locally before pushing"
-        echo ""
-        echo "========================================="
-        exit 1
-
-    - name: Success message
-      if: env.VERILOG_FAILED == 'false' && env.VHDL_FAILED == 'false'
-      run: |
-        echo "🎉 All HDL files compiled successfully!"
+        # Initialize default values if not set
+        VERILOG_FAILED=${VERILOG_FAILED:-false}
+        VHDL_FAILED=${VHDL_FAILED:-false}
+        
+        if [ "$VERILOG_FAILED" = "true" ] || [ "$VHDL_FAILED" = "true" ]; then
+          echo ""
+          echo "========================================="
+          echo "           COMPILATION FAILED"
+          echo "========================================="
+          echo ""
+          echo "❌ Build failed due to compilation errors."
+          echo ""
+          echo "🔍 Review the detailed error messages above to identify:"
+          echo "   • Syntax errors and their exact locations"
+          echo "   • Missing declarations or undefined signals"
+          echo "   • Type mismatches or compatibility issues"
+          echo "   • Structural problems in your HDL code"
+          echo ""
+          echo "📝 To fix these issues:"
+          echo "   1. Check the specific error messages for each file"
+          echo "   2. Verify your code follows proper HDL syntax"
+          echo "   3. Ensure all modules/entities are properly declared"
+          echo "   4. Test compilation locally before pushing"
+          echo ""
+          echo "========================================="
+          exit 1
+        else
+          echo ""
+          echo "========================================="
+          echo "           COMPILATION SUCCESS"
+          echo "========================================="
+          echo ""
+          echo "🎉 All HDL files compiled successfully!"
+          echo ""
+          echo "✅ Your code passes basic syntax and compilation checks."
+          echo ""
+          echo "🚀 Consider next steps:"
+          echo "   • Add simulation testbenches"
+          echo "   • Run synthesis for target platform"
+          echo "   • Perform timing analysis"
+          echo ""
+          echo "========================================="
+        fi
