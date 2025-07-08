@@ -7,7 +7,9 @@ checks if latch and dec is high which logically latch was just hugh so it will n
 (even if it is high we prioritize it over dec) and then check dec and if it is high 
 we decrement the new number
 which is logical as we cant latch (store a new number) and decrement it at the same clock cycle 
-as this is not possible
+as this is not possible (and even if it is this is really dangerous as it could take time more than the 
+posedge and then it would still be operating while the new egde come which could hold a new number or ask to 
+decrement the old number again which is still hasent been decremented)
 =============================================================================================================================================
 */
 module counter_4bit
