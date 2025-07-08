@@ -40,3 +40,5 @@ D2= ~(IN2 & IN3);
 D3=IN2 | IN3;
 end
 
+endmodule 
+
