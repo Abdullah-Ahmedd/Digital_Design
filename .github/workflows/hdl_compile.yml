@@ -22,6 +22,10 @@ jobs:
         install: >-
           git
           make
+          autoconf
+          automake
+          flex
+          bison
           mingw-w64-x86_64-gcc
           mingw-w64-x86_64-cmake
           mingw-w64-x86_64-python
@@ -35,9 +39,10 @@ jobs:
         cd verilator
         git checkout stable
         autoconf
-        ./configure
-        make -j$(nproc)
+        ./configure --prefix=/mingw64
+        make -j4
         make install
+        verilator --version
         
     - name: Install GHDL (for VHDL)
       shell: msys2 {0}
@@ -151,10 +156,11 @@ jobs:
         
     - name: Upload error logs (if any)
       uses: actions/upload-artifact@v4
-      if: failure()
+      if: always()
       with:
         name: hdl-error-logs
         path: |
-          *.log
+          verilator/
           work/
         retention-days: 30
+        if-no-files-found: ignore
