@@ -1,8 +1,8 @@
-# Digital_Design-
+# Digital_Design
 
 
-link for interview sets 
+Link for interview sets 
 https://www.chipverify.com/tutorials/verilog
 
-another link i have found in a whatsapp group
+Another link i have found in a whatsapp group
 https://hdlbits.01xz.net/wiki/Problem_sets#Verilog_Language 
