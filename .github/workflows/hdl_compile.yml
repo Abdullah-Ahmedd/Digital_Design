@@ -273,107 +273,107 @@ jobs:
         total_files=$((total_success + total_errors))
         
         # Create comprehensive report
-        cat > compilation_report.md << 'EOF'
-# 📊 HDL Compilation Report
+        cat > compilation_report.md << 'REPORT_EOF'
+        # 📊 HDL Compilation Report
         
-Generated on: ${{ env.TIMESTAMP }}  
-Repository: ${{ github.repository }}  
-Commit: ${{ github.sha }}  
-Branch: ${{ github.ref_name }}  
+        Generated on: ${{ env.TIMESTAMP }}  
+        Repository: ${{ github.repository }}  
+        Commit: ${{ github.sha }}  
+        Branch: ${{ github.ref_name }}  
         
-## 📋 Summary
+        ## 📋 Summary
         
-EOF
+        REPORT_EOF
         
         if [ "${{ env.NO_HDL_FILES }}" = "true" ]; then
-          cat >> compilation_report.md << 'EOF'
-### ⚠️ No HDL Files Found
+          cat >> compilation_report.md << 'REPORT_EOF'
+        ### ⚠️ No HDL Files Found
         
-No Verilog or VHDL files were discovered in this repository.
+        No Verilog or VHDL files were discovered in this repository.
         
-**Searched for extensions:** `.v`, `.vhd`, `.vhdl`, `.sv`, `.svh`, `.vh`
+        **Searched for extensions:** `.v`, `.vhd`, `.vhdl`, `.sv`, `.svh`, `.vh`
         
-EOF
+        REPORT_EOF
         else
-          cat >> compilation_report.md << EOF
-| File Type | Found | Compiled Successfully | Failed | Success Rate |
-|-----------|-------|---------------------|---------|-------------|
-| Verilog/SystemVerilog | $VERILOG_COUNT | $verilog_success | $verilog_errors | $([ $VERILOG_COUNT -gt 0 ] && echo "$(( verilog_success * 100 / VERILOG_COUNT ))%" || echo "N/A") |
-| VHDL | $VHDL_COUNT | $vhdl_success | $vhdl_errors | $([ $VHDL_COUNT -gt 0 ] && echo "$(( vhdl_success * 100 / VHDL_COUNT ))%" || echo "N/A") |
-| **Total** | **$TOTAL_COUNT** | **$total_success** | **$total_errors** | **$([ $total_files -gt 0 ] && echo "$(( total_success * 100 / total_files ))%" || echo "N/A")** |
+          cat >> compilation_report.md << REPORT_EOF
+        | File Type | Found | Compiled Successfully | Failed | Success Rate |
+        |-----------|-------|---------------------|---------|-------------|
+        | Verilog/SystemVerilog | $VERILOG_COUNT | $verilog_success | $verilog_errors | $([ $VERILOG_COUNT -gt 0 ] && echo "$(( verilog_success * 100 / VERILOG_COUNT ))%" || echo "N/A") |
+        | VHDL | $VHDL_COUNT | $vhdl_success | $vhdl_errors | $([ $VHDL_COUNT -gt 0 ] && echo "$(( vhdl_success * 100 / VHDL_COUNT ))%" || echo "N/A") |
+        | **Total** | **$TOTAL_COUNT** | **$total_success** | **$total_errors** | **$([ $total_files -gt 0 ] && echo "$(( total_success * 100 / total_files ))%" || echo "N/A")** |
         
-EOF
+        REPORT_EOF
         fi
         
         # Add status section
         if [ "$total_errors" -gt 0 ] || [ "${{ env.VERILOG_FAILED }}" = "true" ] || [ "${{ env.VHDL_FAILED }}" = "true" ]; then
-          cat >> compilation_report.md << 'EOF'
-## ❌ Compilation Status: FAILED
+          cat >> compilation_report.md << 'REPORT_EOF'
+        ## ❌ Compilation Status: FAILED
         
-**Issues detected during compilation.** Please review the detailed error messages in the CI logs.
+        **Issues detected during compilation.** Please review the detailed error messages in the CI logs.
         
-### 🔧 Troubleshooting Guide
+        ### 🔧 Troubleshooting Guide
         
-1. **Review Error Messages**: Check the specific error messages for each failed file
-2. **Verify Syntax**: Ensure your code follows proper HDL syntax rules
-3. **Check Dependencies**: Verify all referenced modules/entities are available
-4. **Test Locally**: Compile files locally using the same tools:
-   ```bash
-   # For Verilog
-   iverilog -t null your_file.v
-   
-   # For VHDL
-   ghdl -s your_file.vhd
-   ```
+        1. **Review Error Messages**: Check the specific error messages for each failed file
+        2. **Verify Syntax**: Ensure your code follows proper HDL syntax rules
+        3. **Check Dependencies**: Verify all referenced modules/entities are available
+        4. **Test Locally**: Compile files locally using the same tools:
+           ```bash
+           # For Verilog
+           iverilog -t null your_file.v
+           
+           # For VHDL
+           ghdl -s your_file.vhd
+           ```
         
-### 🎯 Common Issues
+        ### 🎯 Common Issues
         
-**Verilog/SystemVerilog:**
-- Missing semicolons or commas
-- Undeclared variables or modules
-- Port declaration mismatches
-- Syntax errors in always blocks
+        **Verilog/SystemVerilog:**
+        - Missing semicolons or commas
+        - Undeclared variables or modules
+        - Port declaration mismatches
+        - Syntax errors in always blocks
         
-**VHDL:**
-- Missing library or use clauses
-- Entity/architecture mismatches
-- Signal/variable declaration errors
-- Type compatibility problems
+        **VHDL:**
+        - Missing library or use clauses
+        - Entity/architecture mismatches
+        - Signal/variable declaration errors
+        - Type compatibility problems
         
-EOF
+        REPORT_EOF
         else
-          cat >> compilation_report.md << 'EOF'
-## ✅ Compilation Status: SUCCESS
+          cat >> compilation_report.md << 'REPORT_EOF'
+        ## ✅ Compilation Status: SUCCESS
         
-**All HDL files compiled successfully!** 🎉
+        **All HDL files compiled successfully!** 🎉
         
-Your code passes basic syntax and compilation checks with the following tools:
-- **Icarus Verilog** for Verilog files
-- **GHDL** for VHDL files
-- **Verilator** for SystemVerilog files (when available)
+        Your code passes basic syntax and compilation checks with the following tools:
+        - **Icarus Verilog** for Verilog files
+        - **GHDL** for VHDL files
+        - **Verilator** for SystemVerilog files (when available)
         
-### 🚀 Recommended Next Steps
+        ### 🚀 Recommended Next Steps
         
-1. **Add Testbenches**: Create comprehensive test cases for your modules
-2. **Run Simulations**: Verify functional correctness through simulation
-3. **Synthesis Check**: Test synthesis for your target FPGA/ASIC platform
-4. **Timing Analysis**: Perform timing analysis for critical paths
-5. **Code Coverage**: Ensure all code paths are tested
+        1. **Add Testbenches**: Create comprehensive test cases for your modules
+        2. **Run Simulations**: Verify functional correctness through simulation
+        3. **Synthesis Check**: Test synthesis for your target FPGA/ASIC platform
+        4. **Timing Analysis**: Perform timing analysis for critical paths
+        5. **Code Coverage**: Ensure all code paths are tested
         
-EOF
+        REPORT_EOF
         fi
         
         # Add tool information
-        cat >> compilation_report.md << 'EOF'
-## 🛠️ Tool Information
+        cat >> compilation_report.md << 'REPORT_EOF'
+        ## 🛠️ Tool Information
         
-This compilation check used:
-- **Icarus Verilog** for Verilog synthesis checking
-- **GHDL** for VHDL analysis and elaboration
-- **Verilator** for SystemVerilog linting (when applicable)
+        This compilation check used:
+        - **Icarus Verilog** for Verilog synthesis checking
+        - **GHDL** for VHDL analysis and elaboration
+        - **Verilator** for SystemVerilog linting (when applicable)
         
-*Note: This is a syntax and basic compilation check. Further verification through simulation and synthesis is recommended.*
-EOF
+        *Note: This is a syntax and basic compilation check. Further verification through simulation and synthesis is recommended.*
+        REPORT_EOF
         
         echo "Report generated successfully"
         cat compilation_report.md
