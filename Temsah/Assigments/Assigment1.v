@@ -41,15 +41,15 @@ end
 //you output it
 always@(IN1 | IN2)
 begin 
-D1<=~(IN1 | IN2);
+D1=~(IN1 | IN2);
 end
 always@(IN2 | IN3)
 begin 
-D2<= ~(IN2 & IN3);
+D2= ~(IN2 & IN3);
 end
 always@(IN3 | IN4)
 begin 
-D3<=IN2 | IN3;
+D3=IN2 | IN3;
 end
 
 
