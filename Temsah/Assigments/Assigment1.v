@@ -52,4 +52,4 @@ begin
 D3=IN2 | IN3;
 end
 
-
+endmodule 
