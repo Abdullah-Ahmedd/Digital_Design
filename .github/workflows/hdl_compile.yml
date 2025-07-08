@@ -1,166 +1,52 @@
-name: HDL Syntax and Error Checker
+name: Compile Verilog and VHDL Files
 
 on:
   push:
-    branches: [ main, master, develop ]
+    paths:
+      - '**/*.v'
+      - '**/*.sv'
+      - '**/*.vhd'
+      - '**/*.vhdl'
   pull_request:
-    branches: [ main, master, develop ]
+    paths:
+      - '**/*.v'
+      - '**/*.sv'
+      - '**/*.vhd'
+      - '**/*.vhdl'
 
 jobs:
-  hdl-check:
-    runs-on: windows-latest
-    
+  build:
+    runs-on: ubuntu-latest
+
     steps:
-    - name: Checkout repository
+    - name: Checkout Repository
       uses: actions/checkout@v4
-      
-    - name: Setup MSYS2
-      uses: msys2/setup-msys2@v2
-      with:
-        msystem: MINGW64
-        update: true
-        install: >-
-          git
-          make
-          autoconf
-          automake
-          flex
-          bison
-          mingw-w64-x86_64-gcc
-          mingw-w64-x86_64-cmake
-          mingw-w64-x86_64-python
-          mingw-w64-x86_64-python-pip
-          
-    - name: Install Verilator (for Verilog/SystemVerilog)
-      shell: msys2 {0}
+
+    - name: Install Verilog & VHDL Tools
       run: |
-        echo "Installing Verilator..."
-        git clone https://github.com/verilator/verilator.git
-        cd verilator
-        git checkout stable
-        autoconf
-        ./configure --prefix=/mingw64
-        make -j4
-        make install
-        verilator --version
-        
-    - name: Install GHDL (for VHDL)
-      shell: msys2 {0}
+        sudo apt update
+        sudo apt install -y iverilog ghdl
+
+    - name: Find and Compile Verilog Files
       run: |
-        echo "Installing GHDL..."
-        pacman -S --noconfirm mingw-w64-x86_64-ghdl
-        
-    - name: Install Icarus Verilog (backup Verilog compiler)
-      shell: msys2 {0}
+        echo "Compiling Verilog files..."
+        find . -type f \( -iname "*.v" -o -iname "*.sv" \) | while read file; do
+          echo "Compiling $file"
+          iverilog -o /tmp/out "$file" 2> /tmp/verilog_errors.log
+          if [ $? -ne 0 ]; then
+            echo "::error file=$file::$(cat /tmp/verilog_errors.log)"
+            exit 1
+          fi
+        done
+
+    - name: Find and Analyze VHDL Files
       run: |
-        echo "Installing Icarus Verilog..."
-        pacman -S --noconfirm mingw-w64-x86_64-iverilog
-        
-    - name: Check Verilog files with Verilator
-      shell: msys2 {0}
-      run: |
-        echo "=== Checking Verilog files with Verilator ==="
-        error_count=0
-        if find . -name "*.v" -o -name "*.sv" | grep -q .; then
-          for file in $(find . -name "*.v" -o -name "*.sv"); do
-            echo "Checking: $file"
-            if ! verilator --lint-only -Wall "$file" 2>&1; then
-              echo "ERROR in $file"
-              ((error_count++))
-            else
-              echo "OK: $file"
-            fi
-            echo "---"
-          done
-        else
-          echo "No Verilog files found"
-        fi
-        echo "Verilator errors: $error_count"
-        
-    - name: Check Verilog files with Icarus Verilog
-      shell: msys2 {0}
-      run: |
-        echo "=== Checking Verilog files with Icarus Verilog ==="
-        error_count=0
-        if find . -name "*.v" | grep -q .; then
-          for file in $(find . -name "*.v"); do
-            echo "Checking: $file"
-            if ! iverilog -t null -Wall "$file" 2>&1; then
-              echo "ERROR in $file"
-              ((error_count++))
-            else
-              echo "OK: $file"
-            fi
-            echo "---"
-          done
-        else
-          echo "No Verilog files found"
-        fi
-        echo "Icarus Verilog errors: $error_count"
-        
-    - name: Check VHDL files with GHDL
-      shell: msys2 {0}
-      run: |
-        echo "=== Checking VHDL files with GHDL ==="
-        error_count=0
-        if find . -name "*.vhd" -o -name "*.vhdl" | grep -q .; then
-          # Create work directory
-          mkdir -p work
-          cd work
-          for file in $(find .. -name "*.vhd" -o -name "*.vhdl"); do
-            echo "Analyzing: $file"
-            if ! ghdl -a --std=08 -fsynopsys "$file" 2>&1; then
-              echo "ERROR in $file"
-              ((error_count++))
-            else
-              echo "OK: $file"
-            fi
-            echo "---"
-          done
-          cd ..
-        else
-          echo "No VHDL files found"
-        fi
-        echo "GHDL errors: $error_count"
-        
-    - name: Check SystemVerilog files specifically
-      shell: msys2 {0}
-      run: |
-        echo "=== Checking SystemVerilog files ==="
-        error_count=0
-        if find . -name "*.sv" | grep -q .; then
-          for file in $(find . -name "*.sv"); do
-            echo "Checking SystemVerilog: $file"
-            if ! verilator --lint-only -Wall --language 1800-2017 "$file" 2>&1; then
-              echo "ERROR in $file"
-              ((error_count++))
-            else
-              echo "OK: $file"
-            fi
-            echo "---"
-          done
-        else
-          echo "No SystemVerilog files found"
-        fi
-        echo "SystemVerilog errors: $error_count"
-        
-    - name: Generate summary report
-      shell: msys2 {0}
-      run: |
-        echo "=== HDL FILES SUMMARY ==="
-        echo "Verilog files (.v): $(find . -name "*.v" | wc -l)"
-        echo "SystemVerilog files (.sv): $(find . -name "*.sv" | wc -l)"
-        echo "VHDL files (.vhd, .vhdl): $(find . -name "*.vhd" -o -name "*.vhdl" | wc -l)"
-        echo "========================="
-        echo "Check complete! See above for any errors with file names and line numbers."
-        
-    - name: Upload error logs (if any)
-      uses: actions/upload-artifact@v4
-      if: always()
-      with:
-        name: hdl-error-logs
-        path: |
-          verilator/
-          work/
-        retention-days: 30
-        if-no-files-found: ignore
+        echo "Analyzing VHDL files..."
+        find . -type f \( -iname "*.vhd" -o -iname "*.vhdl" \) | while read file; do
+          echo "Analyzing $file"
+          ghdl -a "$file" 2> /tmp/vhdl_errors.log
+          if [ $? -ne 0 ]; then
+            echo "::error file=$file::$(cat /tmp/vhdl_errors.log)"
+            exit 1
+          fi
+        done
