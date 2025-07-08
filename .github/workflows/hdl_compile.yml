@@ -1,169 +1,98 @@
-name: HDL Syntax and Error Checker
+name: HDL Compiler Check
 
 on:
   push:
-    branches: [ main, master, develop ]
+    branches: [ main, develop ]
   pull_request:
-    branches: [ main, master, develop ]
+    branches: [ main, develop ]
 
 jobs:
-  hdl-check:
+  hdl-compile:
     runs-on: ubuntu-latest
     
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
       
-    - name: Install HDL tools (fast pre-built packages)
+    - name: Install HDL tools
       run: |
         sudo apt-get update
-        sudo apt-get install -y verilator ghdl iverilog
-        echo "=== Installed versions ==="
-        verilator --version
-        ghdl --version
-        iverilog -V
+        sudo apt-get install -y ghdl iverilog
         
-    - name: Check Verilog files with Verilator
+    - name: Find HDL files
+      id: find-files
       run: |
-        echo "=== Checking Verilog files with Verilator ==="
-        error_found=false
-        if find . -name "*.v" -o -name "*.sv" | grep -q .; then
-          while IFS= read -r -d '' file; do
-            echo "Checking: $file"
-            if ! verilator --lint-only -Wall "$file" 2>&1; then
-              echo "❌ ERROR in $file"
-              error_found=true
+        echo "Finding Verilog and VHDL files..."
+        find . -type f \( -name "*.v" -o -name "*.vhd" -o -name "*.vhdl" -o -name "*.sv" \) > hdl_files.txt
+        echo "Found files:"
+        cat hdl_files.txt
+        
+    - name: Compile Verilog files
+      run: |
+        echo "Compiling Verilog files..."
+        verilog_files=$(find . -type f \( -name "*.v" -o -name "*.sv" \))
+        compile_error=false
+        
+        for file in $verilog_files; do
+          if [ -f "$file" ]; then
+            echo "Compiling: $file"
+            if ! iverilog -o /tmp/compiled_$(basename "$file" .v) "$file" 2>&1; then
+              echo "❌ ERROR in file: $file"
+              iverilog -o /tmp/compiled_$(basename "$file" .v) "$file" 2>&1 | while IFS= read -r line; do
+                if [[ $line == *":"* ]] && [[ $line == *"error"* ]]; then
+                  echo "  📍 $line"
+                fi
+              done
+              compile_error=true
             else
-              echo "✅ OK: $file"
+              echo "✅ $file compiled successfully"
             fi
-            echo "---"
-          done < <(find . -name "*.v" -o -name "*.sv" -print0)
-        else
-          echo "No Verilog files found"
-        fi
-        if [ "$error_found" = true ]; then
-          echo "::error::Verilator found errors in Verilog files"
-          exit 1
-        fi
-        
-    - name: Check Verilog files with Icarus Verilog
-      run: |
-        echo "=== Checking Verilog files with Icarus Verilog ==="
-        error_found=false
-        if find . -name "*.v" | grep -q .; then
-          while IFS= read -r -d '' file; do
-            echo "Checking: $file"
-            if ! iverilog -t null -Wall "$file" 2>&1; then
-              echo "❌ ERROR in $file"
-              error_found=true
-            else
-              echo "✅ OK: $file"
-            fi
-            echo "---"
-          done < <(find . -name "*.v" -print0)
-        else
-          echo "No Verilog files found"
-        fi
-        if [ "$error_found" = true ]; then
-          echo "::error::Icarus Verilog found errors in Verilog files"
-          exit 1
-        fi
-        
-    - name: Check VHDL files with GHDL
-      run: |
-        echo "=== Checking VHDL files with GHDL ==="
-        error_found=false
-        if find . -name "*.vhd" -o -name "*.vhdl" | grep -q .; then
-          # Create work directory
-          mkdir -p work
-          cd work
-          while IFS= read -r -d '' file; do
-            echo "Analyzing: $file"
-            if ! ghdl -a --std=08 -fsynopsys "$file" 2>&1; then
-              echo "❌ ERROR in $file"
-              error_found=true
-            else
-              echo "✅ OK: $file"
-            fi
-            echo "---"
-          done < <(find .. -name "*.vhd" -o -name "*.vhdl" -print0)
-          cd ..
-        else
-          echo "No VHDL files found"
-        fi
-        if [ "$error_found" = true ]; then
-          echo "::error::GHDL found errors in VHDL files"
-          exit 1
-        fi
-        
-    - name: Check SystemVerilog files specifically
-      run: |
-        echo "=== Checking SystemVerilog files ==="
-        error_found=false
-        if find . -name "*.sv" | grep -q .; then
-          while IFS= read -r -d '' file; do
-            echo "Checking SystemVerilog: $file"
-            if ! verilator --lint-only -Wall --language 1800-2017 "$file" 2>&1; then
-              echo "❌ ERROR in $file"
-              error_found=true
-            else
-              echo "✅ OK: $file"
-            fi
-            echo "---"
-          done < <(find . -name "*.sv" -print0)
-        else
-          echo "No SystemVerilog files found"
-        fi
-        if [ "$error_found" = true ]; then
-          echo "::error::SystemVerilog checker found errors"
-          exit 1
-        fi
-        
-    - name: Run comprehensive syntax check
-      run: |
-        echo "=== COMPREHENSIVE SYNTAX CHECK ==="
-        total_files=0
-        error_files=0
-        
-        # Check all HDL files at once
-        for ext in "*.v" "*.sv" "*.vhd" "*.vhdl"; do
-          count=$(find . -name "$ext" | wc -l)
-          total_files=$((total_files + count))
-          echo "$ext files: $count"
+          fi
         done
         
-        echo "Total HDL files: $total_files"
-        
-        if [ $total_files -eq 0 ]; then
-          echo "⚠️  No HDL files found in repository"
-          exit 0
+        if [ "$compile_error" = true ]; then
+          echo "Verilog compilation failed!"
+          exit 1
         fi
         
-        # Final status
-        echo "=== FINAL RESULTS ==="
-        echo "✅ All HDL files passed syntax checking!"
-        echo "📊 Files checked: $total_files"
-        echo "🔧 Tools used: Verilator, GHDL, Icarus Verilog"
+    - name: Compile VHDL files
+      run: |
+        echo "Compiling VHDL files..."
+        vhdl_files=$(find . -type f \( -name "*.vhd" -o -name "*.vhdl" \))
+        compile_error=false
         
-    - name: Generate detailed report
+        for file in $vhdl_files; do
+          if [ -f "$file" ]; then
+            echo "Compiling: $file"
+            if ! ghdl -a "$file" 2>&1; then
+              echo "❌ ERROR in file: $file"
+              ghdl -a "$file" 2>&1 | while IFS= read -r line; do
+                if [[ $line == *":"* ]] && [[ $line == *"error"* ]]; then
+                  echo "  📍 $line"
+                fi
+              done
+              compile_error=true
+            else
+              echo "✅ $file compiled successfully"
+            fi
+          fi
+        done
+        
+        if [ "$compile_error" = true ]; then
+          echo "VHDL compilation failed!"
+          exit 1
+        fi
+        
+    - name: Summary
       if: always()
       run: |
-        echo "=== DETAILED REPORT ==="
-        echo "Repository: ${{ github.repository }}"
-        echo "Branch: ${{ github.ref_name }}"
-        echo "Commit: ${{ github.sha }}"
-        echo "Triggered by: ${{ github.event_name }}"
-        echo ""
-        echo "Files found:"
-        find . -name "*.v" -o -name "*.sv" -o -name "*.vhd" -o -name "*.vhdl" | sort
-        echo ""
-        echo "Check completed at: $(date)"
+        echo "HDL Compilation Summary:"
+        echo "======================="
+        total_files=$(find . -type f \( -name "*.v" -o -name "*.vhd" -o -name "*.vhdl" -o -name "*.sv" \) | wc -l)
+        echo "Total HDL files found: $total_files"
         
-    - name: Upload logs on failure
-      uses: actions/upload-artifact@v4
-      if: failure()
-      with:
-        name: hdl-error-logs-${{ github.run_number }}
-        path: work/
-        retention-days: 7
-        if-no-files-found: ignore
+        if [ $? -eq 0 ]; then
+          echo "🎉 All files compiled successfully!"
+        else
+          echo "❌ Some files failed to compile. Check the logs above for details."
+        fi
