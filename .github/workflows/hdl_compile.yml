@@ -1,41 +1,169 @@
-name: Compile Verilog and VHDL Files
+name: HDL Syntax and Error Checker
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, master, develop ]
   pull_request:
-    branches: [ main ]
-  workflow_dispatch:
+    branches: [ main, master, develop ]
 
 jobs:
-  compile-hdl:
+  hdl-check:
     runs-on: ubuntu-latest
-
+    
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Install HDL tools
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y iverilog ghdl
-
-      - name: Find and compile Verilog and VHDL files
-        run: |
-          set -e
-          # Find and compile Verilog files
-          find . -type f \( -name "*.v" -o -name "*.sv" \) | while read verilog_file; do
-            echo "Compiling $verilog_file"
-            iverilog -o /tmp/$(basename "$verilog_file").out "$verilog_file" 2> /tmp/iverilog_err.log || {
-              echo "::error file=$verilog_file::$(cat /tmp/iverilog_err.log)"
-              exit 1
-            }
-          done
-          # Find and compile VHDL files
-          find . -type f \( -name "*.vhd" -o -name "*.vhdl" \) | while read vhdl_file; do
-            echo "Analyzing $vhdl_file"
-            ghdl -a "$vhdl_file" 2> /tmp/ghdl_err.log || {
-              echo "::error file=$vhdl_file::$(cat /tmp/ghdl_err.log)"
-              exit 1
-            }
-          done
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Install HDL tools (fast pre-built packages)
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y verilator ghdl iverilog
+        echo "=== Installed versions ==="
+        verilator --version
+        ghdl --version
+        iverilog -V
+        
+    - name: Check Verilog files with Verilator
+      run: |
+        echo "=== Checking Verilog files with Verilator ==="
+        error_found=false
+        if find . -name "*.v" -o -name "*.sv" | grep -q .; then
+          while IFS= read -r -d '' file; do
+            echo "Checking: $file"
+            if ! verilator --lint-only -Wall "$file" 2>&1; then
+              echo "❌ ERROR in $file"
+              error_found=true
+            else
+              echo "✅ OK: $file"
+            fi
+            echo "---"
+          done < <(find . -name "*.v" -o -name "*.sv" -print0)
+        else
+          echo "No Verilog files found"
+        fi
+        if [ "$error_found" = true ]; then
+          echo "::error::Verilator found errors in Verilog files"
+          exit 1
+        fi
+        
+    - name: Check Verilog files with Icarus Verilog
+      run: |
+        echo "=== Checking Verilog files with Icarus Verilog ==="
+        error_found=false
+        if find . -name "*.v" | grep -q .; then
+          while IFS= read -r -d '' file; do
+            echo "Checking: $file"
+            if ! iverilog -t null -Wall "$file" 2>&1; then
+              echo "❌ ERROR in $file"
+              error_found=true
+            else
+              echo "✅ OK: $file"
+            fi
+            echo "---"
+          done < <(find . -name "*.v" -print0)
+        else
+          echo "No Verilog files found"
+        fi
+        if [ "$error_found" = true ]; then
+          echo "::error::Icarus Verilog found errors in Verilog files"
+          exit 1
+        fi
+        
+    - name: Check VHDL files with GHDL
+      run: |
+        echo "=== Checking VHDL files with GHDL ==="
+        error_found=false
+        if find . -name "*.vhd" -o -name "*.vhdl" | grep -q .; then
+          # Create work directory
+          mkdir -p work
+          cd work
+          while IFS= read -r -d '' file; do
+            echo "Analyzing: $file"
+            if ! ghdl -a --std=08 -fsynopsys "$file" 2>&1; then
+              echo "❌ ERROR in $file"
+              error_found=true
+            else
+              echo "✅ OK: $file"
+            fi
+            echo "---"
+          done < <(find .. -name "*.vhd" -o -name "*.vhdl" -print0)
+          cd ..
+        else
+          echo "No VHDL files found"
+        fi
+        if [ "$error_found" = true ]; then
+          echo "::error::GHDL found errors in VHDL files"
+          exit 1
+        fi
+        
+    - name: Check SystemVerilog files specifically
+      run: |
+        echo "=== Checking SystemVerilog files ==="
+        error_found=false
+        if find . -name "*.sv" | grep -q .; then
+          while IFS= read -r -d '' file; do
+            echo "Checking SystemVerilog: $file"
+            if ! verilator --lint-only -Wall --language 1800-2017 "$file" 2>&1; then
+              echo "❌ ERROR in $file"
+              error_found=true
+            else
+              echo "✅ OK: $file"
+            fi
+            echo "---"
+          done < <(find . -name "*.sv" -print0)
+        else
+          echo "No SystemVerilog files found"
+        fi
+        if [ "$error_found" = true ]; then
+          echo "::error::SystemVerilog checker found errors"
+          exit 1
+        fi
+        
+    - name: Run comprehensive syntax check
+      run: |
+        echo "=== COMPREHENSIVE SYNTAX CHECK ==="
+        total_files=0
+        error_files=0
+        
+        # Check all HDL files at once
+        for ext in "*.v" "*.sv" "*.vhd" "*.vhdl"; do
+          count=$(find . -name "$ext" | wc -l)
+          total_files=$((total_files + count))
+          echo "$ext files: $count"
+        done
+        
+        echo "Total HDL files: $total_files"
+        
+        if [ $total_files -eq 0 ]; then
+          echo "⚠️  No HDL files found in repository"
+          exit 0
+        fi
+        
+        # Final status
+        echo "=== FINAL RESULTS ==="
+        echo "✅ All HDL files passed syntax checking!"
+        echo "📊 Files checked: $total_files"
+        echo "🔧 Tools used: Verilator, GHDL, Icarus Verilog"
+        
+    - name: Generate detailed report
+      if: always()
+      run: |
+        echo "=== DETAILED REPORT ==="
+        echo "Repository: ${{ github.repository }}"
+        echo "Branch: ${{ github.ref_name }}"
+        echo "Commit: ${{ github.sha }}"
+        echo "Triggered by: ${{ github.event_name }}"
+        echo ""
+        echo "Files found:"
+        find . -name "*.v" -o -name "*.sv" -o -name "*.vhd" -o -name "*.vhdl" | sort
+        echo ""
+        echo "Check completed at: $(date)"
+        
+    - name: Upload logs on failure
+      uses: actions/upload-artifact@v4
+      if: failure()
+      with:
+        name: hdl-error-logs-${{ github.run_number }}
+        path: work/
+        retention-days: 7
+        if-no-files-found: ignore
