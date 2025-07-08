@@ -10,6 +10,25 @@ which is logical as we cant latch (store a new number) and decrement it at the s
 as this is not possible (and even if it is this is really dangerous as it could take time more than the 
 posedge and then it would still be operating while the new egde come which could hold a new number or ask to 
 decrement the old number again which is still hasent been decremented)
+
+
+also one important thing to notice is that the always block is concurrent so if you do it as 
+always@(posedge clk)
+begin
+    if(latch)
+    begin
+counter <=IN;
+    end
+     if( dec && !zero)
+    begin
+    counter=counter-4'b001;
+    end
+end
+
+now you are trying to check the two if statements at the same time meaning if dec and latch are 
+both high your chip will be trying to store a number and decrement it at the same time (mid-latching it)
+which is ofcourse invalid 
+
 =============================================================================================================================================
 */
 module counter_4bit
