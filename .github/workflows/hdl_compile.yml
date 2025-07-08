@@ -2,51 +2,40 @@ name: Compile Verilog and VHDL Files
 
 on:
   push:
-    paths:
-      - '**/*.v'
-      - '**/*.sv'
-      - '**/*.vhd'
-      - '**/*.vhdl'
+    branches: [ main ]
   pull_request:
-    paths:
-      - '**/*.v'
-      - '**/*.sv'
-      - '**/*.vhd'
-      - '**/*.vhdl'
+    branches: [ main ]
+  workflow_dispatch:
 
 jobs:
-  build:
+  compile-hdl:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-    - name: Install Verilog & VHDL Tools
-      run: |
-        sudo apt update
-        sudo apt install -y iverilog ghdl
+      - name: Install HDL tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y iverilog ghdl
 
-    - name: Find and Compile Verilog Files
-      run: |
-        echo "Compiling Verilog files..."
-        find . -type f \( -iname "*.v" -o -iname "*.sv" \) | while read file; do
-          echo "Compiling $file"
-          iverilog -o /tmp/out "$file" 2> /tmp/verilog_errors.log
-          if [ $? -ne 0 ]; then
-            echo "::error file=$file::$(cat /tmp/verilog_errors.log)"
-            exit 1
-          fi
-        done
-
-    - name: Find and Analyze VHDL Files
-      run: |
-        echo "Analyzing VHDL files..."
-        find . -type f \( -iname "*.vhd" -o -iname "*.vhdl" \) | while read file; do
-          echo "Analyzing $file"
-          ghdl -a "$file" 2> /tmp/vhdl_errors.log
-          if [ $? -ne 0 ]; then
-            echo "::error file=$file::$(cat /tmp/vhdl_errors.log)"
-            exit 1
-          fi
-        done
+      - name: Find and compile Verilog and VHDL files
+        run: |
+          set -e
+          # Find and compile Verilog files
+          find . -type f \( -name "*.v" -o -name "*.sv" \) | while read verilog_file; do
+            echo "Compiling $verilog_file"
+            iverilog -o /tmp/$(basename "$verilog_file").out "$verilog_file" 2> /tmp/iverilog_err.log || {
+              echo "::error file=$verilog_file::$(cat /tmp/iverilog_err.log)"
+              exit 1
+            }
+          done
+          # Find and compile VHDL files
+          find . -type f \( -name "*.vhd" -o -name "*.vhdl" \) | while read vhdl_file; do
+            echo "Analyzing $vhdl_file"
+            ghdl -a "$vhdl_file" 2> /tmp/ghdl_err.log || {
+              echo "::error file=$vhdl_file::$(cat /tmp/ghdl_err.log)"
+              exit 1
+            }
+          done
