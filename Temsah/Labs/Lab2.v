@@ -12,7 +12,10 @@ posedge and then it would still be operating while the new egde come which could
 decrement the old number again which is still hasent been decremented)
 
 
-also one important thing to notice is that the always block is concurrent so if you do it as 
+also one important thing to notice is that using the blocking assigment in an always block makes it concurrent
+and you cant use blocking assigment in this as this is a sequential always block so it is not recommended to use 
+the non-blocking assigments
+ so if you do it as 
 always@(posedge clk)
 begin
     if(latch)
