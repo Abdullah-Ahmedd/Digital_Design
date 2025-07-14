@@ -1,0 +1,99 @@
+#! /c/Source/iverilog-install/bin/vvp
+:ivl_version "12.0 (devel)" "(s20150603-1539-g2693dd32b)";
+:ivl_delay_selection "TYPICAL";
+:vpi_time_precision + 0;
+:vpi_module "C:\iverilog\lib\ivl\system.vpi";
+:vpi_module "C:\iverilog\lib\ivl\vhdl_sys.vpi";
+:vpi_module "C:\iverilog\lib\ivl\vhdl_textio.vpi";
+:vpi_module "C:\iverilog\lib\ivl\v2005_math.vpi";
+:vpi_module "C:\iverilog\lib\ivl\va_math.vpi";
+S_00000249c7f02c00 .scope module, "Up_Dn_Counter" "Up_Dn_Counter" 2 1;
+ .timescale 0 0;
+    .port_info 0 /INPUT 5 "IN";
+    .port_info 1 /INPUT 1 "Load";
+    .port_info 2 /INPUT 1 "Up";
+    .port_info 3 /INPUT 1 "Down";
+    .port_info 4 /INPUT 1 "CLK";
+    .port_info 5 /OUTPUT 1 "High";
+    .port_info 6 /OUTPUT 5 "Counter";
+    .port_info 7 /OUTPUT 1 "Low";
+o00000249c7f36fd8 .functor BUFZ 1, C4<z>; HiZ drive
+v00000249c7f02d90_0 .net "CLK", 0 0, o00000249c7f36fd8;  0 drivers
+v00000249c7f02e30_0 .var "Counter", 4 0;
+o00000249c7f37038 .functor BUFZ 1, C4<z>; HiZ drive
+v00000249c7f02ed0_0 .net "Down", 0 0, o00000249c7f37038;  0 drivers
+v00000249c7eebd70_0 .var "High", 0 0;
+o00000249c7f37098 .functor BUFZ 5, C4<zzzzz>; HiZ drive
+v00000249c7eebe10_0 .net "IN", 4 0, o00000249c7f37098;  0 drivers
+o00000249c7f370c8 .functor BUFZ 1, C4<z>; HiZ drive
+v00000249c7eebeb0_0 .net "Load", 0 0, o00000249c7f370c8;  0 drivers
+v00000249c7f32d60_0 .var "Low", 0 0;
+o00000249c7f37128 .functor BUFZ 1, C4<z>; HiZ drive
+v00000249c7f32e00_0 .net "Up", 0 0, o00000249c7f37128;  0 drivers
+E_00000249c7eec5b0 .event anyedge, v00000249c7f02e30_0;
+E_00000249c7eecdb0 .event posedge, v00000249c7f02d90_0;
+    .scope S_00000249c7f02c00;
+T_0 ;
+    %wait E_00000249c7eecdb0;
+    %load/vec4 v00000249c7eebeb0_0;
+    %cmpi/e 1, 0, 1;
+    %jmp/0xz  T_0.0, 4;
+    %load/vec4 v00000249c7eebe10_0;
+    %assign/vec4 v00000249c7f02e30_0, 0;
+    %jmp T_0.1;
+T_0.0 ;
+    %load/vec4 v00000249c7f02ed0_0;
+    %cmpi/e 1, 0, 1;
+    %flag_get/vec4 4;
+    %jmp/0 T_0.4, 4;
+    %load/vec4 v00000249c7f32d60_0;
+    %nor/r;
+    %and;
+T_0.4;
+    %flag_set/vec4 8;
+    %jmp/0xz  T_0.2, 8;
+    %load/vec4 v00000249c7f02e30_0;
+    %subi 1, 0, 5;
+    %assign/vec4 v00000249c7f02e30_0, 0;
+    %jmp T_0.3;
+T_0.2 ;
+    %load/vec4 v00000249c7f32e00_0;
+    %cmpi/e 1, 0, 1;
+    %flag_get/vec4 4;
+    %jmp/0 T_0.7, 4;
+    %load/vec4 v00000249c7eebd70_0;
+    %nor/r;
+    %and;
+T_0.7;
+    %flag_set/vec4 8;
+    %jmp/0xz  T_0.5, 8;
+    %load/vec4 v00000249c7f02e30_0;
+    %addi 1, 0, 5;
+    %assign/vec4 v00000249c7f02e30_0, 0;
+T_0.5 ;
+T_0.3 ;
+T_0.1 ;
+    %jmp T_0;
+    .thread T_0;
+    .scope S_00000249c7f02c00;
+T_1 ;
+    %wait E_00000249c7eec5b0;
+    %load/vec4 v00000249c7f02e30_0;
+    %cmpi/e 31, 0, 5;
+    %jmp/0xz  T_1.0, 4;
+    %pushi/vec4 1, 0, 1;
+    %store/vec4 v00000249c7eebd70_0, 0, 1;
+T_1.0 ;
+    %load/vec4 v00000249c7f02e30_0;
+    %cmpi/e 0, 0, 5;
+    %jmp/0xz  T_1.2, 4;
+    %pushi/vec4 1, 0, 1;
+    %store/vec4 v00000249c7f32d60_0, 0, 1;
+T_1.2 ;
+    %jmp T_1;
+    .thread T_1, $push;
+# The file index is used to find the file name in the following table.
+:file_names 3;
+    "N/A";
+    "<interactive>";
+    "Up_Dn_Counter.v";
