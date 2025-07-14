@@ -1,0 +1,118 @@
+$date
+	Mon Jul 14 17:45:05 2025
+$end
+$version
+	Icarus Verilog
+$end
+$timescale
+	1ps
+$end
+$scope module Up_Dn_Counter_tb $end
+$var wire 1 ! Low_tb $end
+$var wire 1 " High_tb $end
+$var wire 5 # Counter_tb [4:0] $end
+$var reg 1 $ CLK_tb $end
+$var reg 1 % Down_tb $end
+$var reg 5 & IN_tb [4:0] $end
+$var reg 1 ' Load_tb $end
+$var reg 1 ( Up_tb $end
+$scope module DUT $end
+$var wire 1 $ CLK $end
+$var wire 1 % Down $end
+$var wire 5 ) IN [4:0] $end
+$var wire 1 ' Load $end
+$var wire 1 ( Up $end
+$var reg 5 * Counter [4:0] $end
+$var reg 1 " High $end
+$var reg 1 ! Low $end
+$upscope $end
+$upscope $end
+$enddefinitions $end
+$comment Show the parameter values. $end
+$dumpall
+$end
+#0
+$dumpvars
+bx *
+b1010 )
+0(
+0'
+b1010 &
+0%
+0$
+bx #
+x"
+x!
+$end
+#5000
+1$
+#10000
+0$
+1'
+#15000
+0!
+0"
+b1010 #
+b1010 *
+1$
+#20000
+0$
+#25000
+1$
+#30000
+0$
+1(
+#35000
+1$
+#40000
+0$
+#45000
+1$
+#50000
+0$
+1%
+#55000
+1$
+#60000
+0$
+#65000
+1$
+#70000
+0$
+#75000
+1$
+#80000
+0$
+#85000
+1$
+#90000
+0$
+#95000
+1$
+#100000
+0$
+#105000
+1$
+#110000
+0$
+b11111 &
+b11111 )
+#115000
+1"
+b11111 #
+b11111 *
+1$
+#120000
+0$
+#125000
+1$
+#130000
+0$
+b0 &
+b0 )
+#135000
+1!
+0"
+b0 #
+b0 *
+1$
