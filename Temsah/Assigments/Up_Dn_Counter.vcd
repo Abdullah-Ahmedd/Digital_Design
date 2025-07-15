@@ -1,5 +1,5 @@
 $date
-	Mon Jul 14 17:45:05 2025
+	Mon Jul 14 18:04:44 2025
 $end
 $version
 	Icarus Verilog
@@ -116,3 +116,5 @@ b0 )
 b0 #
 b0 *
 1$
+#140000
+0$

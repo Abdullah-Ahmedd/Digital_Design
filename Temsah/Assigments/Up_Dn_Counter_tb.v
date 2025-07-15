@@ -112,7 +112,7 @@ initial
         else 
             $display ("Test case 7 has failed with High flag value = %0b at simulation time=%t",Low_tb,$time);
 
-        $stop;
+        $finish;
 
     end
 
