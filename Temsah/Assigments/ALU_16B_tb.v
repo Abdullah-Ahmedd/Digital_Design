@@ -282,9 +282,26 @@ initial CLK_tb=1'b0;
 
                 end
             else
-            $display("Test case 16 has failed at time %0t",$time);                
+            $display("Test case 16 has failed at time %0t",$time);
 
+            //Test case 17:CMPG
+            $display("Test case 17: Compare if A is greater than B");
+            #10
+            A_tb=16'ha; B_tb=16'hf;  ALU_FUN_tb=4'b1011;
+            #10
+            if(ALU_OUT_tb==16'd0)
+                begin
+                    $display(" A=%0d , B=%0d so A<B  ", A_tb, B_tb);
+                    $display("Carry_Flag=%b , Arith_Flag=%b ,Logic_Flag=%b ,CMP_Flag=%b ,Shift_Flag=%b", Carry_Flag_tb, Arith_Flag_tb ,Logic_Flag_tb ,CMP_Flag_tb ,Shift_Flag_tb );
+                    $display("Test case 17 has passed at time %0t",$time);
+
+                end
+            else
+            $display("Test case 17 has failed at time %0t",$time);
+ 
+             
         $finish;
+        
 
 
         end
