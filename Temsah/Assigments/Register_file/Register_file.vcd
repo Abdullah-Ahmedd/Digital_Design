@@ -1,0 +1,114 @@
+$date
+	Thu Jul 24 01:52:36 2025
+$end
+$version
+	Icarus Verilog
+$end
+$timescale
+	1ns
+$end
+$scope module Register_file_tb $end
+$var wire 16 ! RdData_tb [15:0] $end
+$var reg 3 " Address_tb [2:0] $end
+$var reg 1 # CLK_tb $end
+$var reg 1 $ RST_tb $end
+$var reg 1 % RdEn_tb $end
+$var reg 16 & WrData_tb [15:0] $end
+$var reg 1 ' WrEn_tb $end
+$scope module DUT $end
+$var wire 3 ( Address [2:0] $end
+$var wire 1 # CLK $end
+$var wire 1 $ RST $end
+$var wire 1 % RdEn $end
+$var wire 16 ) WrData [15:0] $end
+$var wire 1 ' WrEn $end
+$var reg 16 * RdData [15:0] $end
+$upscope $end
+$upscope $end
+$enddefinitions $end
+$comment Show the parameter values. $end
+$dumpall
+$end
+#0
+$dumpvars
+b0 *
+bx )
+bx (
+x'
+bx &
+x%
+0$
+0#
+bx "
+b0 !
+$end
+#5000
+1#
+#10000
+0#
+1$
+#15000
+1#
+#20000
+0#
+#25000
+1#
+#30000
+0#
+0%
+1'
+b0 "
+b0 (
+b1010101111001101 &
+b1010101111001101 )
+#35000
+1#
+#40000
+0#
+#45000
+1#
+#50000
+0#
+1%
+0'
+#55000
+b1010101111001101 !
+b1010101111001101 *
+1#
+#60000
+0#
+#65000
+1#
+#70000
+0#
+b101 "
+b101 (
+#75000
+b0 !
+b0 *
+1#
+#80000
+0#
+#85000
+1#
+#90000
+0#
+b0 "
+b0 (
+#95000
+b1010101111001101 !
+b1010101111001101 *
+1#
+#100000
+0#
+#105000
+1#
+#110000
+b0 !
+b0 *
+0#
+0$
+#115000
+1#
+#120000
+0#

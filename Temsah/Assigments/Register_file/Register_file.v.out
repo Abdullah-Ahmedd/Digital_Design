@@ -1,0 +1,129 @@
+#! /c/Source/iverilog-install/bin/vvp
+:ivl_version "12.0 (devel)" "(s20150603-1539-g2693dd32b)";
+:ivl_delay_selection "TYPICAL";
+:vpi_time_precision + 0;
+:vpi_module "C:\iverilog\lib\ivl\system.vpi";
+:vpi_module "C:\iverilog\lib\ivl\vhdl_sys.vpi";
+:vpi_module "C:\iverilog\lib\ivl\vhdl_textio.vpi";
+:vpi_module "C:\iverilog\lib\ivl\v2005_math.vpi";
+:vpi_module "C:\iverilog\lib\ivl\va_math.vpi";
+S_00000238a64e2c40 .scope module, "Register_file" "Register_file" 2 2;
+ .timescale 0 0;
+    .port_info 0 /INPUT 16 "WrData";
+    .port_info 1 /INPUT 3 "Address";
+    .port_info 2 /INPUT 1 "WrEn";
+    .port_info 3 /INPUT 1 "RdEn";
+    .port_info 4 /INPUT 1 "CLK";
+    .port_info 5 /INPUT 1 "RST";
+    .port_info 6 /OUTPUT 16 "RdData";
+o00000238a6517f88 .functor BUFZ 3, C4<zzz>; HiZ drive
+v00000238a64e3300_0 .net "Address", 2 0, o00000238a6517f88;  0 drivers
+o00000238a6517fb8 .functor BUFZ 1, C4<z>; HiZ drive
+v00000238a64cbf00_0 .net "CLK", 0 0, o00000238a6517fb8;  0 drivers
+o00000238a6517fe8 .functor BUFZ 1, C4<z>; HiZ drive
+v00000238a64e2dd0_0 .net "RST", 0 0, o00000238a6517fe8;  0 drivers
+v00000238a64e2e70_0 .var "RdData", 15 0;
+o00000238a6518048 .functor BUFZ 1, C4<z>; HiZ drive
+v00000238a64e2f10_0 .net "RdEn", 0 0, o00000238a6518048;  0 drivers
+v00000238a6514180 .array "Regfile", 0 7, 15 0;
+o00000238a6518078 .functor BUFZ 16, C4<zzzzzzzzzzzzzzzz>; HiZ drive
+v00000238a6514220_0 .net "WrData", 15 0, o00000238a6518078;  0 drivers
+o00000238a65180a8 .functor BUFZ 1, C4<z>; HiZ drive
+v00000238a65142c0_0 .net "WrEn", 0 0, o00000238a65180a8;  0 drivers
+E_00000238a64ca4b0/0 .event negedge, v00000238a64e2dd0_0;
+E_00000238a64ca4b0/1 .event posedge, v00000238a64cbf00_0;
+E_00000238a64ca4b0 .event/or E_00000238a64ca4b0/0, E_00000238a64ca4b0/1;
+    .scope S_00000238a64e2c40;
+T_0 ;
+    %wait E_00000238a64ca4b0;
+    %load/vec4 v00000238a64e2dd0_0;
+    %nor/r;
+    %flag_set/vec4 8;
+    %jmp/0xz  T_0.0, 8;
+    %pushi/vec4 0, 0, 16;
+    %ix/load 3, 7, 0;
+    %flag_set/imm 4, 0;
+    %ix/load 4, 0, 0; Constant delay
+    %assign/vec4/a/d v00000238a6514180, 0, 4;
+    %pushi/vec4 0, 0, 16;
+    %ix/load 3, 6, 0;
+    %flag_set/imm 4, 0;
+    %ix/load 4, 0, 0; Constant delay
+    %assign/vec4/a/d v00000238a6514180, 0, 4;
+    %pushi/vec4 0, 0, 16;
+    %ix/load 3, 5, 0;
+    %flag_set/imm 4, 0;
+    %ix/load 4, 0, 0; Constant delay
+    %assign/vec4/a/d v00000238a6514180, 0, 4;
+    %pushi/vec4 0, 0, 16;
+    %ix/load 3, 4, 0;
+    %flag_set/imm 4, 0;
+    %ix/load 4, 0, 0; Constant delay
+    %assign/vec4/a/d v00000238a6514180, 0, 4;
+    %pushi/vec4 0, 0, 16;
+    %ix/load 3, 3, 0;
+    %flag_set/imm 4, 0;
+    %ix/load 4, 0, 0; Constant delay
+    %assign/vec4/a/d v00000238a6514180, 0, 4;
+    %pushi/vec4 0, 0, 16;
+    %ix/load 3, 2, 0;
+    %flag_set/imm 4, 0;
+    %ix/load 4, 0, 0; Constant delay
+    %assign/vec4/a/d v00000238a6514180, 0, 4;
+    %pushi/vec4 0, 0, 16;
+    %ix/load 3, 1, 0;
+    %flag_set/imm 4, 0;
+    %ix/load 4, 0, 0; Constant delay
+    %assign/vec4/a/d v00000238a6514180, 0, 4;
+    %pushi/vec4 0, 0, 16;
+    %ix/load 3, 0, 0;
+    %flag_set/imm 4, 0;
+    %ix/load 4, 0, 0; Constant delay
+    %assign/vec4/a/d v00000238a6514180, 0, 4;
+    %pushi/vec4 0, 0, 16;
+    %assign/vec4 v00000238a64e2e70_0, 0;
+    %jmp T_0.1;
+T_0.0 ;
+    %load/vec4 v00000238a65142c0_0;
+    %flag_set/vec4 9;
+    %flag_get/vec4 9;
+    %jmp/0 T_0.4, 9;
+    %load/vec4 v00000238a64e2f10_0;
+    %nor/r;
+    %and;
+T_0.4;
+    %flag_set/vec4 8;
+    %jmp/0xz  T_0.2, 8;
+    %load/vec4 v00000238a6514220_0;
+    %load/vec4 v00000238a64e3300_0;
+    %pad/u 5;
+    %ix/vec4 3;
+    %ix/load 4, 0, 0; Constant delay
+    %assign/vec4/a/d v00000238a6514180, 0, 4;
+    %jmp T_0.3;
+T_0.2 ;
+    %load/vec4 v00000238a64e2f10_0;
+    %flag_set/vec4 9;
+    %flag_get/vec4 9;
+    %jmp/0 T_0.7, 9;
+    %load/vec4 v00000238a65142c0_0;
+    %nor/r;
+    %and;
+T_0.7;
+    %flag_set/vec4 8;
+    %jmp/0xz  T_0.5, 8;
+    %load/vec4 v00000238a64e3300_0;
+    %pad/u 5;
+    %ix/vec4 4;
+    %load/vec4a v00000238a6514180, 4;
+    %assign/vec4 v00000238a64e2e70_0, 0;
+T_0.5 ;
+T_0.3 ;
+T_0.1 ;
+    %jmp T_0;
+    .thread T_0;
+# The file index is used to find the file name in the following table.
+:file_names 3;
+    "N/A";
+    "<interactive>";
+    "Register_file.v";

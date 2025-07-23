@@ -57,10 +57,10 @@ initial
         $dumpfile("ALU_TOP.vcd");
         $dumpvars;
         
-        RST_tb=0;
-        #10
-        RST_tb=1;
-        #10
+        RST_tb=1'b0;
+        @( negedge CLK_tb )
+        RST_tb=1'b1;
+        @( negedge CLK_tb )
 
         //Test case 1: Arithmatic addition ( A is negative and B is negative )
         $display("Test case 1 :");
