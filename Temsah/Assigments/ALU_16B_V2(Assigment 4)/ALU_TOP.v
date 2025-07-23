@@ -14,7 +14,7 @@ module ALU_TOP#( parameter Width='d16 )
     input wire RST, //Active low asynchronus reset 
 
 //Declaring outputs
-    output wire [ (2*Width)-1 : 0 ] Arith_OUT,
+    output wire signed [ (2*Width)-1 : 0 ] Arith_OUT,
     output wire [ Width-1 : 0 ] Logic_OUT,
     output wire [ Width-1 : 0 ] Shift_OUT,
     output wire [ Width-1 : 0 ] CMP_OUT,

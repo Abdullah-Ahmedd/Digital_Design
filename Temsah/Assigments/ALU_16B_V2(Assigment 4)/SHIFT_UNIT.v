@@ -36,7 +36,7 @@ always@ ( posedge CLK or negedge RST )
                         SHRA: Shift_OUT<= A >> 1;
                         SHLA: Shift_OUT<= A << 1;
                         SHRB: Shift_OUT<= B >> 1;
-                        SHRA: Shift_OUT<= B << 1;
+                        SHLB: Shift_OUT<= B << 1;
 
                     endcase
                         Shift_Flag<=1'b1;
