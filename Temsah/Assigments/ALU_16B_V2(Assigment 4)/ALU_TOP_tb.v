@@ -326,7 +326,7 @@ initial
             begin
                     $display("The ANDing of 0b%0b , 0b%0b is 0b%0b ", A_tb, B_tb, Logic_OUT_tb );
                     $display("Arith_Flag=%b ,Logic_Flag=%b ,CMP_Flag=%b ,Shift_Flag=%b", Arith_Flag_tb ,Logic_Flag_tb ,CMP_Flag_tb ,Shift_Flag_tb );
-                    $display("Test case 17 has passed at time %0t",$time );                
+                    $display("Test case 17 has passed at time %0t",$time );                                 
             end
         else 
             $display("Test case 17 has failed at time %0t",$time);
@@ -343,10 +343,10 @@ initial
             begin
                     $display("The ORing of 0b%0b , 0b%0b is 0b%0b ", A_tb, B_tb, Logic_OUT_tb );
                     $display("Arith_Flag=%b ,Logic_Flag=%b ,CMP_Flag=%b ,Shift_Flag=%b", Arith_Flag_tb ,Logic_Flag_tb ,CMP_Flag_tb ,Shift_Flag_tb );
-                    $display("Test case 17 has passed at time %0t",$time );                
+                    $display("Test case 18 has passed at time %0t",$time );                
             end
         else 
-            $display("Test case 17 has failed at time %0t",$time);
+            $display("Test case 18 has failed at time %0t",$time);
 
         //Test case 19: Logic operations ( A NAND B )
         $display("Test case 19 :");
@@ -411,7 +411,7 @@ initial
             begin
                     $display("Comparing( A > B ) : A= %0d ,B= %0d , CMP_OUT= %0d ", A_tb, B_tb, CMP_OUT_tb );
                     $display("Arith_Flag=%b ,Logic_Flag=%b ,CMP_Flag=%b ,Shift_Flag=%b", Arith_Flag_tb ,Logic_Flag_tb ,CMP_Flag_tb ,Shift_Flag_tb );
-                    $display("Test case 22 has passed at time %0t",$time );                
+                    $display("Test case 22 has passed at time %0t",$time );              
             end
         else 
             $display("Test case 22 has failed at time %0t",$time);  
