@@ -40,10 +40,7 @@ RST_tb=1'b1;
 
 $display("Test case 1: Writing on register[ 0 ] "); //storing a value 
 #10
-WrData_tb=16'habcd;
-Address_tb=3'b000;
-WrEn_tb=1'b1;
-RdEn_tb=1'b0;
+WrData_tb=16'habcd  ;Address_tb=3'b000;  WrEn_tb=1'b1;  RdEn_tb=1'b0;
 #10
 if( RdData_tb == 16'b0 ) // Value cannot be read because RdEn is low meaning that the read operation is disabled 
     $display("Test case 1 has passed at time %0t", $time );
@@ -52,9 +49,7 @@ else
 
 $display("Test case 2: Reading from register[ 0 ] "); //checking if the value stored about is stored correclty
 #10 
-WrEn_tb=1'b0;
-RdEn_tb=1'b1;
-Address_tb=3'b000;
+WrEn_tb=1'b0;  RdEn_tb=1'b1;  Address_tb=3'b000;
 #10
 if( RdData_tb == 16'habcd )
     $display("Test case 2 has passed at time %0t", $time );
@@ -63,9 +58,7 @@ else
 
 $display("Test case 3: Reading from register[ 5 ] "); //checking if the register file store the values in the intended register 
 #10
-WrEn_tb=1'b0;
-RdEn_tb=1'b1;
-Address_tb=3'b101;
+WrEn_tb=1'b0;  RdEn_tb=1'b1;  Address_tb=3'b101;
 #10
 if( RdData_tb == 16'b0 )
     $display("Test case 3 has passed at time %0t", $time );
@@ -74,7 +67,7 @@ else
 
 $display("Test case 4: Testing the Reset ");
 #10
-Address_tb=3'b000; WrEn_tb=1'b0; RdEn_tb=1'b1;
+Address_tb=3'b000;  WrEn_tb=1'b0;  RdEn_tb=1'b1;
 #10
 $display("The value of Register[ 0 ] before resetting is 0x%0h",RdData_tb);
 #10
