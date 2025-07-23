@@ -43,10 +43,10 @@ Decoder D1
 );
 
 // Arithmatic unit instantiation
-ARITHMATIC_UNIT ARU1 
+ARITHMATIC_UNIT #( .Width( Width ) ) ARU1 
 (
 .A( A ),
-.B(B),
+.B( B ),
 .ALU_FUN( ALU_FUN[ 1 : 0 ] ),
 .CLK( CLK ),
 .RST( RST ),
@@ -56,7 +56,7 @@ ARITHMATIC_UNIT ARU1
 );
 
 //Logic unit instantiation
-LOGIC_UNIT LU1 
+LOGIC_UNIT #( .Width( Width ) ) LU1 
 (
 .A( A ),
 .B( B ),
@@ -69,7 +69,7 @@ LOGIC_UNIT LU1
 );
 
 //Compare unit instantiation
-CMP_UNIT CMPU1 
+CMP_UNIT #( .Width( Width ) ) CMPU1 
 ( 
 .A( A ),
 .B( B ),
@@ -82,7 +82,7 @@ CMP_UNIT CMPU1
 );
 
 //Shift unit instantiation 
-SHIFT_UNIT SHU1 
+SHIFT_UNIT #( .Width( Width ) ) SHU1 
 (
 .A( A ),
 .B( B ),
