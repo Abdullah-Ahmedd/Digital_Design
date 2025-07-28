@@ -1,4 +1,5 @@
 /*
+
 enable is like the "power-on" for LFSR operation
 It activates the internal logic: the LFSR shifts and updates its bits.
 Think of it as "run the LFSR".
@@ -18,6 +19,8 @@ meanns that when out_enable is on you will shift serially through
 			LFSR[4] <= LFSR[5]
 			LFSR[5] <= LFSR[6]
 			LFSR[6] <= LFSR[7]			
+which is done using  { LFSR[ 6 : 0 ], OUT } <= LFSR[ 7 : 0 ];
+
 */
 module LFSR
 (
