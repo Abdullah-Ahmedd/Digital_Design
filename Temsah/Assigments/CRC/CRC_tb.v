@@ -18,8 +18,8 @@ module CRC_tbb();
     integer i;
     integer oper;
 //Declaring the memories used to store the input and expected output 
-reg [ LFSR_width - 1 : 0 ] Test_seeds [ Number_of_test_cases - 1 : 0 ];
-reg [ LFSR_width - 1 : 0 ] Expected_output [ Number_of_test_cases - 1 : 0 ];
+reg [ LFSR_width - 1 : 0 ] Test_seeds [ 0 : Number_of_test_cases - 1 ];
+reg [ LFSR_width - 1 : 0 ] Expected_output [ 0 : Number_of_test_cases - 1 ];
 
 //Clock generaion
 always 
