@@ -41,7 +41,7 @@ always@(posedge CLK or negedge RST )
         else if( ACTIVE )
             begin
                 LFSR[ 7 ] <= Feedback;
-                DATA_counter <= DATA_counter + 1;
+                //DATA_counter <= DATA_counter + 1;
                 for(i=6;i>=0;i=i-1)
                     begin
                         if(taps[ i ]==1)
@@ -52,13 +52,11 @@ always@(posedge CLK or negedge RST )
             Valid <= 0;
             CRC_counter<=0; //reset the CRC_counter everytime we input data 
             end  
-        else if( !ACTIVE && DATA_counter && CRC_counter< 8 )
+        else if( !ACTIVE && CRC_counter < 8 )
             begin
                 { LFSR[ 6 : 0 ] , CRC } <= LFSR [ 7 : 0 ];
                 Valid<=1;
                 CRC_counter<=CRC_counter+1;
-                if(CRC_counter=='d7)
-                DATA_counter<=0;
             end
         else Valid <= 0;
 
