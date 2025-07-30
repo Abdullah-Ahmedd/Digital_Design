@@ -41,14 +41,14 @@ initial
         $readmemh("Expec_Out_h.txt",Expected_output);
 
 
-        for(oper=0;oper<Number_of_test_cases;oper=oper+1)
+        for( oper = 0 ; oper < Number_of_test_cases ; oper = oper + 1 )
         begin
-            Operation(Test_seeds[oper] );
+            Operation( Test_seeds[oper] );
+            #(Clock_period);
             check_CRC(Expected_output[oper] ,oper);
-
         end
 
-        #100
+        #(Clock_period*10);
         $finish;
 
     end
@@ -56,10 +56,10 @@ initial
 //Tasks
     task Initialization();
         begin
-            CLK_tb=1'b0;
             RST_tb=1'b0;
             DATA_tb=1'b0;
             ACTIVE_tb=1'b0;
+            Reset();
         end
     endtask
 
@@ -78,9 +78,9 @@ initial
         begin
             Reset();
             ACTIVE_tb=1;
-            for(i=0;i<=7;i=i+1)
+            for( i = 7 ; i >= 0 ; i = i - 1 )
             begin
-                DATA_tb=IN_Seed[i];
+                DATA_tb = IN_Seed[ 7 - i ];
                 #(Clock_period);
             end
             ACTIVE_tb=0;
@@ -89,21 +89,19 @@ initial
 
 task check_CRC( input [ LFSR_width - 1 : 0 ] expected_output, input integer Test_case_number );
  reg [ LFSR_width-1 : 0 ] OP_result;
-    begin
-        #(Clock_period)
-        @(posedge Valid_tb)
+    begin        
            for(i=0;i<LFSR_width;i=i+1)
             begin
                 @(negedge CLK_tb)
-                OP_result[i] = CRC_tb; //we used = not not <= as this is a testbench which is no rules ground and as we have said in the test bench we just input a value wait for some time and then check if the input is logical so we dont use <= 
+                OP_result[i] = CRC_tb; 
             end
             if(OP_result == expected_output)
-            $display("Test case %0d has succeeded",Test_case_number);
+                    $display("Test case %0d has succeeded",Test_case_number);
             else 
-            $display("Test case %0d has failed",Test_case_number);
-        
-        ACTIVE_tb=0;
-
+                begin
+                    $display("Test case %0d has failed",Test_case_number);
+                    $display("The obtained result is %0H while the expected output is %0H ",OP_result, expected_output );
+                end
     end
 endtask
 
