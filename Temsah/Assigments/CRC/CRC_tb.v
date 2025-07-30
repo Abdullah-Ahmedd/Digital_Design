@@ -48,7 +48,7 @@ initial
 
         end
 
-        #100
+        #(Clock_period*20);
         $finish;
 
     end
@@ -57,7 +57,7 @@ initial
     task Initialization();
         begin
             CLK_tb=1'b0;
-            RST_tb=1'b0;
+            RST_tb=1'b1;
             DATA_tb=1'b0;
             ACTIVE_tb=1'b0;
         end
@@ -66,11 +66,8 @@ initial
     task Reset();
         begin
             RST_tb=1'b1;
-            #(Clock_period/2);
+            #(Clock_period);
             RST_tb=1'b0;
-            #(Clock_period/2);
-            RST_tb=1'b1;
-
         end
     endtask
 
@@ -81,7 +78,7 @@ initial
             for(i=0;i<=7;i=i+1)
             begin
                 DATA_tb=IN_Seed[i];
-                #(Clock_period);
+                #(Clock_period*2);
             end
             ACTIVE_tb=0;
         end
@@ -90,20 +87,19 @@ initial
 task check_CRC( input [ LFSR_width - 1 : 0 ] expected_output, input integer Test_case_number );
  reg [ LFSR_width-1 : 0 ] OP_result;
     begin
-        #(Clock_period)
-        @(posedge Valid_tb)
+        @(posedge CLK_tb)
            for(i=0;i<LFSR_width;i=i+1)
             begin
-                @(negedge CLK_tb)
+                @(posedge CLK_tb)
                 OP_result[i] = CRC_tb; //we used = not not <= as this is a testbench which is no rules ground and as we have said in the test bench we just input a value wait for some time and then check if the input is logical so we dont use <= 
             end
             if(OP_result == expected_output)
             $display("Test case %0d has succeeded",Test_case_number);
             else 
+            begin
             $display("Test case %0d has failed",Test_case_number);
-        
-        ACTIVE_tb=0;
-
+            $display("The output is %0h",OP_result);
+            end
     end
 endtask
 

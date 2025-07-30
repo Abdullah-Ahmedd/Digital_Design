@@ -1,0 +1,142 @@
+$date
+	Wed Jul 30 03:30:49 2025
+$end
+$version
+	Icarus Verilog
+$end
+$timescale
+	1ps
+$end
+$scope module Door_tb $end
+$var wire 1 ! UP_M_tb $end
+$var wire 1 " DN_M_tb $end
+$var parameter 32 # Clock_period $end
+$var reg 1 $ Activate_tb $end
+$var reg 1 % CLK_tb $end
+$var reg 1 & DN_Max_tb $end
+$var reg 1 ' RST_tb $end
+$var reg 1 ( UP_Max_tb $end
+$var reg 1 ) direction $end
+$scope module DUT $end
+$var wire 1 $ Activate $end
+$var wire 1 % CLK $end
+$var wire 1 & DN_Max $end
+$var wire 1 ' RST $end
+$var wire 1 ( UP_Max $end
+$var parameter 2 * IDLE $end
+$var parameter 2 + MV_Dn $end
+$var parameter 2 , MV_Up $end
+$var reg 2 - Current_state [1:0] $end
+$var reg 1 " DN_M $end
+$var reg 2 . Next_state [1:0] $end
+$var reg 1 ! UP_M $end
+$upscope $end
+$scope task check_output $end
+$var reg 1 / expected $end
+$upscope $end
+$scope task close_the_door $end
+$upscope $end
+$scope task initialize $end
+$upscope $end
+$scope task open_the_door $end
+$upscope $end
+$scope task reset $end
+$upscope $end
+$upscope $end
+$enddefinitions $end
+$comment Show the parameter values. $end
+$dumpall
+b1 ,
+b11 +
+b0 *
+b10100 #
+$end
+#0
+$dumpvars
+x/
+b0 .
+bx -
+x)
+0(
+1'
+0&
+0%
+0$
+x"
+x!
+$end
+#20000
+0"
+0!
+b0 -
+0'
+1%
+#40000
+b1 .
+1$
+1'
+0%
+#60000
+1!
+b1 -
+b1 .
+0$
+1%
+#80000
+0%
+#100000
+1%
+#120000
+0%
+#140000
+1%
+#160000
+0%
+#180000
+1%
+#200000
+0%
+#220000
+1%
+#240000
+0%
+#260000
+0!
+b0 -
+b0 .
+1%
+1)
+1(
+#280000
+0%
+1/
+#300000
+1!
+b1 -
+b1 .
+1%
+0(
+0$
+#320000
+0%
+#340000
+1%
+#360000
+0%
+#380000
+1%
+#400000
+0%
+#420000
+1%
+#440000
+0%
+#460000
+1%
+#480000
+0%
+#500000
+1%
+0/
+0)
+1&
