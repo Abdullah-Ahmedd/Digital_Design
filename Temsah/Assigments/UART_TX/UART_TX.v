@@ -53,13 +53,13 @@ module UART_TX
     );
 
 
-always@( * )
+always@( posedge CLK or negedge CLK )
 begin
     case( mux_sel_internal )
-        2'b00: TX_OUT = 1'b0;
-        2'b01: TX_OUT = 1'b1;
-        2'b10: TX_OUT = ser_data_internal;
-        2'b11: TX_OUT = par_bit_internal;
+        2'b00: TX_OUT <= 1'b0;
+        2'b01: TX_OUT <= 1'b1;
+        2'b10: TX_OUT <= ser_data_internal;
+        2'b11: TX_OUT <= par_bit_internal;
     endcase
 end
 endmodule 

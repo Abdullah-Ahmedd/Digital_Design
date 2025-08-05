@@ -21,32 +21,33 @@ always@( posedge CLK )
     begin
         if( !RST )
             begin
-                ser_data <= 1;
-                ser_done <= 0;
-                internal_reg <= 0;
-                counter <= 0;
-                ready <= 0;
+                ser_data <= 1'b1;
+                ser_done <= 1'b0;
+                internal_reg <= 8'b0;
+                counter <= 4'b0;
+                ready <= 1'b0;
             end
         else begin
-            if( !ready )
+            if( !ready && ser_en)
                 begin
-                    counter <= 0;
+                    counter <= 4'b0;
                     internal_reg <= P_DATA;
-                    ready <= 1;
-                    ser_done <= 0;
+                    ready <= 1'b1;
+                    ser_done <= 1'b0;
                 end   
-            else if( ser_en )
+            else if( ready )
                 begin
                     if( counter <= 7 )
                         begin
                             ser_data <= internal_reg[ 0 ];
                             internal_reg <= internal_reg >> 1;
+                            counter<=counter+1;
                         end
                     if (counter == 7)
                         begin
-                            ser_done <= 1;
+                            ser_done <= 1'b1;
                             ready <= 0;
-                            counter <=counter+1;
+                           counter <=counter+1;
                         end
                     else
                         begin

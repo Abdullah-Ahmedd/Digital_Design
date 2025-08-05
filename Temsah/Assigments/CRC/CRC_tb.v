@@ -90,7 +90,7 @@ initial
 task check_CRC( input [ LFSR_width - 1 : 0 ] expected_output, input integer Test_case_number );
  reg [ LFSR_width-1 : 0 ] OP_result;
     begin 
-        //@(posedge CLK_tb) this was the error in the code as now you wait for a whole clock cycle before outputting anything and during this cycle the shifter is shifting and xoring the numbers so they output is different from the expected (same output and result will be with the negedge as you will also wait for a whole clock cycle)       
+        //@(posedge Valid_tb) this was the error in the code as now you wait for a whole clock cycle before outputting anything and during this cycle the shifter is shifting and xoring the numbers so they output is different from the expected (same output and result will be with the negedge as you will also wait for a whole clock cycle)       
            for(i=0;i<LFSR_width;i=i+1)
             begin
                 @(negedge CLK_tb) //must be negedge as you know untill otherwise is mentioned all the systems are edge rising clock and it is a professional practice to input at the negative edge and look at the output also at the negative edge to make sure everything ahd enough setting time and the output is stable 

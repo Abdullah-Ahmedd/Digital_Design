@@ -15,23 +15,23 @@ always@( * )
     begin
     if ( !Data_valid )
         begin
-            par_bit=0;
+            par_bit=1'b0;
         end
     else  
         begin  
         if( !PAR_TYP )
             begin
                 if( P_flag )
-                par_bit = 1;
+                par_bit = 1'b1;
                 else
-                par_bit = 0;
+                par_bit = 1'b0;
             end
         else    
             begin
                 if( P_flag )
-                par_bit = 0;
+                par_bit = 1'b0;
                 else
-                par_bit = 1;
+                par_bit = 1'b1;
             end
         end
 end
