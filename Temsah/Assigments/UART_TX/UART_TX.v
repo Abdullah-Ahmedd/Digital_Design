@@ -26,30 +26,30 @@ module UART_TX
 //modules instantiations
     serializer S1 
     (
-    P_DATA( P_DATA ),
-    ser_en( ser_en_internal ),
-    CLK( CLK ),
-    RST( RST ),
-    ser_data( ser_data_internal ),
-    ser_done( ser_done_internal )
+    .P_DATA( P_DATA ),
+    .ser_en( ser_en_internal ),
+    .CLK( CLK ),
+    .RST( RST ),
+    .ser_data( ser_data_internal ),
+    .ser_done( ser_done_internal )
     );
     parity_calc P1
     (
-    P_DATA( P_DATA ),
-    Data_valid( Data_valid ),
-    PAR_TYP( PAR_TYP ),
-    par_bit( par_bit_internal )
+    .P_DATA( P_DATA ),
+    .Data_valid( Data_valid ),
+    .PAR_TYP( PAR_TYP ),
+    .par_bit( par_bit_internal )
     );
     FSM FSM1
     (
-    Data_valid( Data_valid ),
-    PAR_EN( PAR_EN ),
-    ser_done( ser_done_internal ),
-    CLK( CLK ),
-    RST( RST ),
-    mux_sel( mux_sel_internal ),
-    ser_en( ser_en_internal ),
-    busy( busy )
+    .Data_valid( Data_valid ),
+    .PAR_EN( PAR_EN ),
+    .ser_done( ser_done_internal ),
+    .CLK( CLK ),
+    .RST( RST ),
+    .mux_sel( mux_sel_internal ),
+    .ser_en( ser_en_internal ),
+    .busy( busy )
     );
 
 
