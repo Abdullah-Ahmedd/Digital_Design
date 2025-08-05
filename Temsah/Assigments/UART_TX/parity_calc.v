@@ -15,7 +15,7 @@ always@( * )
     begin
     if ( !Data_valid )
         begin
-            par_bit=par_bit;
+            par_bit=0;
         end
     else  
         begin  

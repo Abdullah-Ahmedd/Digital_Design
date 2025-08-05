@@ -4,7 +4,7 @@ module serializer
     input wire [ 7 : 0 ] P_DATA,
     input wire ser_en,
     input wire CLK,
-    input wire RST,
+    input wire RST, //Asynchronus active-low reset
 
 //Declaring outputs
     output reg ser_data,
