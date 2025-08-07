@@ -19,20 +19,30 @@ integer i;
 always
     begin
         CLK_tb=0;
-        #( clock_period/2 );
+        #( clock_period/2.0 );
         CLK_tb=1;
-        #( clock_period/2 );
+        #( clock_period/2.0 );
     end
 
 initial
     begin
-        reset();
+        $dumpfile("UART_TX.vcd");
+        $dumpvars;
         initialization();
+
         $display("Test case 1: inputting a number with the parity enable off");
         @( negedge CLK_tb )
-        do_operation(8'h00, 1'b1 , 1'b0 ,1'b0 );
-        #(clock_period*15)
-        check_TX(8'h00,8'h00 , 1'b0 ,1'b0 );
+        do_operation(8'h00, 1'b1 ,1'b0 );
+        #( clock_period );
+        check_TX(8'h00, 1'b0 ,1'b0 );
+        #( clock_period );
+        reset();
+
+        $display("Test case 2: inputting a number with the parity enable on (even parity)");
+        @( negedge CLK_tb )
+        do_operation(8'b01001000, 1'b0 ,1'b0 );
+        #( clock_period );
+        check_TX(8'b1001000, 1'b0 ,1'b0 );
 
         $finish;
     end
@@ -45,47 +55,49 @@ task initialization();
     Data_valid_tb=0;
     PAR_EN_tb=0;
     PAR_TYP_tb=0;
+    reset();
     end
 endtask
 
 task reset();
     begin
-        RST_tb=1;
-        #( clock_period );
         RST_tb=0;
         #( clock_period );
-        RST_tb=0;  
+        RST_tb=1;  
+        #( clock_period );
     end
 endtask
 
-task do_operation (input [ 7 : 0 ] data , input data_valid , input parity_enable , input parity_type );
+task do_operation (input [ 7 : 0 ] data  , input parity_enable , input parity_type );
     begin
-        @( negedge CLK_tb )
+        @( posedge CLK_tb )
         P_DATA_tb = data;
-        Data_valid_tb = data_valid;
+        Data_valid_tb = 1'b1;
         PAR_EN_tb =parity_enable;
         PAR_TYP_tb=parity_type;
-        @(negedge CLK_tb)
-        Data_valid_tb=0;
+        @( posedge CLK_tb )
+        Data_valid_tb=1'b0;
     end
 endtask
 
-task check_TX( input [ 7 : 0 ] data ,input [ 7 : 0 ] expected_output , input parity_enable , input parity_type );
+task check_TX( input [ 7 : 0 ] data , input parity_enable , input parity_type );
 reg is_parity_ok;
     begin
-        //@( negedge TX_OUT_tb )
+
         #( clock_period );
         for(  i = 0  ; i <= 7  ; i = i + 1  ) //Checking is the number is transmitted correctly
             begin
                 #( clock_period );
-                if( TX_OUT_tb != expected_output [ i ] )
+                if( TX_OUT_tb != data [ i ] )
                 begin
-                    $display("The is value of the %0d'th bit is incorrect, number=%b ,expected=%b" ,i, expected_output[ i ], TX_OUT_tb);
+                    $display("The is value of the %0d'th bit is incorrect, number=%b ,expected=%b" ,i, data[ i ], TX_OUT_tb);
                     $display("the busy is %b",busy_tb);
                 end
+        
             end
         if( parity_enable )
             begin  
+                #( clock_period );
                 parity_checker( data , TX_OUT_tb ,parity_type, is_parity_ok ); 
                 if( !is_parity_ok ) //Checking if the parity bit is generated correctly 
                     $display("The value of the parity bit is incorect "); 
@@ -102,13 +114,13 @@ task parity_checker( input [ 7 : 0 ] data  , input parity_bit , input parity_typ
 reg expected_parity;
 begin
     expected_parity = ^ data;
-    if( parity_type )
-        if( !expected_parity == parity_bit )
+    if( parity_type ) //odd parity
+        if(  parity_bit == ~ expected_parity )
             valid=1;
         else
             valid=0;
-    else
-        if( expected_parity == parity_bit )
+    else //even parity 
+        if( parity_bit == expected_parity )
             valid=1;
         else 
         valid=0;
@@ -116,7 +128,7 @@ end
 endtask
 
 //Module instantiation
-UART_TX UART1
+UART_TX DUT
 (
 .P_DATA( P_DATA_tb ),
 .Data_valid( Data_valid_tb ),

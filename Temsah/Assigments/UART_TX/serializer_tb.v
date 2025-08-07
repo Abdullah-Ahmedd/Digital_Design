@@ -2,20 +2,18 @@
 `include "serializer.v"
 module serializer_tb;
 
-parameter CLK_PERIOD = 10;
-
-// Inputs
+// Testbench signals
 reg [7:0] P_DATA_tb;
 reg ser_en_tb;
 reg CLK_tb;
 reg RST_tb;
-
-// Outputs
 wire ser_data_tb;
 wire ser_done_tb;
 
-// Instantiate serializer
-serializer DUT (
+parameter clock_period = 10;
+
+// Instantiate DUT
+serializer uut (
     .P_DATA(P_DATA_tb),
     .ser_en(ser_en_tb),
     .CLK(CLK_tb),
@@ -26,55 +24,47 @@ serializer DUT (
 
 // Clock generation
 always begin
-    CLK_tb = 1;
-    #(CLK_PERIOD/2);
-    CLK_tb = 0;
-    #(CLK_PERIOD/2);
+    CLK_tb = 1'b0;
+    #(clock_period/2);
+    CLK_tb = 1'b1;
+    #(clock_period/2);
 end
 
-// Test procedure
+// Test logic
 initial begin
-    $display("Starting serializer testbench...");
-    init();
+    $dumpfile("serializer_tb.vcd");
+    $dumpvars;
 
-    // Apply test vector
-    @(negedge CLK_tb);
-    P_DATA_tb = 8'b1010_1101;     // example pattern
+    // Initial state
+    P_DATA_tb = 8'b0;
+    ser_en_tb = 1'b0;
+    RST_tb = 1'b0;
+
+    // Apply reset
+    #(2*clock_period);
+    RST_tb = 1'b1;
+    #(clock_period);
+
+    // Load data
+    P_DATA_tb = 8'b10110011; // Expected serial: 1 1 0 0 1 0 1 1
     ser_en_tb = 1'b1;
-
-    @(negedge CLK_tb);            // Let ser_en be high for one cycle
+    #(clock_period);
     ser_en_tb = 1'b0;
 
-    // Read bits serially (LSB first)
-    repeat(8) begin
-        @(negedge CLK_tb);
-        $display("Bit out: %b", ser_data_tb);
+    // Monitor serialization output
+    repeat (8) begin
+        @(posedge CLK_tb);
+        $display("Time %0t | ser_data = %b | bit #%0d", $time, ser_data_tb, $time/clock_period - 5);
     end
 
-    // Wait and check for ser_done
-    @(negedge CLK_tb);
+    // Wait for ser_done
+    @(posedge CLK_tb);
     if (ser_done_tb)
-        $display("✅ ser_done asserted successfully.");
+        $display("✅ ser_done asserted correctly after 8 bits");
     else
-        $display("❌ ERROR: ser_done not asserted.");
+        $display("❌ ser_done not asserted as expected");
 
-    // Final check
-    @(negedge CLK_tb);
-    $display("Test finished.");
     $finish;
 end
-
-task init;
-begin
-    CLK_tb = 0;
-    RST_tb = 0;
-    P_DATA_tb = 8'b0;
-    ser_en_tb = 0;
-
-    #(2 * CLK_PERIOD);
-    RST_tb = 1;
-    #(2 * CLK_PERIOD);
-end
-endtask
 
 endmodule

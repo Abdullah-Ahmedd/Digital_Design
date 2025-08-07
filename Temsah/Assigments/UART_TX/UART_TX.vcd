@@ -1,0 +1,399 @@
+$date
+	Thu Aug 07 04:05:05 2025
+$end
+$version
+	Icarus Verilog
+$end
+$timescale
+	1ps
+$end
+$scope module UART_TX_tb $end
+$var wire 1 ! busy_tb $end
+$var wire 1 " TX_OUT_tb $end
+$var parameter 32 # clock_period $end
+$var reg 1 $ CLK_tb $end
+$var reg 1 % Data_valid_tb $end
+$var reg 1 & PAR_EN_tb $end
+$var reg 1 ' PAR_TYP_tb $end
+$var reg 8 ( P_DATA_tb [7:0] $end
+$var reg 1 ) RST_tb $end
+$var integer 32 * i [31:0] $end
+$scope module DUT $end
+$var wire 1 $ CLK $end
+$var wire 1 % Data_valid $end
+$var wire 1 & PAR_EN $end
+$var wire 1 ' PAR_TYP $end
+$var wire 8 + P_DATA [7:0] $end
+$var wire 1 ) RST $end
+$var wire 1 , ser_en_internal $end
+$var wire 1 - ser_done_internal $end
+$var wire 1 . ser_data_internal $end
+$var wire 1 / par_bit_internal $end
+$var wire 2 0 mux_sel_internal [1:0] $end
+$var wire 1 ! busy $end
+$var reg 1 " TX_OUT $end
+$scope module FSM1 $end
+$var wire 1 $ CLK $end
+$var wire 1 % Data_valid $end
+$var wire 1 & PAR_EN $end
+$var wire 1 ) RST $end
+$var wire 1 - ser_done $end
+$var parameter 5 1 IDLE $end
+$var parameter 5 2 Send_data $end
+$var parameter 5 3 Start_bit $end
+$var parameter 5 4 Stop_bit $end
+$var parameter 5 5 parity $end
+$var reg 5 6 Current_state [4:0] $end
+$var reg 5 7 Next_state [4:0] $end
+$var reg 1 ! busy $end
+$var reg 2 8 mux_sel [1:0] $end
+$var reg 1 , ser_en $end
+$upscope $end
+$scope module P1 $end
+$var wire 1 % Data_valid $end
+$var wire 1 ' PAR_TYP $end
+$var wire 8 9 P_DATA [7:0] $end
+$var wire 1 : P_flag $end
+$var reg 1 / par_bit $end
+$upscope $end
+$scope module S1 $end
+$var wire 1 $ CLK $end
+$var wire 8 ; P_DATA [7:0] $end
+$var wire 1 ) RST $end
+$var wire 1 , ser_en $end
+$var reg 1 < busy $end
+$var reg 4 = counter [3:0] $end
+$var reg 8 > internal_reg [7:0] $end
+$var reg 1 . ser_data $end
+$var reg 1 - ser_done $end
+$upscope $end
+$upscope $end
+$scope task check_TX $end
+$var reg 8 ? data [7:0] $end
+$var reg 1 @ is_parity_ok $end
+$var reg 1 A parity_enable $end
+$var reg 1 B parity_type $end
+$upscope $end
+$scope task do_operation $end
+$var reg 8 C data [7:0] $end
+$var reg 1 D parity_enable $end
+$var reg 1 E parity_type $end
+$upscope $end
+$scope task initialization $end
+$upscope $end
+$scope task parity_checker $end
+$var reg 8 F data [7:0] $end
+$var reg 1 G expected_parity $end
+$var reg 1 H parity_bit $end
+$var reg 1 I parity_type $end
+$var reg 1 J valid $end
+$upscope $end
+$scope task reset $end
+$upscope $end
+$upscope $end
+$enddefinitions $end
+$comment Show the parameter values. $end
+$dumpall
+b1000 5
+b10000 4
+b10 3
+b100 2
+b1 1
+b101 #
+$end
+#0
+$dumpvars
+xJ
+xI
+xH
+xG
+bx F
+xE
+xD
+bx C
+xB
+xA
+x@
+bx ?
+b0 >
+b0 =
+0<
+b0 ;
+0:
+b0 9
+b1 8
+b1 7
+b1 6
+b1 0
+0/
+1.
+0-
+0,
+b0 +
+bx *
+0)
+b0 (
+0'
+0&
+0%
+0$
+1"
+0!
+$end
+#2500
+1$
+#5000
+0$
+1)
+#7500
+1$
+#10000
+0E
+1D
+b0 C
+0$
+#12500
+b10 7
+1&
+1%
+1$
+#15000
+0$
+#17500
+0"
+1,
+b0 0
+b0 8
+1!
+b10 6
+b100 7
+0%
+1$
+#20000
+0$
+#22500
+b10 0
+b10 8
+1!
+0,
+b100 6
+0.
+1<
+b1 =
+1$
+0B
+0A
+b0 ?
+#25000
+0$
+#27500
+b10 =
+1$
+b0 *
+#30000
+0$
+#32500
+b11 =
+1$
+b1 *
+#35000
+0$
+#37500
+b100 =
+1$
+b10 *
+#40000
+0$
+#42500
+b101 =
+1$
+b11 *
+#45000
+0$
+#47500
+b110 =
+1$
+b100 *
+#50000
+0$
+#52500
+b111 =
+1$
+b101 *
+#55000
+0$
+#57500
+b1000 =
+1$
+b110 *
+#60000
+0$
+#62500
+1"
+b1000 7
+1.
+0<
+1-
+1$
+b111 *
+#65000
+0$
+#67500
+0"
+b11 0
+b11 8
+1!
+b10000 7
+b1000 6
+1$
+b1000 *
+#70000
+0$
+#72500
+1"
+b1 0
+b1 8
+1!
+b1 7
+b10000 6
+1$
+#75000
+0$
+#77500
+0!
+b0 =
+0-
+b1 6
+1$
+0)
+#80000
+0$
+#82500
+1$
+1)
+#85000
+0$
+#87500
+1$
+#90000
+0D
+b1001000 C
+0$
+#92500
+b10 7
+0&
+1%
+b1001000 (
+b1001000 +
+b1001000 9
+b1001000 ;
+1$
+#95000
+0$
+#97500
+0"
+1,
+b0 0
+b0 8
+1!
+b10 6
+b100 7
+0%
+1$
+#100000
+0$
+#102500
+b10 0
+b10 8
+1!
+0,
+b100 6
+0.
+1<
+b1001000 >
+b1 =
+1$
+b1001000 ?
+#105000
+0$
+#107500
+b10 =
+b100100 >
+1$
+b0 *
+#110000
+0$
+#112500
+b11 =
+b10010 >
+1$
+b1 *
+#115000
+0$
+#117500
+1"
+b100 =
+1.
+b1001 >
+1$
+b10 *
+#120000
+0$
+#122500
+0"
+b101 =
+0.
+b100 >
+1$
+b11 *
+#125000
+0$
+#127500
+b110 =
+b10 >
+1$
+b100 *
+#130000
+0$
+#132500
+1"
+b111 =
+1.
+b1 >
+1$
+b101 *
+#135000
+0$
+#137500
+0"
+b1000 =
+0.
+b0 >
+1$
+b110 *
+#140000
+0$
+#142500
+1"
+b10000 7
+1.
+0<
+1-
+1$
+b111 *
+#145000
+0$
+#147500
+b1 0
+b1 8
+1!
+b1 7
+b10000 6
+1$
+b1000 *
+#150000
+0$
+#152500
+0!
+b1 6
+1$

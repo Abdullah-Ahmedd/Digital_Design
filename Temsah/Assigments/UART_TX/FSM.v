@@ -30,8 +30,6 @@ always@ ( posedge CLK or negedge RST )
         if( !RST )
             begin
                 Current_state <= IDLE;
-                busy <= 0;
-                ser_en <= 0;
             end
         else Current_state <= Next_state;
     end
@@ -94,18 +92,19 @@ always@( * )
                 IDLE:
                     begin
                         busy=0;
-                        mux_sel=2'b01;                                      
+                        mux_sel=2'b01;                                     
                     end
                 Start_bit:
                     begin
                         busy=1;
                         mux_sel=2'b00; 
+                        ser_en=1;  //comment
                     end
                 Send_data:
                     begin
                         busy=1;
                         mux_sel=2'b10;
-                        ser_en=1; 
+                        ser_en=0;                        
                     end
                 parity:
                     begin

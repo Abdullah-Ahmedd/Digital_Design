@@ -1,7 +1,6 @@
 `include "serializer.v"
 `include "parity_calc.v"
 `include "FSM.v"
-
 module UART_TX
 (
 //Declaring inputs    
@@ -28,6 +27,7 @@ module UART_TX
     (
     .P_DATA( P_DATA ),
     .ser_en( ser_en_internal ),
+    //.Data_valid(Data_valid_tb),
     .CLK( CLK ),
     .RST( RST ),
     .ser_data( ser_data_internal ),
@@ -52,14 +52,26 @@ module UART_TX
     .busy( busy )
     );
 
+/*
+MUX M1
+(
+.mux_sel(mux_sel_internal),
+.ser_data(ser_data_internal),
+.par_bit(par_bit_internal),
+.CLK(CLK),
+.MUX_OUT(TX_OUT)
+);
+*/
 
-always@( posedge CLK or negedge CLK )
+always@( * )
 begin
     case( mux_sel_internal )
-        2'b00: TX_OUT <= 1'b0;
-        2'b01: TX_OUT <= 1'b1;
-        2'b10: TX_OUT <= ser_data_internal;
-        2'b11: TX_OUT <= par_bit_internal;
+        2'b00: TX_OUT = 1'b0;
+        2'b01: TX_OUT = 1'b1;
+        2'b10: TX_OUT = ser_data_internal;
+        2'b11: TX_OUT = par_bit_internal;
     endcase
 end
+
+
 endmodule 
