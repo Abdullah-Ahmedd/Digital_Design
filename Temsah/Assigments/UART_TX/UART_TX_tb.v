@@ -37,24 +37,26 @@ initial
                     check_TX(8'h00 );
                     #( clock_period );
 
-                    reset();
-            $display("Test case 2: Checking if the serializer outputs the LSB first ");
+            reset();
+
+            $display("Test case 2: inputting all ones");
+                    @( negedge CLK_tb )
+                    do_operation(8'hff, 1'b0 ,1'b0 );
+                    #( clock_period );
+                    check_TX(8'hff );
+                    #( clock_period );                    
+
+            reset();
+
+            $display("Test case 3: Checking if the serializer outputs the LSB first ");
                     @( negedge CLK_tb )
                     do_operation(8'h01, 1'b0 ,1'b0 );
                     #( clock_period );
                     check_TX(8'h01 );
                     #( clock_period );
 
-                    reset();                    
-
-            $display("Test case 3: inputting all ones");
-                    @( negedge CLK_tb )
-                    do_operation(8'hff, 1'b0 ,1'b0 );
-                    #( clock_period );
-                    check_TX(8'hff );
-                    #( clock_period );
-
-                reset();
+            reset();                    
+                
                    
             $display("Test case 4: inputting a number with the parity enable off");
                     @( negedge CLK_tb )
