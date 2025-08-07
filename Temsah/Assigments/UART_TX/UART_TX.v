@@ -22,6 +22,7 @@ module UART_TX
     wire ser_done_internal;
     wire ser_en_internal;
 
+
 //modules instantiations
     serializer S1 
     (
@@ -39,6 +40,7 @@ module UART_TX
     .Data_valid( Data_valid ),
     .PAR_TYP( PAR_TYP ),
     .par_bit( par_bit_internal )
+    //.PAR_EN(PAR_EN)
     );
     FSM FSM1
     (

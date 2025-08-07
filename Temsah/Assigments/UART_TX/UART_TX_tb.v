@@ -32,17 +32,26 @@ initial
 
         $display("Test case 1: inputting a number with the parity enable off");
         @( negedge CLK_tb )
-        do_operation(8'h00, 1'b1 ,1'b0 );
+        do_operation(8'h00, 1'b0 ,1'b0 );
         #( clock_period );
-        check_TX(8'h00, 1'b0 ,1'b0 );
+        check_TX(8'h00 );
         #( clock_period );
+
         reset();
 
         $display("Test case 2: inputting a number with the parity enable on (even parity)");
         @( negedge CLK_tb )
-        do_operation(8'b01001000, 1'b0 ,1'b0 );
+        do_operation(8'b01001000, 1'b1 ,1'b0 );
         #( clock_period );
-        check_TX(8'b1001000, 1'b0 ,1'b0 );
+        check_TX(8'b1001000 );
+
+        reset();
+
+        $display("Test case 3: inputting a number with the parity enable on (odd parity)");
+        @( negedge CLK_tb )
+        do_operation(8'b01001000, 1'b1 ,1'b1 );
+        #( clock_period );
+        check_TX(8'b1001000 );
 
         $finish;
     end
@@ -80,51 +89,49 @@ task do_operation (input [ 7 : 0 ] data  , input parity_enable , input parity_ty
     end
 endtask
 
-task check_TX( input [ 7 : 0 ] data , input parity_enable , input parity_type );
-reg is_parity_ok;
+task check_TX(input [7:0] data);
+    integer i;
+    reg test_failed;
+    reg expected_parity;
     begin
+        test_failed = 0;
 
-        #( clock_period );
-        for(  i = 0  ; i <= 7  ; i = i + 1  ) //Checking is the number is transmitted correctly
-            begin
-                #( clock_period );
-                if( TX_OUT_tb != data [ i ] )
-                begin
-                    $display("The is value of the %0d'th bit is incorrect, number=%b ,expected=%b" ,i, data[ i ], TX_OUT_tb);
-                    $display("the busy is %b",busy_tb);
-                end
-        
-            end
-        if( parity_enable )
-            begin  
-                #( clock_period );
-                parity_checker( data , TX_OUT_tb ,parity_type, is_parity_ok ); 
-                if( !is_parity_ok ) //Checking if the parity bit is generated correctly 
-                    $display("The value of the parity bit is incorect "); 
-            end
-        #(clock_period);
-        if( !TX_OUT_tb ) //Checking if the stop bit is generated successfully 
-            $display("The value of the stop bit is incorrect");
+        // Wait 1 clock cycle before checking data (if needed)
+        @(posedge CLK_tb);
 
-        $display("Your test case has passed successfully");
+        // 🧪 Check 8 data bits (LSB first)
+        for (i = 0; i < 8; i = i + 1) begin
+            @(posedge CLK_tb);
+            if (TX_OUT_tb !== data[i]) begin
+                $display("❌ Bit %0d incorrect: expected = %b, got = %b", i, data[i], TX_OUT_tb);
+                test_failed = 1;
+            end
+        end
+
+        // 🧮 Check parity if enabled
+        if (PAR_EN_tb) begin
+            expected_parity = ^data; // Even parity by default
+            if (PAR_TYP_tb) // Odd parity
+                expected_parity = ~expected_parity;
+
+            @(posedge CLK_tb); // Wait for parity bit
+            if (TX_OUT_tb !== expected_parity) begin
+                $display("❌ Parity bit incorrect: expected = %b, got = %b", expected_parity, TX_OUT_tb);
+                test_failed = 1;
+            end
+        end
+
+        // ⏹ Check stop bit (must be 1)
+        @(posedge CLK_tb);
+        if (TX_OUT_tb !== 1'b1) begin
+            $display("❌ Stop bit incorrect: expected = 1, got = %b", TX_OUT_tb);
+            test_failed = 1;
+        end
+
+        // ✅ Final result
+        if (!test_failed)
+            $display("✅ Test case passed successfully");
     end
-endtask
-
-task parity_checker( input [ 7 : 0 ] data  , input parity_bit , input parity_type , output valid );
-reg expected_parity;
-begin
-    expected_parity = ^ data;
-    if( parity_type ) //odd parity
-        if(  parity_bit == ~ expected_parity )
-            valid=1;
-        else
-            valid=0;
-    else //even parity 
-        if( parity_bit == expected_parity )
-            valid=1;
-        else 
-        valid=0;
-end
 endtask
 
 //Module instantiation

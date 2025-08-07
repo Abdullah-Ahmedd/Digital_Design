@@ -1,5 +1,5 @@
 $date
-	Thu Aug 07 00:58:26 2025
+	Thu Aug 07 18:37:24 2025
 $end
 $version
 	Icarus Verilog
@@ -20,9 +20,9 @@ $var wire 1 $ CLK $end
 $var wire 8 ( P_DATA [7:0] $end
 $var wire 1 & RST $end
 $var wire 1 ' ser_en $end
-$var reg 1 ) busy $end
-$var reg 4 * counter [3:0] $end
-$var reg 8 + internal_reg [7:0] $end
+$var reg 4 ) counter [3:0] $end
+$var reg 8 * internal_reg [7:0] $end
+$var reg 1 + ready $end
 $var reg 1 " ser_data $end
 $var reg 1 ! ser_done $end
 $upscope $end
@@ -34,9 +34,9 @@ b1010 #
 $end
 #0
 $dumpvars
-b0 +
+0+
 b0 *
-0)
+b0 )
 b0 (
 0'
 0&
@@ -62,65 +62,69 @@ $end
 b10110011 %
 b10110011 (
 #35000
-1)
-b10110011 +
+1+
+b10110011 *
 1$
 #40000
 0$
 0'
 #45000
-b1 *
-b1011001 +
+b1 )
+b1011001 *
 1$
 #50000
 0$
 #55000
-b10 *
-b101100 +
+b10 )
+b101100 *
 1$
 #60000
 0$
 #65000
-b11 *
-b10110 +
+b11 )
+b10110 *
 0"
 1$
 #70000
 0$
 #75000
-b100 *
-b1011 +
+b100 )
+b1011 *
 1$
 #80000
 0$
 #85000
+b101 )
 b101 *
-b101 +
 1"
 1$
 #90000
 0$
 #95000
-b110 *
-b10 +
+b110 )
+b10 *
 1$
 #100000
 0$
 #105000
-b111 *
-b1 +
+b111 )
+b1 *
 0"
 1$
 #110000
 0$
 #115000
-0)
+0+
 1!
-b1000 *
-b0 +
+b1000 )
+b0 *
 1"
 1$
 #120000
 0$
 #125000
+1$
+#130000
+0$
+#135000
 1$

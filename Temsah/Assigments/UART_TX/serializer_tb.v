@@ -52,7 +52,7 @@ initial begin
     ser_en_tb = 1'b0;
 
     // Monitor serialization output
-    repeat (8) begin
+    repeat (9) begin
         @(posedge CLK_tb);
         $display("Time %0t | ser_data = %b | bit #%0d", $time, ser_data_tb, $time/clock_period - 5);
     end
