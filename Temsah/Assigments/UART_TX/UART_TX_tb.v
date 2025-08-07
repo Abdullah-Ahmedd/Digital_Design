@@ -129,7 +129,7 @@ reg is_parity_ok;
                 #( clock_period );
                 if( TX_OUT_tb != data [ i ] )
                 begin
-                    $display("The is value of the %0d'th bit is incorrect, number=%b ,expected=%b" ,i, data[ i ], TX_OUT_tb);
+                    $display("The value of the %0d'th bit is incorrect, number=%b ,expected=%b" ,i, TX_OUT_tb, data[ i ]);
                     $display("the busy is %b",busy_tb);
                 end
         
