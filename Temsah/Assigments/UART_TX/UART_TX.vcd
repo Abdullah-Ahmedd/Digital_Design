@@ -1,5 +1,5 @@
 $date
-	Thu Aug 07 18:37:27 2025
+	Thu Aug 07 21:13:00 2025
 $end
 $version
 	Icarus Verilog
@@ -17,18 +17,19 @@ $var reg 1 & PAR_EN_tb $end
 $var reg 1 ' PAR_TYP_tb $end
 $var reg 8 ( P_DATA_tb [7:0] $end
 $var reg 1 ) RST_tb $end
+$var integer 32 * i [31:0] $end
 $scope module DUT $end
 $var wire 1 $ CLK $end
 $var wire 1 % Data_valid $end
 $var wire 1 & PAR_EN $end
 $var wire 1 ' PAR_TYP $end
-$var wire 8 * P_DATA [7:0] $end
+$var wire 8 + P_DATA [7:0] $end
 $var wire 1 ) RST $end
-$var wire 1 + ser_en_internal $end
-$var wire 1 , ser_done_internal $end
-$var wire 1 - ser_data_internal $end
-$var wire 1 . par_bit_internal $end
-$var wire 2 / mux_sel_internal [1:0] $end
+$var wire 1 , ser_en_internal $end
+$var wire 1 - ser_done_internal $end
+$var wire 1 . ser_data_internal $end
+$var wire 1 / par_bit_internal $end
+$var wire 2 0 mux_sel_internal [1:0] $end
 $var wire 1 ! busy $end
 $var reg 1 " TX_OUT $end
 $scope module FSM1 $end
@@ -36,50 +37,51 @@ $var wire 1 $ CLK $end
 $var wire 1 % Data_valid $end
 $var wire 1 & PAR_EN $end
 $var wire 1 ) RST $end
-$var wire 1 , ser_done $end
-$var parameter 5 0 IDLE $end
-$var parameter 5 1 SER_SETUP $end
-$var parameter 5 2 Send_data $end
-$var parameter 5 3 Start_bit $end
-$var parameter 5 4 Stop_bit $end
-$var parameter 5 5 parity $end
+$var wire 1 - ser_done $end
+$var parameter 5 1 Idle $end
+$var parameter 5 2 Parity_Bit $end
+$var parameter 5 3 Send_data $end
+$var parameter 5 4 Serializer_delay $end
+$var parameter 5 5 Stop_bit $end
 $var reg 5 6 Current_state [4:0] $end
 $var reg 5 7 Next_state [4:0] $end
 $var reg 1 ! busy $end
 $var reg 2 8 mux_sel [1:0] $end
-$var reg 1 + ser_en $end
+$var reg 1 , ser_en $end
 $upscope $end
 $scope module P1 $end
 $var wire 1 % Data_valid $end
 $var wire 1 ' PAR_TYP $end
 $var wire 8 9 P_DATA [7:0] $end
 $var wire 1 : P_flag $end
-$var reg 1 . par_bit $end
+$var reg 1 / par_bit $end
 $upscope $end
 $scope module S1 $end
 $var wire 1 $ CLK $end
 $var wire 8 ; P_DATA [7:0] $end
 $var wire 1 ) RST $end
-$var wire 1 + ser_en $end
+$var wire 1 , ser_en $end
 $var reg 4 < counter [3:0] $end
 $var reg 8 = internal_reg [7:0] $end
 $var reg 1 > ready $end
-$var reg 1 - ser_data $end
-$var reg 1 , ser_done $end
+$var reg 1 . ser_data $end
+$var reg 1 - ser_done $end
 $upscope $end
 $upscope $end
 $scope task check_TX $end
 $var reg 8 ? data [7:0] $end
-$var reg 1 @ expected_parity $end
-$var reg 1 A test_failed $end
-$var integer 32 B i [31:0] $end
+$var reg 1 @ is_parity_ok $end
 $upscope $end
 $scope task do_operation $end
-$var reg 8 C data [7:0] $end
-$var reg 1 D parity_enable $end
-$var reg 1 E parity_type $end
+$var reg 8 A data [7:0] $end
+$var reg 1 B parity_enable $end
+$var reg 1 C parity_type $end
 $upscope $end
 $scope task initialization $end
+$upscope $end
+$scope task parity_checker $end
+$var reg 1 D expected_parity $end
+$var reg 1 E valid $end
 $upscope $end
 $scope task reset $end
 $upscope $end
@@ -87,21 +89,20 @@ $upscope $end
 $enddefinitions $end
 $comment Show the parameter values. $end
 $dumpall
-b1000 5
-b10000 4
-b10 3
-b100 2
-b11 1
-b1 0
+b10000 5
+b10 4
+b100 3
+b1000 2
+b1 1
 b101 #
 $end
 #0
 $dumpvars
 xE
 xD
-bx C
-bx B
-xA
+xC
+xB
+bx A
 x@
 bx ?
 0>
@@ -113,12 +114,13 @@ b0 9
 b1 8
 b1 7
 b1 6
-b1 /
+b1 0
+0/
 0.
-1-
+0-
 0,
-0+
-b0 *
+b0 +
+bx *
 0)
 b0 (
 0'
@@ -136,396 +138,712 @@ $end
 #7500
 1$
 #10000
-0E
-0D
-b0 C
+0C
+0B
+b1 A
 0$
 #12500
 b10 7
+1/
 1%
+1:
+b1 (
+b1 +
+b1 9
+b1 ;
 1$
 #15000
 0$
 #17500
-0"
-b0 /
-b0 8
-1!
+1,
 b10 6
-b11 7
+b100 7
 0%
 1$
 #20000
 0$
 #22500
-1"
-1+
-b10 /
+0"
+b10 0
 b10 8
 1!
-b100 7
-b11 6
-b0 B
+1,
+b100 6
+1>
+b1 =
 1$
-0A
 b0 ?
 #25000
 0$
 #27500
-b10 /
-b10 8
-1!
-1+
-1>
-b100 6
-b1 B
-1A
+1"
+b1 <
+b0 =
+1.
 1$
+b0 *
 #30000
 0$
 #32500
 0"
-b1 <
-0-
-b10 B
+b10 <
+0.
 1$
+b1 *
 #35000
 0$
 #37500
-b10 <
-b11 B
+b11 <
 1$
+b10 *
 #40000
 0$
 #42500
-b11 <
-b100 B
+b100 <
 1$
+b11 *
 #45000
 0$
 #47500
-b100 <
-b101 B
+b101 <
 1$
+b100 *
 #50000
 0$
 #52500
-b101 <
-b110 B
+b110 <
 1$
+b101 *
 #55000
 0$
 #57500
-b110 <
-b111 B
+b111 <
 1$
+b110 *
 #60000
 0$
 #62500
-b111 <
-b1000 B
+b10000 7
+0>
+1-
+b1000 <
 1$
+b111 *
 #65000
 0$
 #67500
-b10000 7
-0>
-1,
-b1000 <
+1"
+b1 0
+b1 8
+1!
+0,
+b1 7
+0-
+1>
+b1 =
+b0 <
+b10000 6
 1$
+b1000 *
 #70000
 0$
 #72500
-b1 /
-b1 8
 0!
-0+
-b1 7
-1"
 b1 6
-b0 <
-0,
-1-
+b1 <
+b0 =
+1.
 1$
-0)
 #75000
 0$
 #77500
+0>
+b0 <
+0.
 1$
-1)
+0)
 #80000
 0$
 #82500
 1$
+1)
 #85000
-1D
-b1001000 C
 0$
 #87500
-b10 7
-1&
-1%
-b1001000 (
-b1001000 *
-b1001000 9
-b1001000 ;
 1$
 #90000
+b11111111 A
 0$
 #92500
-0"
-b0 /
-b0 8
-1!
-b10 6
-b11 7
-0%
+b10 7
+0/
+1%
+0:
+b11111111 (
+b11111111 +
+b11111111 9
+b11111111 ;
 1$
 #95000
 0$
 #97500
-1"
-1+
-b10 /
-b10 8
-1!
+1,
+b10 6
 b100 7
-b11 6
-b0 B
+0%
 1$
-0A
-b1001000 ?
 #100000
 0$
 #102500
-b10 /
+0"
+b10 0
 b10 8
 1!
-1+
+1,
 b100 6
 1>
-b1001000 =
-b1 B
-1A
+b11111111 =
 1$
+b11111111 ?
 #105000
 0$
 #107500
-0"
+1"
 b1 <
-b100100 =
-0-
-b10 B
+b1111111 =
+1.
 1$
+b0 *
 #110000
 0$
 #112500
 b10 <
-b10010 =
-b11 B
+b111111 =
 1$
+b1 *
 #115000
 0$
 #117500
 b11 <
-b1001 =
-b100 B
+b11111 =
 1$
+b10 *
 #120000
 0$
 #122500
-1"
 b100 <
-b100 =
-1-
-b101 B
+b1111 =
 1$
+b11 *
 #125000
 0$
 #127500
-0"
 b101 <
-b10 =
-0-
-b110 B
+b111 =
 1$
+b100 *
 #130000
 0$
 #132500
 b110 <
-b1 =
-b111 B
+b11 =
 1$
+b101 *
 #135000
 0$
 #137500
-1"
 b111 <
-b0 =
-1-
-0@
-b1000 B
+b1 =
 1$
+b110 *
 #140000
 0$
 #142500
-b1000 7
-0"
+b10000 7
 0>
-1,
+1-
 b1000 <
-0-
+b0 =
 1$
+b111 *
 #145000
 0$
 #147500
-1"
-b1 /
+b1 0
 b1 8
-0!
-0+
-b1 7
-b0 <
+1!
 0,
-1-
-b1 6
-0)
+b1 7
+0-
+1>
+b11111111 =
+b0 <
+b10000 6
 1$
+b1000 *
 #150000
 0$
 #152500
+0!
+b1 6
+b1 <
+b1111111 =
 1$
-1)
 #155000
 0$
 #157500
+0>
+b0 <
+b0 =
+0.
 1$
+0)
 #160000
-1E
 0$
 #162500
-b10 7
-1.
-1'
-1%
 1$
+1)
 #165000
 0$
 #167500
-0"
-b0 /
-b0 8
-1!
-b10 6
-b11 7
-0.
-0%
 1$
 #170000
+b10101011 A
 0$
 #172500
-1"
-1+
-b10 /
-b10 8
-1!
-b100 7
-b11 6
-b0 B
+b10 7
+1/
+1%
+1:
+b10101011 (
+b10101011 +
+b10101011 9
+b10101011 ;
 1$
-0A
 #175000
 0$
 #177500
-b10 /
-b10 8
-1!
-1+
-1>
-b1001000 =
-b100 6
-b1 B
-1A
+1,
+b10 6
+b100 7
+0%
 1$
 #180000
 0$
 #182500
 0"
-b1 <
-b100100 =
-0-
-b10 B
+b10 0
+b10 8
+1!
+1,
+b100 6
+1>
+b10101011 =
 1$
+b10101011 ?
 #185000
 0$
 #187500
-b10 <
-b10010 =
-b11 B
+1"
+b1 <
+b1010101 =
+1.
 1$
+b0 *
 #190000
 0$
 #192500
-b11 <
-b1001 =
-b100 B
+b10 <
+b101010 =
 1$
+b1 *
 #195000
 0$
 #197500
-1"
-b100 <
-b100 =
-1-
-b101 B
+0"
+b11 <
+b10101 =
+0.
 1$
+b10 *
 #200000
 0$
 #202500
-0"
-b101 <
-b10 =
-0-
-b110 B
+1"
+b100 <
+b1010 =
+1.
 1$
+b11 *
 #205000
 0$
 #207500
-b110 <
-b1 =
-b111 B
+0"
+b101 <
+b101 =
+0.
 1$
+b100 *
 #210000
 0$
 #212500
 1"
-b111 <
-b0 =
-1-
-1@
-b1000 B
+b110 <
+b10 =
+1.
 1$
+b101 *
 #215000
 0$
 #217500
-b1000 7
 0"
-0>
-1,
-b1000 <
-0-
+b111 <
+b1 =
+0.
 1$
+b110 *
 #220000
 0$
 #222500
-b11 /
+b10000 7
+1"
+0>
+1-
+b1000 <
+b0 =
+1.
+1$
+b111 *
+#225000
+0$
+#227500
+b1 0
+b1 8
+1!
+0,
+b1 7
+0-
+1>
+b10101011 =
+b0 <
+b10000 6
+1$
+b1000 *
+#230000
+0$
+#232500
+0!
+b1 6
+b1 <
+b1010101 =
+1$
+#235000
+0$
+#237500
+0>
+b0 <
+b0 =
+0.
+1$
+0)
+#240000
+0$
+#242500
+1$
+1)
+#245000
+0$
+#247500
+1$
+#250000
+1B
+b1001000 A
+0$
+#252500
+b10 7
+0/
+1&
+1%
+0:
+b1001000 (
+b1001000 +
+b1001000 9
+b1001000 ;
+1$
+#255000
+0$
+#257500
+1,
+b10 6
+b100 7
+0%
+1$
+#260000
+0$
+#262500
+0"
+b10 0
+b10 8
+1!
+1,
+b100 6
+1>
+b1001000 =
+1$
+b1001000 ?
+#265000
+0$
+#267500
+b1 <
+b100100 =
+1$
+b0 *
+#270000
+0$
+#272500
+b10 <
+b10010 =
+1$
+b1 *
+#275000
+0$
+#277500
+b11 <
+b1001 =
+1$
+b10 *
+#280000
+0$
+#282500
+1"
+b100 <
+b100 =
+1.
+1$
+b11 *
+#285000
+0$
+#287500
+0"
+b101 <
+b10 =
+0.
+1$
+b100 *
+#290000
+0$
+#292500
+b110 <
+b1 =
+1$
+b101 *
+#295000
+0$
+#297500
+1"
+b111 <
+b0 =
+1.
+1$
+b110 *
+#300000
+0$
+#302500
+b1000 7
+0"
+0>
+1-
+b1000 <
+0.
+1$
+b111 *
+#305000
+0$
+#307500
+b11 0
 b11 8
 1!
-0+
-b10000 7
-b1000 6
 0,
+b10000 7
+0-
 1>
 b1001000 =
 b0 <
+b1000 6
+1$
+b1000 *
+#310000
+0$
+#312500
+1"
+b1 0
+b1 8
+1!
+b1 7
+b10000 6
+b1 <
+b100100 =
+1$
+1@
+1E
+0D
+#315000
+0$
+#317500
+0!
+0>
+b0 <
+b0 =
+b1 6
+1$
+0)
+#320000
+0$
+#322500
+1$
+1)
+#325000
+0$
+#327500
+1$
+#330000
+1C
+0$
+#332500
+1/
+b10 7
+1'
+1%
+1$
+#335000
+0$
+#337500
+1,
+b10 6
+b100 7
+0%
+1$
+#340000
+0$
+#342500
+0"
+b10 0
+b10 8
+1!
+1,
+b100 6
+1>
+b1001000 =
+1$
+#345000
+0$
+#347500
+b1 <
+b100100 =
+1$
+b0 *
+#350000
+0$
+#352500
+b10 <
+b10010 =
+1$
+b1 *
+#355000
+0$
+#357500
+b11 <
+b1001 =
+1$
+b10 *
+#360000
+0$
+#362500
+1"
+b100 <
+b100 =
+1.
+1$
+b11 *
+#365000
+0$
+#367500
+0"
+b101 <
+b10 =
+0.
+1$
+b100 *
+#370000
+0$
+#372500
+b110 <
+b1 =
+1$
+b101 *
+#375000
+0$
+#377500
+1"
+b111 <
+b0 =
+1.
+1$
+b110 *
+#380000
+0$
+#382500
+b1000 7
+0"
+0>
+1-
+b1000 <
+0.
+1$
+b111 *
+#385000
+0$
+#387500
+1"
+b11 0
+b11 8
+1!
+0,
+b10000 7
+0-
+1>
+b1001000 =
+b0 <
+b1000 6
+1$
+b1000 *
+#390000
+0$
+#392500
+b1 0
+b1 8
+1!
+b1 7
+b10000 6
+b1 <
+b100100 =
+1$
+#395000
+0$
+#397500
+0!
+0>
+b0 <
+b0 =
+b1 6
+1$
+0)
+#400000
+0$
+#402500
+1$
+1)
+#405000
+0$
+#407500
 1$

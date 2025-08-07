@@ -21,7 +21,7 @@ always@( posedge CLK or negedge RST )
     begin
         if( !RST )
             begin
-                ser_data <= 1'b;
+                ser_data <= 1'b0;
                 ser_done <= 1'b0;
                 internal_reg <= 8'b0;
                 counter <= 4'b0;

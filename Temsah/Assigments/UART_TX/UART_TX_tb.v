@@ -30,28 +30,48 @@ initial
         $dumpvars;
         initialization();
 
-        $display("Test case 1: inputting a number with the parity enable off");
-        @( negedge CLK_tb )
-        do_operation(8'h00, 1'b0 ,1'b0 );
-        #( clock_period );
-        check_TX(8'h00 );
-        #( clock_period );
+            $display("Test case 1: inputting all zeros");
+                    @( negedge CLK_tb )
+                    do_operation(8'h01, 1'b0 ,1'b0 );
+                    #( clock_period );
+                    check_TX(8'h00 );
+                    #( clock_period );
 
-        reset();
+                    reset();
 
-        $display("Test case 2: inputting a number with the parity enable on (even parity)");
-        @( negedge CLK_tb )
-        do_operation(8'b01001000, 1'b1 ,1'b0 );
-        #( clock_period );
-        check_TX(8'b1001000 );
+            $display("Test case 2: inputting all ones");
+                    @( negedge CLK_tb )
+                    do_operation(8'hff, 1'b0 ,1'b0 );
+                    #( clock_period );
+                    check_TX(8'hff );
+                    #( clock_period );
 
-        reset();
+                reset();
+                   
+            $display("Test case 3: inputting a number with the parity enable off");
+                    @( negedge CLK_tb )
+                    do_operation(8'hab, 1'b0 ,1'b0 );
+                    #( clock_period );
+                    check_TX(8'hab );
+                    #( clock_period );
 
-        $display("Test case 3: inputting a number with the parity enable on (odd parity)");
-        @( negedge CLK_tb )
-        do_operation(8'b01001000, 1'b1 ,1'b1 );
-        #( clock_period );
-        check_TX(8'b1001000 );
+            reset();
+
+            $display("Test case 4: inputting a number with the parity enable on (even parity)");
+                    @( negedge CLK_tb )
+                    do_operation(8'b01001000, 1'b1 ,1'b0 );
+                    #( clock_period );
+                    check_TX(8'b1001000 );
+
+            reset();
+
+            $display("Test case 5: inputting a number with the parity enable on (odd parity)");
+                    @( negedge CLK_tb )
+                    do_operation(8'b01001000, 1'b1 ,1'b1 );
+                    #( clock_period );
+                    check_TX(8'b1001000 );
+
+            reset();
 
         $finish;
     end
@@ -89,49 +109,53 @@ task do_operation (input [ 7 : 0 ] data  , input parity_enable , input parity_ty
     end
 endtask
 
-task check_TX(input [7:0] data);
-    integer i;
-    reg test_failed;
-    reg expected_parity;
+task check_TX( input [7:0] data );
+reg is_parity_ok;
     begin
-        test_failed = 0;
+        
 
-        // Wait 1 clock cycle before checking data (if needed)
-        @(posedge CLK_tb);
 
-        // 🧪 Check 8 data bits (LSB first)
-        for (i = 0; i < 8; i = i + 1) begin
-            @(posedge CLK_tb);
-            if (TX_OUT_tb !== data[i]) begin
-                $display("❌ Bit %0d incorrect: expected = %b, got = %b", i, data[i], TX_OUT_tb);
-                test_failed = 1;
+        #( clock_period );
+        for(  i = 0  ; i <= 7  ; i = i + 1  ) //Checking is the number is transmitted correctly
+            begin
+                #( clock_period );
+                if( TX_OUT_tb != data [ i ] )
+                begin
+                    $display("The is value of the %0d'th bit is incorrect, number=%b ,expected=%b" ,i, data[ i ], TX_OUT_tb);
+                    $display("the busy is %b",busy_tb);
+                end
+        
             end
-        end
-
-        // 🧮 Check parity if enabled
-        if (PAR_EN_tb) begin
-            expected_parity = ^data; // Even parity by default
-            if (PAR_TYP_tb) // Odd parity
-                expected_parity = ~expected_parity;
-
-            @(posedge CLK_tb); // Wait for parity bit
-            if (TX_OUT_tb !== expected_parity) begin
-                $display("❌ Parity bit incorrect: expected = %b, got = %b", expected_parity, TX_OUT_tb);
-                test_failed = 1;
+        if( PAR_EN_tb )
+            begin  
+                #( clock_period );
+                parity_checker( is_parity_ok ); 
+                if( !is_parity_ok ) //Checking if the parity bit is generated correctly 
+                    $display("The value of the parity bit is incorect "); 
             end
-        end
+        #(clock_period);
+        if( !TX_OUT_tb ) //Checking if the stop bit is generated successfully 
+            $display("The value of the stop bit is incorrect");
 
-        // ⏹ Check stop bit (must be 1)
-        @(posedge CLK_tb);
-        if (TX_OUT_tb !== 1'b1) begin
-            $display("❌ Stop bit incorrect: expected = 1, got = %b", TX_OUT_tb);
-            test_failed = 1;
-        end
-
-        // ✅ Final result
-        if (!test_failed)
-            $display("✅ Test case passed successfully");
+        $display("Your test case has passed successfully");
     end
+endtask
+
+task parity_checker( output valid );
+reg expected_parity;
+begin
+    expected_parity = ^ P_DATA_tb;
+    if( PAR_TYP_tb ) //odd parity
+        if(  TX_OUT_tb == ~ expected_parity )
+            valid=1;
+        else
+            valid=0;
+    else //even parity 
+        if( TX_OUT_tb == expected_parity )
+            valid=1;
+        else 
+        valid=0;
+end
 endtask
 
 //Module instantiation
