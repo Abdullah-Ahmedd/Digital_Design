@@ -32,14 +32,22 @@ initial
 
             $display("Test case 1: inputting all zeros");
                     @( negedge CLK_tb )
-                    do_operation(8'h01, 1'b0 ,1'b0 );
+                    do_operation(8'h00, 1'b0 ,1'b0 );
                     #( clock_period );
                     check_TX(8'h00 );
                     #( clock_period );
 
                     reset();
+            $display("Test case 2: Checking if the serializer outputs the LSB first ");
+                    @( negedge CLK_tb )
+                    do_operation(8'h01, 1'b0 ,1'b0 );
+                    #( clock_period );
+                    check_TX(8'h01 );
+                    #( clock_period );
 
-            $display("Test case 2: inputting all ones");
+                    reset();                    
+
+            $display("Test case 3: inputting all ones");
                     @( negedge CLK_tb )
                     do_operation(8'hff, 1'b0 ,1'b0 );
                     #( clock_period );
@@ -48,7 +56,7 @@ initial
 
                 reset();
                    
-            $display("Test case 3: inputting a number with the parity enable off");
+            $display("Test case 4: inputting a number with the parity enable off");
                     @( negedge CLK_tb )
                     do_operation(8'hab, 1'b0 ,1'b0 );
                     #( clock_period );
@@ -57,7 +65,7 @@ initial
 
             reset();
 
-            $display("Test case 4: inputting a number with the parity enable on (even parity)");
+            $display("Test case 5: inputting a number with the parity enable on (even parity)");
                     @( negedge CLK_tb )
                     do_operation(8'b01001000, 1'b1 ,1'b0 );
                     #( clock_period );
@@ -65,7 +73,7 @@ initial
 
             reset();
 
-            $display("Test case 5: inputting a number with the parity enable on (odd parity)");
+            $display("Test case 6: inputting a number with the parity enable on (odd parity)");
                     @( negedge CLK_tb )
                     do_operation(8'b01001000, 1'b1 ,1'b1 );
                     #( clock_period );

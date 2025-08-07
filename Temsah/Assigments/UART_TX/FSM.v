@@ -20,7 +20,7 @@ module FSM
 
 // State encoding (One-Shot)
     localparam Idle        = 5'b00001;
-    localparam Serializer_delay   = 5'b00010;
+    localparam Start_bit   = 5'b00010;
     localparam Send_data   = 5'b00100;
     localparam Parity_Bit      = 5'b01000;
     localparam Stop_bit    = 5'b10000;
@@ -39,11 +39,11 @@ module FSM
         case (Current_state)
             Idle:
                 if (Data_valid)
-                    Next_state = Serializer_delay;
+                    Next_state = Start_bit;
                 else
                     Next_state = Idle;
 
-            Serializer_delay:
+            Start_bit:
                 Next_state = Send_data;
 
             Send_data:
@@ -80,7 +80,7 @@ module FSM
                 ser_en  = 0;
             end
 
-            Serializer_delay: begin
+            Start_bit: begin
                 busy    = 0;
                 mux_sel = 2'b01; 
                 ser_en  = 1;    
