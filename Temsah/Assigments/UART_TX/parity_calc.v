@@ -13,7 +13,7 @@ wire P_flag= ^P_DATA;
 
 always@( * )
     begin
-        if(PAR_TYP )
+        if( PAR_TYP )
         par_bit=!P_flag;
         else
         par_bit=P_flag;

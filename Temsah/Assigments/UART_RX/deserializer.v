@@ -1,0 +1,25 @@
+module deserializer
+(
+//Declaring inputs
+    input wire CLK,
+    input wire RST,
+    input wire sampled_bit,
+    input wire deserializer_enable,
+    input wire [ 3 : 0 ] bit_cnt,
+//Declaring output
+    output reg [ 7 : 0 ] P_DATA
+);
+
+always@(posedge CLK or negedge RST)
+    begin
+        if( !RST )
+            begin
+                P_DATA <= 0;
+            end
+        else if( deserializer_enable && bit_cnt<=4'd8 )
+            begin
+                P_DATA[ bit_cnt - 1 ] <= sampled_bit;
+            end
+    end
+
+endmodule 
