@@ -196,7 +196,7 @@ always@( * )
 
                 Data_valid:
                     begin
-                        //data_valid = 1;
+                        data_valid = 1;
                         reset_counters = 1;
                     end   
 
