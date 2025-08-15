@@ -59,6 +59,7 @@ initial
             check_output( 8'hab, 1'b0 , 1'b0 );
             repeat(prescale_tb) #(Clock_period);
         reset();
+        repeat(prescale_tb) #(Clock_period);
 
         $display("Test case 2 :Prescale=8 with parity enable=1 and the type of the parity is even parity ");
             set_prescale( 4'd8 , 1'b1 , 1'b0 );
@@ -66,14 +67,15 @@ initial
             check_output( 8'hab, 1'b1 , 1'b0 );
             repeat(prescale_tb) #(Clock_period);
         reset();
+        repeat(prescale_tb) #(Clock_period);
 
         $display("Test case 3 :Prescale=8 with parity enable=1 and the type of the parity is odd parity ");
             set_prescale( 4'd8 , 1'b1 , 1'b1 );
             frame(8'hab, 1'b1 , 1'b1 );
-            repeat(prescale_tb) #(Clock_period);
             check_output( 8'hab, 1'b1 , 1'b1 );
             repeat(prescale_tb) #(Clock_period);
         reset();
+        repeat(prescale_tb) #(Clock_period);
 
         $display("Test case 4 :Prescale=16 with parity enable=0 ");
             set_prescale( 5'd16 , 1'b0 , 1'b0 );
@@ -81,6 +83,7 @@ initial
             check_output( 8'hcd, 1'b0 , 1'b0 );
             repeat(prescale_tb) #(Clock_period);
         reset();
+        repeat(prescale_tb) #(Clock_period);
 
         $display("Test case 5 :Prescale=16 with parity enable=1 and the type of the parity is even parity ");
             set_prescale( 5'd16 , 1'b1 , 1'b0 );
@@ -88,6 +91,7 @@ initial
             check_output( 8'hcd, 1'b1 , 1'b0 );
             repeat(prescale_tb) #(Clock_period);
         reset();
+        repeat(prescale_tb) #(Clock_period);
 
         $display("Test case 6 :Prescale=16 with parity enable=1 and the type of the parity is odd parity ");
             set_prescale( 5'd16 , 1'b1 , 1'b1 );
@@ -95,14 +99,15 @@ initial
             check_output( 8'hcd, 1'b1 , 1'b1 );
             repeat(prescale_tb) #(Clock_period);
         reset();
+        repeat(prescale_tb) #(Clock_period);
 
         $display("Test case 7 :Prescale=32 with parity enable=0 ");
             set_prescale( 6'd32 , 1'b0 , 1'b0 );
             frame(8'hef, 1'b0 , 1'b0 );
             check_output( 8'hef, 1'b0 , 1'b0 );
             repeat(prescale_tb) #(Clock_period);
-
         reset();
+        repeat(prescale_tb) #(Clock_period);
 
         $display("Test case 8 :Prescale=32 with parity enable=1 and the type of the parity is even parity ");
             set_prescale( 6'd32 , 1'b1 , 1'b0 );
@@ -110,6 +115,7 @@ initial
             check_output( 8'hef, 1'b1 , 1'b0 );
             repeat(prescale_tb) #(Clock_period);
         reset();
+        repeat(prescale_tb) #(Clock_period);
 
         $display("Test case 9 :Prescale=32 with parity enable=1 and the type of the parity is odd parity ");
             set_prescale( 6'd32 , 1'b1 , 1'b1 );
@@ -117,6 +123,7 @@ initial
             check_output( 8'hef, 1'b1 , 1'b1 );
             repeat(prescale_tb) #(Clock_period);
         reset();
+        repeat(prescale_tb) #(Clock_period);
 
         $finish;
 

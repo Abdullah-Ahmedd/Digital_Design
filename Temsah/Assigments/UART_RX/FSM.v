@@ -120,10 +120,14 @@ always@( * )
 
             Data_valid:
                 begin
-                    if( RX_IN == 0 )
-                        Next_state = Start_bit_check;
-                    else 
-                        Next_state=Idle;                
+                    if( edge_cnt == prescale - 1 )
+                        begin
+                            if( RX_IN == 0 )
+                                Next_state = Start_bit_check;
+                            else 
+                                Next_state=Idle;
+                        end 
+                    else Next_state = Data_valid;            
                 end   
 
             default:    
