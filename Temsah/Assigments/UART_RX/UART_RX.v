@@ -20,19 +20,19 @@ module UART_RX
     output wire data_valid
 );
 //Declaring internal signals
-wire reset_counters_internal;
-wire enable_internal;
-wire [ 3 : 0 ] bit_cnt_internal;
-wire [ 5 : 0 ]edge_cnt_counter_internal;
-wire data_sample_enable_internal;
-wire sampled_bit_internal;
-wire deserializer_enable_internal;
-wire parity_checker_enable_internal;
-wire parity_error_internal;
-wire start_checker_enable_internal;
-wire start_glitch_internal;
-wire stop_checker_enable_internal;
-wire stop_error_internal;
+    wire reset_counters_internal;
+    wire enable_internal;
+    wire [ 3 : 0 ] bit_cnt_internal;
+    wire [ 5 : 0 ]edge_cnt_counter_internal;
+    wire data_sample_enable_internal;
+    wire sampled_bit_internal;
+    wire deserializer_enable_internal;
+    wire parity_checker_enable_internal;
+    wire parity_error_internal;
+    wire start_checker_enable_internal;
+    wire start_glitch_internal;
+    wire stop_checker_enable_internal;
+    wire stop_error_internal;
 
 
 edge_bit_counter ebc
