@@ -52,55 +52,55 @@ initial
         initialize();
         
 
-        $display("Test case 1 :Prescale =8 with parity enable=0 ");
+        $display("Test case 1 :Prescale=8 with parity enable=0 ");
             set_prescale( 4'd8 );
             frame(8'hab, 1'b0 , 1'b0 );
             check_output( 8'hab, 1'b0 , 1'b0 );
         reset();
 
-        $display("Test case 2 :Prescale =8 with parity enable=1 and the type of the parity is even parity ");
+        $display("Test case 2 :Prescale=8 with parity enable=1 and the type of the parity is even parity ");
             set_prescale( 4'd8 );
             frame(8'hab, 1'b1 , 1'b0 );
             check_output( 8'hab, 1'b1 , 1'b0 );
         reset();
 
-        $display("Test case 3 :Prescale =8 with parity enable=1 and the type of the parity is odd parity ");
+        $display("Test case 3 :Prescale=8 with parity enable=1 and the type of the parity is odd parity ");
             set_prescale( 4'd8 );
             frame(8'hab, 1'b1 , 1'b1 );
             check_output( 8'hab, 1'b1 , 1'b1 );
         reset();
 
-$display("Test case 4 :Prescale =16 with parity enable=0 ");
+        $display("Test case 4 :Prescale=16 with parity enable=0 ");
             set_prescale( 5'd16 );
             frame(8'hcd, 1'b0 , 1'b0 );
             check_output( 8'hcd, 1'b0 , 1'b0 );
         reset();
 
-        $display("Test case 5 :Prescale =8 with parity enable=1 and the type of the parity is even parity ");
+        $display("Test case 5 :Prescale=16 with parity enable=1 and the type of the parity is even parity ");
             set_prescale( 5'd16 );
             frame(8'hcd, 1'b1 , 1'b0 );
             check_output( 8'hcd, 1'b1 , 1'b0 );
         reset();
 
-        $display("Test case 6 :Prescale =8 with parity enable=1 and the type of the parity is odd parity ");
+        $display("Test case 6 :Prescale=16 with parity enable=1 and the type of the parity is odd parity ");
             set_prescale( 5'd16 );
             frame(8'hcd, 1'b1 , 1'b1 );
             check_output( 8'hcd, 1'b1 , 1'b1 );
         reset();
 
-$display("Test case 7 :Prescale =8 with parity enable=0 ");
+        $display("Test case 7 :Prescale=32 with parity enable=0 ");
             set_prescale( 6'd32 );
             frame(8'hef, 1'b0 , 1'b0 );
             check_output( 8'hef, 1'b0 , 1'b0 );
         reset();
 
-        $display("Test case 8 :Prescale =8 with parity enable=1 and the type of the parity is even parity ");
+        $display("Test case 8 :Prescale=32 with parity enable=1 and the type of the parity is even parity ");
             set_prescale( 6'd32 );
             frame(8'hef, 1'b1 , 1'b0 );
             check_output( 8'hef, 1'b1 , 1'b0 );
         reset();
 
-        $display("Test case 9 :Prescale =8 with parity enable=1 and the type of the parity is odd parity ");
+        $display("Test case 9 :Prescale=32 with parity enable=1 and the type of the parity is odd parity ");
             set_prescale( 6'd32 );
             frame(8'hef, 1'b1 , 1'b1 );
             check_output( 8'hef, 1'b1 , 1'b1 );
