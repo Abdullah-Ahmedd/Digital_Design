@@ -54,7 +54,7 @@ initial
         
 
         $display("Test case 1 :Prescale=8 with parity enable=0 ");
-            set_prescale( 4'd8, 1'b0 , 1'b0 );
+            set_prescale( 4'd8 );
             frame(8'hab, 1'b0 , 1'b0 );
             check_output( 8'hab, 1'b0 , 1'b0 );
             repeat(prescale_tb) #(Clock_period);
@@ -62,7 +62,7 @@ initial
         repeat(prescale_tb) #(Clock_period);
 
         $display("Test case 2 :Prescale=8 with parity enable=1 and the type of the parity is even parity ");
-            set_prescale( 4'd8 , 1'b1 , 1'b0 );
+            set_prescale( 4'd8 );
             frame(8'hab, 1'b1 , 1'b0 );
             check_output( 8'hab, 1'b1 , 1'b0 );
             repeat(prescale_tb) #(Clock_period);
@@ -70,7 +70,7 @@ initial
         repeat(prescale_tb) #(Clock_period);
 
         $display("Test case 3 :Prescale=8 with parity enable=1 and the type of the parity is odd parity ");
-            set_prescale( 4'd8 , 1'b1 , 1'b1 );
+            set_prescale( 4'd8 );
             frame(8'hab, 1'b1 , 1'b1 );
             check_output( 8'hab, 1'b1 , 1'b1 );
             repeat(prescale_tb) #(Clock_period);
@@ -78,7 +78,7 @@ initial
         repeat(prescale_tb) #(Clock_period);
 
         $display("Test case 4 :Prescale=16 with parity enable=0 ");
-            set_prescale( 5'd16 , 1'b0 , 1'b0 );
+            set_prescale( 5'd16 );
             frame(8'hcd, 1'b0 , 1'b0 );
             check_output( 8'hcd, 1'b0 , 1'b0 );
             repeat(prescale_tb) #(Clock_period);
@@ -86,7 +86,7 @@ initial
         repeat(prescale_tb) #(Clock_period);
 
         $display("Test case 5 :Prescale=16 with parity enable=1 and the type of the parity is even parity ");
-            set_prescale( 5'd16 , 1'b1 , 1'b0 );
+            set_prescale( 5'd16 );
             frame(8'hcd, 1'b1 , 1'b0 );
             check_output( 8'hcd, 1'b1 , 1'b0 );
             repeat(prescale_tb) #(Clock_period);
@@ -94,7 +94,7 @@ initial
         repeat(prescale_tb) #(Clock_period);
 
         $display("Test case 6 :Prescale=16 with parity enable=1 and the type of the parity is odd parity ");
-            set_prescale( 5'd16 , 1'b1 , 1'b1 );
+            set_prescale( 5'd16 );
             frame(8'hcd, 1'b1 , 1'b1 );
             check_output( 8'hcd, 1'b1 , 1'b1 );
             repeat(prescale_tb) #(Clock_period);
@@ -102,7 +102,7 @@ initial
         repeat(prescale_tb) #(Clock_period);
 
         $display("Test case 7 :Prescale=32 with parity enable=0 ");
-            set_prescale( 6'd32 , 1'b0 , 1'b0 );
+            set_prescale( 6'd32 );
             frame(8'hef, 1'b0 , 1'b0 );
             check_output( 8'hef, 1'b0 , 1'b0 );
             repeat(prescale_tb) #(Clock_period);
@@ -110,7 +110,7 @@ initial
         repeat(prescale_tb) #(Clock_period);
 
         $display("Test case 8 :Prescale=32 with parity enable=1 and the type of the parity is even parity ");
-            set_prescale( 6'd32 , 1'b1 , 1'b0 );
+            set_prescale( 6'd32 );
             frame(8'hef, 1'b1 , 1'b0 );
             check_output( 8'hef, 1'b1 , 1'b0 );
             repeat(prescale_tb) #(Clock_period);
@@ -118,7 +118,7 @@ initial
         repeat(prescale_tb) #(Clock_period);
 
         $display("Test case 9 :Prescale=32 with parity enable=1 and the type of the parity is odd parity ");
-            set_prescale( 6'd32 , 1'b1 , 1'b1 );
+            set_prescale( 6'd32 );
             frame(8'hef, 1'b1 , 1'b1 );
             check_output( 8'hef, 1'b1 , 1'b1 );
             repeat(prescale_tb) #(Clock_period);
@@ -152,11 +152,9 @@ begin
 end
 endtask
 
-task set_prescale ( input [ 5 : 0 ] ps , input parity_enable, input parity_type );
+task set_prescale ( input [ 5 : 0 ] ps );
     begin
         prescale_tb = ps;
-        PAR_EN_tb = parity_enable;
-        PAR_TYP_tb = parity_type;
         RX_frequnecy = TX_frequency * ps;
         Clock_period = ( 1.0 / RX_frequnecy ) * 1e6; 
     end
@@ -165,6 +163,9 @@ endtask
 task frame (input [ 7 : 0 ] data, input parity_enable , input parity_type );
 reg parity_bit;
 begin
+    //Setting the parity enable and type
+    PAR_EN_tb = parity_enable;
+    PAR_TYP_tb = parity_type;
     //Idle state
     RX_IN_tb=1;
     repeat(prescale_tb) #(Clock_period);
