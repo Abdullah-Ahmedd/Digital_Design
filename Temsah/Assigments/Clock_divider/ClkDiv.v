@@ -16,12 +16,13 @@ module ClkDiv
     wire [ 7 : 0 ] half_period;
     wire [ 7 : 0 ] half_period_plus_1;
     wire odd; //odd flag that equals one when the input clock ratio is odd
-    reg flag; //flag equals one when the output of the clock divider equals one 
+    wire flag; //flag equals one when the output of the clock divider equals one 
 
-//Computing the half period value and the odd flag
+//Computing the half period value in addition to odd and the flag 
 assign half_period =  i_div_ratio >> 1 ;
 assign half_period_plus_1 =  ( i_div_ratio >> 1 ) + 1 ;
 assign odd = i_div_ratio[ 0 ] ;
+assign flag = o_div_clk;
 
 //Declaring the clock divider enable
 wire clk_divider_en;
@@ -37,7 +38,6 @@ always@( posedge i_ref_clk  or  negedge i_rst_n )
                 counter_odd_down<= 0;
                 counter_odd_up<= 0;
                 o_div_clk <= 0;
-                flag <= 0;
             end
             
             else if( clk_divider_en )
@@ -49,7 +49,6 @@ always@( posedge i_ref_clk  or  negedge i_rst_n )
             begin
                 counter_even <= 0;
                 o_div_clk <= ~o_div_clk;
-                flag <= ~flag;
             end
         else counter_even <= counter_even+1;
         else if( odd )
@@ -60,7 +59,6 @@ always@( posedge i_ref_clk  or  negedge i_rst_n )
                         begin
                             counter_odd_up <=0;
                             o_div_clk <= ~o_div_clk;
-                            flag <= ~flag;
                        end
                     else counter_odd_up <= counter_odd_up + 1;
                 end
@@ -70,7 +68,6 @@ always@( posedge i_ref_clk  or  negedge i_rst_n )
                             begin
                                 counter_odd_down <=0;
                                 o_div_clk <= ~o_div_clk;
-                                flag <= ~flag;
                         end
                         else counter_odd_down <= counter_odd_down + 1;
                     end                
