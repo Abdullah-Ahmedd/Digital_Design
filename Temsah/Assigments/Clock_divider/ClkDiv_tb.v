@@ -28,39 +28,41 @@ initial
         reset();
 
         $display("Test case 1: trying to divide by (0) ");
+        @(negedge i_ref_clk_tb);
             do_operation(1,0);
-            #(Clock_period * 4 );
-            reset();    
-        
+            #( Clock_period * 100 );
+
+       
+
+
         $display("Test case 2: trying to divide by (1) ");
+        @(negedge i_ref_clk_tb);
             do_operation(1,1);
-            #(Clock_period * 6 );
-            reset();
+            #( Clock_period * 100 );
+
 
         $display("Test case 3: trying to divide by an even number (2) ");
             do_operation( 1 , 2);
-            #(Clock_period * 6 * 2 );
-            reset(); 
+            #( Clock_period * 100 );
+
                        
 
 
         $display("Test case 4: trying to divide by an even number (8) ");
             do_operation(1,8);
-            #(Clock_period * 6 * 8  );
-            reset();               
+            #( Clock_period * 100 );
+             
 
 
         $display("Test case 5: trying to divide by an odd number number (7) ");
             do_operation(1,7);
-            #(Clock_period * 6 * 7  );
-            reset();   
+            #( Clock_period * 100  );
+   
 
         $display("Test case 6: trying to divide by an odd number number (9) ");
             do_operation(1,9);
-            #(Clock_period * 6 * 9  );
-            reset();  
-
-    
+            #( Clock_period * 100 );
+ 
         $finish;
     end
 

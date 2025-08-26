@@ -10,7 +10,9 @@ module ClkDiv
 );
 
 //Declaring some internal registers
-    reg [ 7 : 0 ] counter;
+    reg [ 7 : 0 ] counter_even;
+    reg [ 7 : 0 ] counter_odd_up;
+    reg [ 7 : 0 ] counter_odd_down;
     wire [ 7 : 0 ] half_period;
     wire [ 7 : 0 ] half_period_plus_1;
     wire odd; //odd flag that equals one when the input clock ratio is odd
@@ -26,57 +28,66 @@ wire clk_divider_en;
 assign clk_divider_en = i_clk_en && ( i_div_ratio != 0 )&&( i_div_ratio != 1 ); 
 
 
+
 always@( posedge i_ref_clk  or  negedge i_rst_n )
     begin
         if( !i_rst_n )
             begin
-                counter <= 0;
-                o_div_clk <= i_ref_clk;
+                counter_even<= 0;
+                counter_odd_down<= 0;
+                counter_odd_up<= 0;
+                o_div_clk <= 0;
                 flag <= 0;
             end
-            /*
-        else if ( !clk_divider_en )  
-            begin
-                counter <= o_div_clk;      
-                o_div_clk <= i_ref_clk;   
-                flag <= 0;        
-            end
-            */
+            
             else if( clk_divider_en )
         begin
-          /*  
-         if( i_div_ratio == 0 || i_div_ratio == 1 ) //Handling when the division scale is zero or one
-            begin
-                o_div_clk <= i_ref_clk;
-                counter <= 0;
-                flag <= 0;
-            end 
-            */ 
-            
-         if( !odd && counter == half_period )
-            begin
-                counter <= 0;
-                o_div_clk <= ~o_div_clk;
-                flag <= ~flag;
-            end
-        else if(odd && ( ( ( counter == half_period ) && flag ) || ( ( counter == half_period_plus_1) && !flag ) ) )
-            begin
-                counter <= 0;
-                o_div_clk <= ~o_div_clk;
-                flag <= ~flag;
 
-            end
-        else
+
+         if( !odd )
+         if( counter_even == half_period - 1 ) 
             begin
-                counter <= counter + 1;
+                counter_even <= 0;
+                o_div_clk <= ~o_div_clk;
+                flag <= ~flag;
+            end
+        else counter_even <= counter_even+1;
+        else if( odd )
+            begin
+                if( flag )
+                begin
+                    if( counter_odd_up == half_period-1 )
+                        begin
+                            counter_odd_up <=0;
+                            o_div_clk <= ~o_div_clk;
+                            flag <= ~flag;
+                       end
+                    else counter_odd_up <= counter_odd_up + 1;
+                end
+                else if( !flag )
+                    begin
+                        if(counter_odd_down == half_period_plus_1-1)
+                            begin
+                                counter_odd_down <=0;
+                                o_div_clk <= ~o_div_clk;
+                                flag <= ~flag;
+                        end
+                        else counter_odd_down <= counter_odd_down + 1;
+                    end                
             end
         end
-        else
-        begin
-           o_div_clk <= i_ref_clk; 
-           counter <= 0;
-           flag <= 0;
-        end
+        
     end
+always@( i_ref_clk )
+begin
+    if(  clk_divider_en == 0  ||  i_clk_en == 0  )
+        begin
+            o_div_clk = i_ref_clk;
+        end
+
+end
+    
+
+
 
 endmodule 
