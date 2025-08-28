@@ -27,6 +27,7 @@ initial
         initialization();
         reset();
 
+
         $display("Test case 1: trying to divide by (0) ");
         @(negedge i_ref_clk_tb);
             do_operation(1,0);
@@ -62,6 +63,13 @@ initial
         $display("Test case 6: trying to divide by an odd number number (9) ");
             do_operation(1,9);
             #( Clock_period * 100 );
+
+        $display("Test case 7: trying to divide by a number then goes to a lower number (divide by 6 then 4) ");
+            do_operation(1,6);
+            #( Clock_period * 100 );
+
+            do_operation(1,4);
+            #( Clock_period * 100 );
  
         $finish;
     end
@@ -71,7 +79,7 @@ initial
 
 task initialization();
     begin
-     i_ref_clk_tb = 0;
+    i_ref_clk_tb = 0;
     i_clk_en_tb= 1;
     i_div_ratio_tb = 0;       
     end
