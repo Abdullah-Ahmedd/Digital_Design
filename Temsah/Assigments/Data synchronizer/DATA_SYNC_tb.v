@@ -4,7 +4,7 @@ module DATA_SYNC_tb();
 //Declaring the clock parameter
     parameter Clock_period=10; //assuming the clock period is 10ns
 //Declaring the number of stages and bus width parameters
-    parameter NUM_STAGES = 2;
+    parameter NUM_STAGES = 5;
     parameter BUS_WIDTH = 8;
 //Declaring the testbench signals
     reg [ BUS_WIDTH - 1 : 0 ] unsync_bus_tb;

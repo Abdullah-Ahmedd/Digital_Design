@@ -1,5 +1,5 @@
 $date
-	Tue Sep 02 23:14:19 2025
+	Wed Sep 03 00:21:12 2025
 $end
 $version
 	Icarus Verilog
@@ -21,18 +21,19 @@ $scope module DSYNC $end
 $var wire 1 & CLK $end
 $var wire 1 ' RST $end
 $var wire 1 ( bus_enable $end
-$var wire 1 " enable_pulse $end
-$var wire 8 * unsync_bus [7:0] $end
-$var wire 8 + mux [7:0] $end
-$var parameter 32 , BUS_WIDTH $end
-$var parameter 32 - NUM_STAGES $end
-$var reg 1 . pulse_gen $end
-$var reg 2 / syn_reg [1:0] $end
-$var reg 8 0 sync_bus [7:0] $end
+$var wire 1 * pulse_gen $end
+$var wire 8 + unsync_bus [7:0] $end
+$var wire 8 , mux [7:0] $end
+$var parameter 32 - BUS_WIDTH $end
+$var parameter 32 . NUM_STAGES $end
+$var reg 1 " enable_pulse $end
+$var reg 1 / pulse_gen_internal $end
+$var reg 5 0 syn_reg [4:0] $end
+$var reg 8 1 sync_bus [7:0] $end
 $upscope $end
 $scope task do_operation $end
-$var reg 8 1 data [7:0] $end
-$var reg 1 2 enable $end
+$var reg 8 2 data [7:0] $end
+$var reg 1 3 enable $end
 $upscope $end
 $scope task initialize $end
 $upscope $end
@@ -42,21 +43,22 @@ $upscope $end
 $enddefinitions $end
 $comment Show the parameter values. $end
 $dumpall
-b10 -
-b1000 ,
-b10 %
+b101 .
+b1000 -
+b101 %
 b1010 $
 b1000 #
 $end
 #0
 $dumpvars
-x2
-bx 1
+x3
+bx 2
+b0 1
 b0 0
-b0 /
-0.
+0/
+b0 ,
 b0 +
-b0 *
+0*
 b0 )
 0(
 0'
@@ -68,45 +70,51 @@ $end
 1&
 #10000
 0&
-12
-b10101011 1
+13
+b10101011 2
 1'
 #15000
-b10101011 +
-1"
-b1 /
+b1 0
 1(
 b10101011 )
-b10101011 *
+b10101011 +
 1&
 #20000
 0&
 #25000
-b10101011 !
-b10101011 0
-b11 /
+b11 0
 1&
 #30000
 0&
 #35000
-0"
-1.
+b111 0
 1&
 #40000
 0&
 #45000
+1*
+b1111 0
 1&
 #50000
 0&
 #55000
+0*
+b10101011 ,
+b11111 0
+1/
 1&
 #60000
 0&
 #65000
+b10101011 !
+b10101011 1
+1"
+0/
 1&
 #70000
 0&
 #75000
+0"
 1&
 #80000
 0&
@@ -123,52 +131,57 @@ b11 /
 #110000
 0&
 #115000
-b0 +
-b0 /
-0.
-b0 !
+b0 ,
 b0 0
+b0 !
+b0 1
 1&
 0'
 #120000
 0&
 #125000
-b11001101 +
-1"
-b1 /
+b1 0
 b11001101 )
-b11001101 *
+b11001101 +
 1&
-b11001101 1
+b11001101 2
 1'
 #130000
 0&
 #135000
-b11 /
-b11001101 !
-b11001101 0
+b11 0
 1&
 #140000
 0&
 #145000
-0"
-1.
+b111 0
 1&
 #150000
 0&
 #155000
+1*
+b1111 0
 1&
 #160000
 0&
 #165000
+0*
+b11001101 ,
+1/
+b11111 0
 1&
 #170000
 0&
 #175000
+0/
+1"
+b11001101 !
+b11001101 1
 1&
 #180000
 0&
 #185000
+0"
 1&
 #190000
 0&

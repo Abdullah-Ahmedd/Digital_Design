@@ -8,12 +8,14 @@ module DATA_SYNC
     input wire RST,
 //Declaring outputs
     output reg [ BUS_WIDTH - 1 : 0 ] sync_bus,
-    output wire enable_pulse
+    output reg enable_pulse
 );
 //Declaring the internal registers for the synchronizer 
     reg [ NUM_STAGES - 1 : 0 ] syn_reg;
-//Declaring an internal register for the pulse gen
-    reg pulse_gen;
+//Declaring an internal signal for the pulse generator 
+    wire pulse_gen;
+//Declaring an internal reg for the pulse generator    
+    reg pulse_gen_internal;
 //Declaring the mux output
     wire [ BUS_WIDTH - 1 : 0 ] mux;       
 
@@ -31,21 +33,29 @@ always@( posedge CLK  or  negedge RST )
     end
 
 //Pulse generator
-    always@(posedge CLK or negedge RST)
-        begin
-            if(!RST)
-                begin
-                  pulse_gen <= 0;
-                end
-            else
-            pulse_gen <= syn_reg[ NUM_STAGES - 1 ] ;    
-        end
+    assign pulse_gen = ~syn_reg[ NUM_STAGES - 1 ] & syn_reg[ NUM_STAGES - 2 ];
 
-assign enable_pulse = ~pulse_gen & syn_reg[ NUM_STAGES - 2 ];
+always@( posedge CLK  or  negedge RST )
+    begin
+        if( !RST )
+        pulse_gen_internal <= 0;
+        else 
+        pulse_gen_internal <= pulse_gen;
+        
+    end
+    
+always@( posedge CLK  or  negedge RST )
+    begin
+        if( !RST )
+        enable_pulse <= 0;
+        else 
+        enable_pulse <= pulse_gen_internal;
+        
+    end
 
 
 //MUX 
-assign mux = enable_pulse ? unsync_bus : sync_bus ;
+assign mux = pulse_gen_internal ? unsync_bus : sync_bus ; //you did pulse_gen_internal (the real signal not the delayed signal) as you know that the enable signal is the only signal that comes early so we dealyed it but the output is not delayed so we dont need to delay it 
 
 //Destination flip flop
     always@(posedge CLK or negedge RST)
