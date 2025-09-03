@@ -17,7 +17,13 @@ module DATA_SYNC
 //Declaring an internal reg for the pulse generator    
     reg pulse_gen_internal;
 //Declaring the mux output
-    wire [ BUS_WIDTH - 1 : 0 ] mux;       
+    wire [ BUS_WIDTH - 1 : 0 ] mux;  
+
+//Isolating the unsync data input
+reg [ BUS_WIDTH - 1 : 0 ] unsync_reg;
+
+
+
 
 //Synchronizer
 always@( posedge CLK  or  negedge RST )
@@ -25,10 +31,16 @@ always@( posedge CLK  or  negedge RST )
         if( !RST )
             begin
                 syn_reg <= 0;
+                unsync_reg<=0;
+            end
+        else if(unsync_reg!=unsync_bus)    
+            begin
+                syn_reg<=0;
+                unsync_reg<=unsync_bus;
             end
         else
             begin
-                syn_reg<={ syn_reg [ NUM_STAGES - 2 : 0 ] , bus_enable };
+                syn_reg <= { syn_reg [ NUM_STAGES - 2 : 0 ] , bus_enable };
             end
     end
 
@@ -38,24 +50,15 @@ always@( posedge CLK  or  negedge RST )
 always@( posedge CLK  or  negedge RST )
     begin
         if( !RST )
-        pulse_gen_internal <= 0;
-        else 
-        pulse_gen_internal <= pulse_gen;
-        
-    end
-    
-always@( posedge CLK  or  negedge RST )
-    begin
-        if( !RST )
         enable_pulse <= 0;
         else 
-        enable_pulse <= pulse_gen_internal;
+        enable_pulse <= pulse_gen;
         
     end
 
 
 //MUX 
-assign mux = pulse_gen_internal ? unsync_bus : sync_bus ; //you did pulse_gen_internal (the real signal not the delayed signal) as you know that the enable signal is the only signal that comes early so we dealyed it but the output is not delayed so we dont need to delay it 
+assign mux = pulse_gen ? unsync_reg : sync_bus ;
 
 //Destination flip flop
     always@(posedge CLK or negedge RST)
@@ -63,9 +66,12 @@ assign mux = pulse_gen_internal ? unsync_bus : sync_bus ; //you did pulse_gen_in
             if(!RST)
                 begin
                   sync_bus <= 0;
-                end
+                end                
             else
-            sync_bus <= mux ;    
+                begin
+                    sync_bus <= mux ;
+                end
+                      
         end
 
 endmodule
