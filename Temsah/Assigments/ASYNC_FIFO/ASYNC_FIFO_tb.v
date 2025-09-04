@@ -111,13 +111,13 @@ initial
       $display("Test case 1: trying to fill FIFO to its maximum value");
         for(  i = 1  ;  i <= Depth  ; i = i + 1  )
           begin
-            Write( 8'd10 + i );
+            Write( 'd10 + i );
           end
           #( Wclk_tb );
           $display("Number of writes=%0d ,Wfull=%0b , Wempty=%0b", Depth , Wfull_tb , Wempty_tb );
 
     $display("Test case 2 : trying to store a data when the FIFO is full");
-        Write( 8'd10 + 10 );
+        Write( 'd10 + 10 );
         #( Wclk_tb );
         $display("Wfull=%0b , Wempty=%0b", Wfull_tb , Wempty_tb );
 
@@ -143,15 +143,27 @@ initial
 
 
     $display("Test case 5: trying to read and write simultaneously");
-          
+        reset();
+          done=0;
+        fork
+          begin
+            for(  i = 1  ;  i <= Depth  ; i = i + 1 )
+              write( 'd50 + i );
+          end
+          begin
+            while( !done )
+              begin
+                read();
+                if( Rindex == 8 )
+                done = 1 ;
+                else
+                read();
+              end
+          end
+        join
+    $display("Number of Reads=%0d , Number of writes=%0d , Wfull=%0b , Wempty=%0b", Rindex , Windex , Wfull_tb , Wempty_tb );      
 
           
-
-
-
-
-
-
   end
 
 
