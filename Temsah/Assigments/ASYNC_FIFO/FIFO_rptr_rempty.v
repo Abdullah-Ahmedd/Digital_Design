@@ -11,8 +11,8 @@ module FIFO_rptr_rempty #( parameter Address =3 ) //Depth = 2^(Address)
     output reg [ Address : 0 ] Rptr
 );
 //Declaring internal registers
-reg [ Address - 1 : 0 ] Radder_binary_current;
-reg [ Address - 1 : 0 ] Radder_binary_next;
+reg [ Address  : 0 ] Radder_binary_current;
+reg [ Address  : 0 ] Radder_binary_next;
 reg [ Address : 0 ] Radder_gray_next;
 
 //Rptr logic

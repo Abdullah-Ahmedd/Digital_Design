@@ -17,7 +17,7 @@ module ASYNC_FIFO_tb;
   wire [Data_width-1:0] Rdata;
   wire Wfull, Rempty;
 
-  // scoreboard memory
+  // Scoreboard memory
   reg [Data_width-1:0] expected [0:Depth*4-1];
   integer write_idx, read_idx;
   integer i;
@@ -43,19 +43,21 @@ module ASYNC_FIFO_tb;
 
   // Clock generation
   always #5  Wclk = ~Wclk;  // 100 MHz
-  always #7  Rclk = ~Rclk;  // ~71 MHz (async to Wclk)
+  always #4  Rclk = ~Rclk;  // ~40 MHz
 
+  // ======================
   // Write task
+  // ======================
   task write_data(input [Data_width-1:0] data);
     begin
-      @(negedge Wclk);
+      @(posedge Wclk);
       if (!Wfull) begin
         Wrdata = data;
         Winc = 1;
         expected[write_idx] = data;
         $display("[%0t] WRITE: %h (index %0d)", $time, data, write_idx);
         write_idx++;
-        @(negedge Wclk);
+        @(posedge Wclk);
         Winc = 0;
       end else begin
         $display("[%0t] WRITE BLOCKED: FIFO is full", $time);
@@ -63,16 +65,17 @@ module ASYNC_FIFO_tb;
     end
   endtask
 
+  // ======================
   // Read task
+  // ======================
   task read_data();
     begin
-      @(negedge Rclk);
+      @(posedge Rclk);
       if (!Rempty) begin
         Rinc = 1;
-        @(negedge Rclk);
+        @(posedge Rclk);
         Rinc = 0;
-        // Wait a cycle for data to be valid
-        @(negedge Rclk);
+        @(posedge Rclk); // Wait for data to propagate
         if (Rdata !== expected[read_idx]) begin
           $display("[%0t] ERROR: expected %h, got %h (index %0d)", 
                    $time, expected[read_idx], Rdata, read_idx);
@@ -86,19 +89,23 @@ module ASYNC_FIFO_tb;
     end
   endtask
 
+  // ======================
   // Reset task
+  // ======================
   task reset_fifo();
     begin
       $display("[%0t] Applying reset...", $time);
       Wrst = 0;
       Rrst = 0;
-      repeat (5) @(negedge Wclk);
-      repeat (3) @(negedge Rclk);
+      repeat (5) @(posedge Wclk);
+      repeat (3) @(posedge Rclk);
       Wrst = 1;
       Rrst = 1;
-      repeat (3) @(negedge Wclk);
-      repeat (2) @(negedge Rclk);
+      repeat (3) @(posedge Wclk);
+      repeat (2) @(posedge Rclk);
       $display("[%0t] Reset released.", $time);
+      write_idx = 0;
+      read_idx = 0;
     end
   endtask
 
@@ -106,84 +113,53 @@ module ASYNC_FIFO_tb;
   // Test procedure
   // ======================
   initial begin
-    // Initialize everything
-    Wclk   = 0;
-    Rclk   = 0;
-    Wrst   = 1;
-    Rrst   = 1;
-    Winc   = 0;
-    Rinc   = 0;
+    // Initialize signals
+    Wclk   = 0; Rclk   = 0;
+    Wrst   = 1; Rrst   = 1;
+    Winc   = 0; Rinc   = 0;
     Wrdata = 0;
-    write_idx = 0;
-    read_idx  = 0;
 
-    // Reset the FIFO
+    // Reset FIFO
     reset_fifo();
 
     $display("\n=== TEST 1: Fill FIFO completely ===");
-    // Write data until FIFO is full (should be 8 entries)
-    for (i = 1; i <= 10; i++) begin
+    for (i = 1; i <= Depth+2; i = i + 1) begin
       write_data(8'h10 + i);
-      if (Wfull) begin
-        $display("[%0t] FIFO became full after %0d writes", $time, write_idx);
- 
-      end
+      if (Wfull) $display("[%0t] FIFO full after %0d writes", $time, write_idx);
     end
 
-    // Try one more write when full
     $display("\n=== TEST 2: Try writing when full ===");
     write_data(8'hFF);
 
     $display("\n=== TEST 3: Read all data ===");
-    // Read all data
-    while (!Rempty && read_idx < write_idx) begin
-      read_data();
-    end
+    while (!Rempty && read_idx < write_idx) read_data();
 
-    // Wait for empty flag to propagate
-    repeat (5) @(negedge Rclk);
-    if (Rempty) begin
-      $display("[%0t] FIFO is now empty", $time);
-    end
+    repeat (5) @(posedge Rclk);
+    if (Rempty) $display("[%0t] FIFO is now empty", $time);
 
     $display("\n=== TEST 4: Try reading when empty ===");
     read_data();
 
     $display("\n=== TEST 5: Write and read simultaneously ===");
-    // Reset for clean test
-    reset_fifo();
-    write_idx = 0;
-    read_idx = 0;
+   // reset_fifo();
+    for (i = 1; i <= 4; i = i + 1) write_data(8'h20 + i);
 
-    // Write a few items first
-    for (i = 1; i <= 4; i++) begin
-      write_data(8'h20 + i);
-    end
-
-    // Now write and read simultaneously
     fork
       begin
-        for (i = 5; i <= 8; i++) begin
-          write_data(8'h20 + i);
-        end
+        for (i = 5; i <= 8; i = i + 1) write_data(8'h20 + i);
       end
       begin
-        repeat (2) @(negedge Rclk); // Let some data accumulate
-        repeat (6) begin
-          read_data();
-        end
+        repeat (2) @(posedge Rclk);
+        repeat (6) read_data();
       end
     join
 
-    // Final status
     $display("\n=== FINAL STATUS ===");
     $display("Total writes: %0d", write_idx);
     $display("Total reads: %0d", read_idx);
     $display("Wfull: %b, Rempty: %b", Wfull, Rempty);
 
-    // Finish simulation
-    #200;
-    $finish;
+    #200 $finish;
   end
 
   // ======================
@@ -195,22 +171,11 @@ module ASYNC_FIFO_tb;
   end
 
   // ======================
-  // VCD dump for waveform
+  // VCD waveform dump
   // ======================
   initial begin
     $dumpfile("dump.vcd");
     $dumpvars(0, ASYNC_FIFO_tb);
-  end
-
-  // Debug: Print internal states
-  initial begin
-    #1; // Small delay to let initial values settle
-    $display("=== FIFO Configuration ===");
-    $display("Data_width: %0d", Data_width);
-    $display("Depth: %0d", Depth); 
-    $display("Address bits: %0d", Address);
-    $display("Sync stages: %0d", NUM_STAGES);
-    $display("Expected FIFO capacity: %0d entries", Depth);
   end
 
 endmodule

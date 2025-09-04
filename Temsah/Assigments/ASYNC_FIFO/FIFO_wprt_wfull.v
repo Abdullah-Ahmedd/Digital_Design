@@ -34,8 +34,8 @@ module FIFO_wptr_wfull
 );
 
 //Declaring internal registers 
-    reg [ Address - 1 : 0 ] Wadder_binary_current;
-    reg [ Address - 1 : 0 ] Wadder_binary_next;
+    reg [ Address : 0 ] Wadder_binary_current;
+    reg [ Address : 0 ] Wadder_binary_next;
     reg [ Address : 0 ] Wadder_gray_next;
 
 // Wptr logic
