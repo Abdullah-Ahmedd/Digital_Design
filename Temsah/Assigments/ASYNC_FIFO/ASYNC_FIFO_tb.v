@@ -25,7 +25,7 @@ module ASYNC_FIFO_tb();
     integer Windex; //write index to know how many elements have been written
     integer Rindex; //read index to know how many elements have been read
 //Declaring an internal memory to stored the expected output at
-    reg [ Data_width - 1 : 0 ] expected_output [ 10 : 0 ];
+    reg [ Data_width - 1 : 0 ] expected_output [ Depth - 1 : 0 ];
 //Delcaring a done flag that equals one when a cetain task is done
     reg done;
 
@@ -61,9 +61,10 @@ task reset();
   begin
     Wrst_tb = 0;
     Rrst_tb = 0;
-    #( Rperiod );
+    @( posedge Rclk_tb );
     Wrst_tb = 1;
     Rrst_tb = 1;
+    @( posedge Rclk_tb );
     Windex = 0;
     Rindex = 0;   
   end
@@ -71,14 +72,14 @@ endtask
 
 task write ( input [ Data_width - 1 : 0 ] data );
   begin
-    if( !Wfull )
+    @( posedge Wclk_tb )
+    if( !Wfull_tb )
       begin
-        @( posedge Wclk )
         Wrdata_tb = data;
         expected_output[ Windex ] = data;
         Windex = Windex + 1;
         Winc_tb = 1;
-        @( posedge Wclk )
+        @( posedge Wclk_tb )
         Winc_tb =0;
 
       end 
@@ -87,18 +88,19 @@ endtask
 
 task read();
   begin
-    if( !Rempty )
+    @( posedge Rclk_tb )
+    if( !Rempty_tb )
       begin
-        @( posedge Rclk )
-        Rinc = 1;
-        Rindex = Rindex + 1;
-        @(posedge Rclk)
-        Rinc = 0;            
-      end
-    if( Rdata_tbv != expected_output[ Rindex ] )
+        Rinc_tb = 1;
+        @(posedge Rclk_tb)
+        Rinc_tb = 0;     
+      if( Rdata_tb != expected_output[ Rindex ] )
       begin
         $display("There is an error with reading the data");
+      end   
+      Rindex = Rindex + 1;     
       end
+
   end
 endtask
 
@@ -111,15 +113,15 @@ initial
       $display("Test case 1: trying to fill FIFO to its maximum value");
         for(  i = 1  ;  i <= Depth  ; i = i + 1  )
           begin
-            Write( 'd10 + i );
+            write( 'd10 + i );
           end
           #( Wclk_tb );
-          $display("Number of writes=%0d ,Wfull=%0b , Wempty=%0b", Depth , Wfull_tb , Wempty_tb );
+          $display("Number of writes=%0d ,Wfull=%0b , Wempty=%0b", Windex , Wfull_tb , Rempty_tb );
 
     $display("Test case 2 : trying to store a data when the FIFO is full");
-        Write( 'd10 + 10 );
+        write( 'd10 + 10 );
         #( Wclk_tb );
-        $display("Wfull=%0b , Wempty=%0b", Wfull_tb , Wempty_tb );
+        $display("Wfull=%0b , Wempty=%0b", Wfull_tb , Rempty_tb );
 
 
   end
@@ -127,18 +129,19 @@ initial
 //Read initial block
 initial
   begin
+    #1000;
     $display("Test case 3: trying to read all the contents in the FIFO ");
           while( !Rempty_tb  && (Rindex < Windex) ) 
             read();
             #( Rclk_tb );
-            $display("Number of Reads=%0d ,Wfull=%0b , Wempty=%0b", Rindex , Wfull_tb , Wempty_tb );
+            $display("Number of Reads=%0d ,Wfull=%0b , Wempty=%0b", Rindex , Wfull_tb , Rempty_tb );
 
 
 
     $display("Test case 4: trying to read when the FIFO is empty");
           read();
           #( Rclk_tb );
-          $display("Wfull=%0b , Wempty=%0b", Wfull_tb , Wempty_tb );
+          $display("Wfull=%0b , Wempty=%0b", Wfull_tb , Rempty_tb );
 
 
 
@@ -161,9 +164,12 @@ initial
               end
           end
         join
-    $display("Number of Reads=%0d , Number of writes=%0d , Wfull=%0b , Wempty=%0b", Rindex , Windex , Wfull_tb , Wempty_tb );      
+    $display("Number of Reads=%0d , Number of writes=%0d , Wfull=%0b , Wempty=%0b", Rindex , Windex , Wfull_tb , Rempty_tb );   
 
-          
+
+
+    #100 ;
+    $finish;
   end
 
 
