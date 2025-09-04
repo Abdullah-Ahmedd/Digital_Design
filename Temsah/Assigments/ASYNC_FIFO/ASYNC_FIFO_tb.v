@@ -164,9 +164,8 @@ initial
               end
           end
         join
+        @( posedge Rclk_tb )
     $display("Number of Reads=%0d , Number of writes=%0d , Wfull=%0b , Wempty=%0b", Rindex , Windex , Wfull_tb , Rempty_tb );   
-
-
 
     #100 ;
     $finish;
