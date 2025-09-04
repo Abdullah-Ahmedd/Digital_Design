@@ -8,7 +8,7 @@ module ASYNC_FIFO
     parameter Data_width = 8,
     parameter Depth = 8,
     parameter Address = 3, // depth = 2^(Address) 
-    parameter NUM_STAGES=2
+    parameter NUM_STAGES= 2
 )
 (
 //Declaring inputs
@@ -22,7 +22,7 @@ module ASYNC_FIFO
 //Declaring outputs
     output wire Wfull,
     output wire Rempty,
-    output wire [Data_width - 1 : 0 ] Rdata
+    output wire [ Data_width - 1 : 0 ] Rdata
 );
 //Internal signals
 wire [ Address : 0 ] Wq2_rptr_internal;

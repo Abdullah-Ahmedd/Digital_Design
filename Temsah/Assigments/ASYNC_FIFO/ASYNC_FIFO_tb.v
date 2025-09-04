@@ -1,181 +1,180 @@
-`timescale 1ns/1ps
 `include "ASYNC_FIFO.v"
+`timescale 1ns/1ps
+module ASYNC_FIFO_tb();
+//Declaring the read and write clock periods
+  parameter Wperiod = 10 ;
+  parameter Rperiod =25 ;
+//Declaring the parameters
+    parameter Data_width = 8;
+    parameter Depth = 8;
+    parameter Address = 3; // depth = 2^(Address) 
+    parameter NUM_STAGES= 2;
+//Declaring the testbench signals
+    reg Winc_tb;
+    reg Wrst_tb;
+    reg Wclk_tb;
+    reg Rinc_tb;
+    reg Rrst_tb;
+    reg Rclk_tb;
+    reg [ Data_width - 1 : 0 ] Wrdata_tb;
+    wire Wfull_tb;
+    wire Rempty_tb;
+    wire [Data_width - 1 : 0 ] Rdata_tb;
+//Declaring the loop variabe
+    integer i;
+    integer Windex; //write index to know how many elements have been written
+    integer Rindex; //read index to know how many elements have been read
+//Declaring an internal memory to stored the expected output at
+    reg [ Data_width - 1 : 0 ] expected_output [ 10 : 0 ];
+//Delcaring a done flag that equals one when a cetain task is done
+    reg done;
 
-module ASYNC_FIFO_tb;
+//Clock generation
+always //Write clock 
+  begin
+    Wclk_tb=0;
+    #( Wperiod/2.0 );
+    Wclk_tb=1;
+    #( Wperiod/2.0 );
+  end
+  always //Read clock
+  begin
+    Rclk_tb=0;
+    #( Rperiod/2.0 );
+    Rclk_tb=1;
+    #( Rperiod/2.0 );
+  end
 
-  // Parameters
-  parameter Data_width = 8;
-  parameter Depth = 8;
-  parameter Address = 3; // depth = 2^Address
-  parameter NUM_STAGES = 2;
 
-  // Testbench signals
-  reg Wclk, Rclk;
-  reg Wrst, Rrst;
-  reg Winc, Rinc;
-  reg [Data_width-1:0] Wrdata;
-  wire [Data_width-1:0] Rdata;
-  wire Wfull, Rempty;
+//Tasks
+task initialize();
+  begin
+    Winc_tb = 0;
+    Wrst_tb = 1;
+    Rinc_tb = 0;
+    Rrst_tb = 1;
+    Wrdata_tb = 0;
+  end
+endtask
 
-  // Scoreboard memory
-  reg [Data_width-1:0] expected [0:Depth*4-1];
-  integer write_idx, read_idx;
-  integer i;
+task reset();
+  begin
+    Wrst_tb = 0;
+    Rrst_tb = 0;
+    #( Rperiod );
+    Wrst_tb = 1;
+    Rrst_tb = 1;
+    Windex = 0;
+    Rindex = 0;   
+  end
+endtask
 
-  // DUT instantiation
-  ASYNC_FIFO #(
-    .Data_width(Data_width),
-    .Depth(Depth),
-    .Address(Address),
-    .NUM_STAGES(NUM_STAGES)
-  ) DUT (
-    .Winc(Winc),
-    .Wrst(Wrst),
-    .Wclk(Wclk),
-    .Rinc(Rinc),
-    .Rrst(Rrst),
-    .Rclk(Rclk),
-    .Wrdata(Wrdata),
-    .Wfull(Wfull),
-    .Rempty(Rempty),
-    .Rdata(Rdata)
-  );
+task write ( input [ Data_width - 1 : 0 ] data );
+  begin
+    if( !Wfull )
+      begin
+        @( posedge Wclk )
+        Wrdata_tb = data;
+        expected_output[ Windex ] = data;
+        Windex = Windex + 1;
+        Winc_tb = 1;
+        @( posedge Wclk )
+        Winc_tb =0;
 
-  // Clock generation
-  always #5  Wclk = ~Wclk;  // 100 MHz
-  always #4  Rclk = ~Rclk;  // ~40 MHz
+      end 
+  end
+endtask
 
-  // ======================
-  // Write task
-  // ======================
-  task write_data(input [Data_width-1:0] data);
-    begin
-      @(posedge Wclk);
-      if (!Wfull) begin
-        Wrdata = data;
-        Winc = 1;
-        expected[write_idx] = data;
-        $display("[%0t] WRITE: %h (index %0d)", $time, data, write_idx);
-        write_idx++;
-        @(posedge Wclk);
-        Winc = 0;
-      end else begin
-        $display("[%0t] WRITE BLOCKED: FIFO is full", $time);
-      end
-    end
-  endtask
-
-  // ======================
-  // Read task
-  // ======================
-  task read_data();
-    begin
-      @(posedge Rclk);
-      if (!Rempty) begin
+task read();
+  begin
+    if( !Rempty )
+      begin
+        @( posedge Rclk )
         Rinc = 1;
-        @(posedge Rclk);
-        Rinc = 0;
-        @(posedge Rclk); // Wait for data to propagate
-        if (Rdata !== expected[read_idx]) begin
-          $display("[%0t] ERROR: expected %h, got %h (index %0d)", 
-                   $time, expected[read_idx], Rdata, read_idx);
-        end else begin
-          $display("[%0t] READ OK: %h (index %0d)", $time, Rdata, read_idx);
-        end
-        read_idx++;
-      end else begin
-        $display("[%0t] READ BLOCKED: FIFO is empty", $time);
+        Rindex = Rindex + 1;
+        @(posedge Rclk)
+        Rinc = 0;            
       end
-    end
-  endtask
-
-  // ======================
-  // Reset task
-  // ======================
-  task reset_fifo();
-    begin
-      $display("[%0t] Applying reset...", $time);
-      Wrst = 0;
-      Rrst = 0;
-      repeat (5) @(posedge Wclk);
-      repeat (3) @(posedge Rclk);
-      Wrst = 1;
-      Rrst = 1;
-      repeat (3) @(posedge Wclk);
-      repeat (2) @(posedge Rclk);
-      $display("[%0t] Reset released.", $time);
-      write_idx = 0;
-      read_idx = 0;
-    end
-  endtask
-
-  // ======================
-  // Test procedure
-  // ======================
-  initial begin
-    // Initialize signals
-    Wclk   = 0; Rclk   = 0;
-    Wrst   = 1; Rrst   = 1;
-    Winc   = 0; Rinc   = 0;
-    Wrdata = 0;
-
-    // Reset FIFO
-    reset_fifo();
-
-    $display("\n=== TEST 1: Fill FIFO completely ===");
-    for (i = 1; i <= Depth+2; i = i + 1) begin
-      write_data(8'h10 + i);
-      if (Wfull) $display("[%0t] FIFO full after %0d writes", $time, write_idx);
-    end
-
-    $display("\n=== TEST 2: Try writing when full ===");
-    write_data(8'hFF);
-
-    $display("\n=== TEST 3: Read all data ===");
-    while (!Rempty && read_idx < write_idx) read_data();
-
-    repeat (5) @(posedge Rclk);
-    if (Rempty) $display("[%0t] FIFO is now empty", $time);
-
-    $display("\n=== TEST 4: Try reading when empty ===");
-    read_data();
-
-    $display("\n=== TEST 5: Write and read simultaneously ===");
-   // reset_fifo();
-    for (i = 1; i <= 4; i = i + 1) write_data(8'h20 + i);
-
-    fork
+    if( Rdata_tbv != expected_output[ Rindex ] )
       begin
-        for (i = 5; i <= 8; i = i + 1) write_data(8'h20 + i);
+        $display("There is an error with reading the data");
       end
-      begin
-        repeat (2) @(posedge Rclk);
-        repeat (6) read_data();
-      end
-    join
+  end
+endtask
 
-    $display("\n=== FINAL STATUS ===");
-    $display("Total writes: %0d", write_idx);
-    $display("Total reads: %0d", read_idx);
-    $display("Wfull: %b, Rempty: %b", Wfull, Rempty);
+//Write initial block
+initial 
+  begin
+    initialize();
+    reset();
 
-    #200 $finish;
+      $display("Test case 1: trying to fill FIFO to its maximum value");
+        for(  i = 1  ;  i <= Depth  ; i = i + 1  )
+          begin
+            Write( 8'd10 + i );
+          end
+          #( Wclk_tb );
+          $display("Number of writes=%0d ,Wfull=%0b , Wempty=%0b", Depth , Wfull_tb , Wempty_tb );
+
+    $display("Test case 2 : trying to store a data when the FIFO is full");
+        Write( 8'd10 + 10 );
+        #( Wclk_tb );
+        $display("Wfull=%0b , Wempty=%0b", Wfull_tb , Wempty_tb );
+
+
   end
 
-  // ======================
-  // Monitor signals
-  // ======================
-  initial begin
-    $monitor("T=%0t | Wfull=%b Rempty=%b | Wrdata=%h Winc=%b | Rdata=%h Rinc=%b | WriteIdx=%0d ReadIdx=%0d",
-             $time, Wfull, Rempty, Wrdata, Winc, Rdata, Rinc, write_idx, read_idx);
+//Read initial block
+initial
+  begin
+    $display("Test case 3: trying to read all the contents in the FIFO ");
+          while( !Rempty_tb  && (Rindex < Windex) ) 
+            read();
+            #( Rclk_tb );
+            $display("Number of Reads=%0d ,Wfull=%0b , Wempty=%0b", Rindex , Wfull_tb , Wempty_tb );
+
+
+
+    $display("Test case 4: trying to read when the FIFO is empty");
+          read();
+          #( Rclk_tb );
+          $display("Wfull=%0b , Wempty=%0b", Wfull_tb , Wempty_tb );
+
+
+
+    $display("Test case 5: trying to read and write simultaneously");
+          
+
+          
+
+
+
+
+
+
   end
 
-  // ======================
-  // VCD waveform dump
-  // ======================
-  initial begin
-    $dumpfile("dump.vcd");
-    $dumpvars(0, ASYNC_FIFO_tb);
-  end
+
+//Module instantiation
+ASYNC_FIFO
+#(
+.Data_width( Data_width ),
+.Depth( Depth ),
+ .Address( Address ), 
+.NUM_STAGES( NUM_STAGES )
+)
+FIFOASYNC
+(
+.Winc( Winc_tb ),
+.Wrst( Wrst_tb ),
+.Wclk( Wclk_tb ),
+.Rinc( Rinc_tb ),
+.Rrst( Rrst_tb ),
+.Rclk( Rclk_tb ),
+.Wrdata( Wrdata_tb ),
+.Wfull( Wfull_tb ),
+.Rempty( Rempty_tb ),
+.Rdata( Rdata_tb )
+);
 
 endmodule
