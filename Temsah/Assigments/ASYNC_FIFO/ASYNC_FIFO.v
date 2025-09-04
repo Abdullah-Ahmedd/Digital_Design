@@ -33,7 +33,6 @@ wire [ Address - 1 : 0 ] Radder_internal;
 wire [ Address : 0 ]R2q_wptr_internal;
 wire [ Address : 0 ] Rptr_internal;
 
-wire Wfull_internal;
 
 //Modules instantiation
 
@@ -47,13 +46,13 @@ FIFO_WPTRFULL
 .Wq2_rptr( Wq2_rptr_internal ),
 .Wadder( Wadder_internal ),
 .Wptr( Wptr_internal ),
-.Wfull( Wfull_internal )
+.Wfull( Wfull )
 );
 
 Comb_logic Clogic 
 (
 .Winc( Winc ),
-.Wfull( Wfull_internal ),
+.Wfull( Wfull ),
 .Wclken( Wclken_internal )    
 );
 
@@ -113,5 +112,4 @@ BIT_r2q_wptr
 .SYNC( R2q_wptr_internal )
 );
 
-assign Wfull = Wfull_internal;
 endmodule

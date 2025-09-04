@@ -44,7 +44,15 @@ initial
         do_operation( 8'hef,1 );
         #( Clock_period * 10 );
 
+        do_operation( 8'hff,0 );
+        #( Clock_period * 10 );
+        do_operation( 8'hff,1 );
+        #( Clock_period * 0.2 );
+        do_operation( 8'hff,0 );
+        #( Clock_period * 10 );
 
+       do_operation( 8'hab,1 );
+        #( Clock_period * 10 );
         
         $finish;
     end
@@ -68,7 +76,6 @@ endtask
 
 task do_operation(input [ BUS_WIDTH - 1 : 0 ] data , input enable );
     begin
-        @( posedge CLK_tb );
         unsync_bus_tb = data;
         bus_enable_tb = enable;
     end

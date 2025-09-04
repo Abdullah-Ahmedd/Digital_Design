@@ -5,12 +5,11 @@ module RST_SYNC
     input wire RST,
     input wire CLK,
 //Declaring outputs
-    output wire SYNC_RST
+    output reg SYNC_RST
 );
 
 //Declaring the internal registers of the synchronizer
     reg [ NUM_STAGES - 1 : 0 ] sync_reg;
-
 
 always@( posedge CLK  or  negedge RST )
     begin
@@ -24,6 +23,13 @@ always@( posedge CLK  or  negedge RST )
             end
     end
 
-assign SYNC_RST = sync_reg[ 0 ];
+always@( posedge CLK or negedge RST)
+    begin
+        if( !RST )
+        SYNC_RST <= 0;
+        else
+        SYNC_RST <= sync_reg[ 0 ];
+    end
+
 
 endmodule

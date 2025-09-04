@@ -18,6 +18,11 @@ enta 3andak wptr we wadder fe3lan byshawro 3ala el address el hatkteb feeh bas e
 we da by5aleek fl full detection tt2aked next 3alashan howa b2a el current bta3ak men Wptr <= Wadder_gray_next; bas 3alashan
 kol el sequentual blocks concurrent fa el value makentsh lessa etgadett
 */
+/*
+you needed to make  reg [ Address : 0 ] Wadder_binary_current;   not reg [ Address - 1 : 0 ] Wadder_binary_current;
+as it is used in making the Wadder_gray_next which is Address so we needed to make it Address not Address-1 to be able
+to store 
+*/
 module FIFO_wptr_wfull
 #( parameter Address =3  ) // Depth = 2^(Address)
 (

@@ -14,11 +14,8 @@ module DATA_SYNC
     reg [ NUM_STAGES - 1 : 0 ] syn_reg;
 //Declaring an internal signal for the pulse generator 
     wire pulse_gen;
-//Declaring an internal reg for the pulse generator    
-    reg pulse_gen_internal;
 //Declaring the mux output
     wire [ BUS_WIDTH - 1 : 0 ] mux;  
-
 //Isolating the unsync data input
 reg [ BUS_WIDTH - 1 : 0 ] unsync_reg;
 
@@ -33,7 +30,7 @@ always@( posedge CLK  or  negedge RST )
                 syn_reg <= 0;
                 unsync_reg<=0;
             end
-        else if(unsync_reg!=unsync_bus)    
+        else if( unsync_reg != unsync_bus )    
             begin
                 syn_reg<=0;
                 unsync_reg<=unsync_bus;
@@ -61,9 +58,9 @@ always@( posedge CLK  or  negedge RST )
 assign mux = pulse_gen ? unsync_reg : sync_bus ;
 
 //Destination flip flop
-    always@(posedge CLK or negedge RST)
+    always@( posedge CLK  or  negedge RST )
         begin
-            if(!RST)
+            if( !RST )
                 begin
                   sync_bus <= 0;
                 end                
