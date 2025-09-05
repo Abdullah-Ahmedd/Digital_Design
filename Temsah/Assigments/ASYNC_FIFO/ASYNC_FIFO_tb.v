@@ -131,7 +131,7 @@ initial
 //Read initial block
 initial
   begin
-    #1000;
+    #300;
     $display("Test case 3: trying to read all the contents in the FIFO ");
           while( !Rempty_tb  && (Rindex < Windex) ) 
             read();
