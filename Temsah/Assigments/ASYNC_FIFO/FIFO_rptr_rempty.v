@@ -1,4 +1,4 @@
-module FIFO_rptr_rempty #( parameter Address =3 ) //Depth = 2^(Address)
+module FIFO_rptr_rempty #( parameter Address = 3 ) //Depth = 2^(Address)
 (
 //Declaring inputs
     input wire Rinc,
@@ -8,6 +8,7 @@ module FIFO_rptr_rempty #( parameter Address =3 ) //Depth = 2^(Address)
 //Declaring outputs
     output wire [ Address - 1 : 0 ] Radder,
     output reg Rempty,
+    output reg Rempty_flag,
     output reg [ Address : 0 ] Rptr
 );
 //Declaring internal registers
@@ -46,7 +47,8 @@ always@( posedge Rclk  or  negedge Rrst )
             end
         else
             begin
-                Rempty <=( Radder_gray_next == R2q_wptr);         
+                Rempty <=( Radder_gray_next == R2q_wptr);
+                Rempty_flag <=( Radder_gray_next == R2q_wptr);          
             end
     end
 

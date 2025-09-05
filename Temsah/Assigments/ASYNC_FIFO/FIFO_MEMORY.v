@@ -13,6 +13,7 @@ module FIFO_MEMORY
 //Declaring read ports
     output reg [ Data_width - 1 : 0 ] Rdata,
     input wire [ Address - 1 : 0 ] Radder,
+    input wire Rempty_flag,
     input wire Rclk
 );
 //Declaring the memory to store the data
@@ -29,6 +30,7 @@ always@( posedge Wclk )
 //Reading
 always@( posedge Rclk )
     begin
+        if( !Rempty_flag )
         Rdata <= MEM[ Radder ];
     end
 

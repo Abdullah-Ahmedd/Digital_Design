@@ -32,6 +32,7 @@ wire Wclken_internal;
 wire [ Address - 1 : 0 ] Radder_internal;
 wire [ Address : 0 ]R2q_wptr_internal;
 wire [ Address : 0 ] Rptr_internal;
+wire Rempty_flag_internal;
 
 
 //Modules instantiation
@@ -70,7 +71,8 @@ FIFO_MEM
 .Wclk( Wclk ),
 .Rdata( Rdata ),
 .Radder( Radder_internal ),
-.Rclk( Rclk )
+.Rclk( Rclk ),
+.Rempty_flag( Rempty_flag_internal )
 );
 
 FIFO_rptr_rempty
@@ -83,7 +85,8 @@ FIFO_RPTRREMPTY
 .R2q_wptr( R2q_wptr_internal ),
 .Radder( Radder_internal ),
 .Rempty( Rempty ),
-.Rptr( Rptr_internal )
+.Rptr( Rptr_internal ),
+.Rempty_flag( Rempty_flag_internal )
 );
 
 BIT_SYNC 
