@@ -27,7 +27,7 @@ module ASYNC_FIFO_tb();
 //Declaring an internal memory to stored the expected output at
     reg [ Data_width - 1 : 0 ] expected_output [ Depth - 1 : 0 ];
 //Delcaring a done flag that equals one when a cetain task is done
-    reg done;
+    reg done=0;
 
 //Clock generation
 always //Write clock 
