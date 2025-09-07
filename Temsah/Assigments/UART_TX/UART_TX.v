@@ -1,6 +1,7 @@
 `include "serializer.v"
 `include "parity_calc.v"
 `include "FSM.v"
+`include "MUX.v"
 module UART_TX
 (
 //Declaring inputs    
@@ -12,7 +13,7 @@ module UART_TX
     input wire RST,
 
 //Declaring outputs
-    output reg TX_OUT,
+    output wire TX_OUT,
     output wire busy
 );
 //Declaring internal signals 
@@ -54,7 +55,7 @@ module UART_TX
     .busy( busy )
     );
 
-/*
+
 MUX M1
 (
 .mux_sel(mux_sel_internal),
@@ -63,8 +64,8 @@ MUX M1
 .CLK(CLK),
 .MUX_OUT(TX_OUT)
 );
-*/
 
+/*
 always@( * )
 begin
     case( mux_sel_internal )
@@ -74,6 +75,6 @@ begin
         2'b11: TX_OUT = par_bit_internal;
     endcase
 end
-
+*/
 
 endmodule 
