@@ -1,5 +1,5 @@
 $date
-	Sun Sep 07 15:34:27 2025
+	Sun Sep 07 21:59:34 2025
 $end
 $version
 	Icarus Verilog
@@ -50,14 +50,12 @@ $var reg 2 8 mux_sel [1:0] $end
 $var reg 1 , ser_en $end
 $upscope $end
 $scope module M1 $end
-$var wire 1 $ CLK $end
 $var wire 2 9 mux_sel [1:0] $end
 $var wire 1 . ser_data $end
 $var wire 1 / par_bit $end
 $var reg 1 " MUX_OUT $end
 $upscope $end
 $scope module P1 $end
-$var wire 1 % Data_valid $end
 $var wire 1 ' PAR_TYP $end
 $var wire 8 : P_DATA [7:0] $end
 $var wire 1 ; P_flag $end

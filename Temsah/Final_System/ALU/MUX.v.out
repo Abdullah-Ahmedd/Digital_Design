@@ -1,0 +1,79 @@
+#! /c/Source/iverilog-install/bin/vvp
+:ivl_version "12.0 (devel)" "(s20150603-1539-g2693dd32b)";
+:ivl_delay_selection "TYPICAL";
+:vpi_time_precision + 0;
+:vpi_module "C:\iverilog\lib\ivl\system.vpi";
+:vpi_module "C:\iverilog\lib\ivl\vhdl_sys.vpi";
+:vpi_module "C:\iverilog\lib\ivl\vhdl_textio.vpi";
+:vpi_module "C:\iverilog\lib\ivl\v2005_math.vpi";
+:vpi_module "C:\iverilog\lib\ivl\va_math.vpi";
+S_000001e31a6a2c40 .scope module, "MUX" "MUX" 2 1;
+ .timescale 0 0;
+    .port_info 0 /INPUT 8 "In0";
+    .port_info 1 /INPUT 8 "In1";
+    .port_info 2 /INPUT 8 "In2";
+    .port_info 3 /INPUT 8 "In3";
+    .port_info 4 /INPUT 2 "Sel";
+    .port_info 5 /OUTPUT 8 "Out";
+P_000001e31a68c9b0 .param/l "Output_data_width" 0 2 2, C4<00000000000000000000000000001000>;
+o000001e31a6d6f98 .functor BUFZ 8, C4<zzzzzzzz>; HiZ drive
+v000001e31a6a2dd0_0 .net "In0", 7 0, o000001e31a6d6f98;  0 drivers
+o000001e31a6d6fc8 .functor BUFZ 8, C4<zzzzzzzz>; HiZ drive
+v000001e31a6a2e70_0 .net "In1", 7 0, o000001e31a6d6fc8;  0 drivers
+o000001e31a6d6ff8 .functor BUFZ 8, C4<zzzzzzzz>; HiZ drive
+v000001e31a6a2f10_0 .net "In2", 7 0, o000001e31a6d6ff8;  0 drivers
+o000001e31a6d7028 .functor BUFZ 8, C4<zzzzzzzz>; HiZ drive
+v000001e31a68be10_0 .net "In3", 7 0, o000001e31a6d7028;  0 drivers
+v000001e31a68beb0_0 .var/s "Out", 7 0;
+o000001e31a6d7088 .functor BUFZ 2, C4<zz>; HiZ drive
+v000001e31a6d21f0_0 .net "Sel", 1 0, o000001e31a6d7088;  0 drivers
+E_000001e31a68c430/0 .event anyedge, v000001e31a6d21f0_0, v000001e31a6a2dd0_0, v000001e31a6a2e70_0, v000001e31a6a2f10_0;
+E_000001e31a68c430/1 .event anyedge, v000001e31a68be10_0;
+E_000001e31a68c430 .event/or E_000001e31a68c430/0, E_000001e31a68c430/1;
+    .scope S_000001e31a6a2c40;
+T_0 ;
+    %wait E_000001e31a68c430;
+    %load/vec4 v000001e31a6d21f0_0;
+    %pad/u 4;
+    %dup/vec4;
+    %pushi/vec4 0, 0, 4;
+    %cmp/u;
+    %jmp/1 T_0.0, 6;
+    %dup/vec4;
+    %pushi/vec4 1, 0, 4;
+    %cmp/u;
+    %jmp/1 T_0.1, 6;
+    %dup/vec4;
+    %pushi/vec4 10, 0, 4;
+    %cmp/u;
+    %jmp/1 T_0.2, 6;
+    %dup/vec4;
+    %pushi/vec4 11, 0, 4;
+    %cmp/u;
+    %jmp/1 T_0.3, 6;
+    %jmp T_0.4;
+T_0.0 ;
+    %load/vec4 v000001e31a6a2dd0_0;
+    %store/vec4 v000001e31a68beb0_0, 0, 8;
+    %jmp T_0.4;
+T_0.1 ;
+    %load/vec4 v000001e31a6a2e70_0;
+    %store/vec4 v000001e31a68beb0_0, 0, 8;
+    %jmp T_0.4;
+T_0.2 ;
+    %load/vec4 v000001e31a6a2f10_0;
+    %store/vec4 v000001e31a68beb0_0, 0, 8;
+    %jmp T_0.4;
+T_0.3 ;
+    %load/vec4 v000001e31a68be10_0;
+    %store/vec4 v000001e31a68beb0_0, 0, 8;
+    %jmp T_0.4;
+T_0.4 ;
+    %pop/vec4 1;
+    %jmp T_0;
+    .thread T_0, $push;
+# The file index is used to find the file name in the following table.
+:file_names 3;
+    "N/A";
+    "<interactive>";
+    "MUX.v";

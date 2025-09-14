@@ -3,7 +3,7 @@ module MUX
 input wire [1:0] mux_sel ,
 input wire ser_data,
 input wire par_bit,
-input wire CLK,
+
 
 output reg MUX_OUT
 

@@ -2,7 +2,6 @@ module parity_calc
 (
 //Declaring inputs 
     input wire [7:0] P_DATA,
-    input wire Data_valid,
     input wire PAR_TYP,
 
 //Declaring outputs

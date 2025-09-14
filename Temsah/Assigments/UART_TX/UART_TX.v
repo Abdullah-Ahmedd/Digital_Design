@@ -38,7 +38,7 @@ module UART_TX
     parity_calc P1
     (
     .P_DATA( P_DATA ),
-    .Data_valid( Data_valid ),
+    //.Data_valid( Data_valid ),
     .PAR_TYP( PAR_TYP ),
     .par_bit( par_bit_internal )
     //.PAR_EN(PAR_EN)
@@ -61,7 +61,6 @@ MUX M1
 .mux_sel(mux_sel_internal),
 .ser_data(ser_data_internal),
 .par_bit(par_bit_internal),
-.CLK(CLK),
 .MUX_OUT(TX_OUT)
 );
 
