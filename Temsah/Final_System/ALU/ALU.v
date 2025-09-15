@@ -4,7 +4,7 @@
 `include "CMP_UNIT.v"
 `include "Decoder.v"
 `include "MUX.v"
-module ALU#( parameter Input_data_width ='d8 , parameter Output_data_width ='d8  )
+module ALU#( parameter Input_data_width ='d8 , parameter Output_data_width ='d16  )
 (
 
 //Declaring inputs
@@ -13,9 +13,10 @@ module ALU#( parameter Input_data_width ='d8 , parameter Output_data_width ='d8 
     input wire [ 3 : 0 ] ALU_FUN,
     input wire CLK,
     input wire RST, //Active low asynchronus reset 
+    input wire ALU_EN,
 
 //Declaring outputs
-    output wire signed [ Output_data_width - 1 : 0 ] ALU_OUT,
+    output wire  [ Output_data_width - 1 : 0 ] ALU_OUT,
     output wire OUT_VALID
 
 
@@ -32,9 +33,9 @@ wire Shift_Flag_internal;
 wire CMP_Flag_internal;
 
 wire signed [ Output_data_width - 1 : 0 ] Arith_out_internal;
-wire signed [ Output_data_width - 1 : 0 ] Logic_out_internal;
-wire signed [ Output_data_width - 1 : 0 ] Shift_out_internal;
-wire signed [ Output_data_width - 1 : 0 ] CMP_out_internal;
+wire  [ Output_data_width - 1 : 0 ] Logic_out_internal;
+wire  [ Output_data_width - 1 : 0 ] Shift_out_internal;
+wire  [ Output_data_width - 1 : 0 ] CMP_out_internal;
 
 
 //Decoder instantiaton
@@ -44,7 +45,8 @@ Decoder D1
 .Arith_Enable( Arith_Enable_internal ),
 .Logic_Enable( Logic_Enable_internal ),
 .CMP_Enable( CMP_Enable_internal ),
-.Shift_Enable( Shift_Enable_internal )
+.Shift_Enable( Shift_Enable_internal ),
+.ALU_EN( ALU_EN )
 );
 
 // Arithmatic unit instantiation

@@ -3,6 +3,7 @@ module Decoder
 
 //Declaring inputs
     input wire [1:0] ALU_FUN,
+    input wire ALU_EN,
 
 //Declaring outputs 
     output reg Arith_Enable,
@@ -19,11 +20,8 @@ module Decoder
 
 always@( * )
     begin
-    //Default values     
-        Arith_Enable=1'b0;
-        Logic_Enable=1'b0;
-        CMP_Enable=1'b0;
-        Shift_Enable=1'b0;
+
+        if( ALU_EN )
         case( ALU_FUN )
 
             Arith: Arith_Enable=1'b1;
@@ -32,6 +30,14 @@ always@( * )
             Shift: Shift_Enable=1'b1;
 
         endcase
+        else
+            begin
+                Arith_Enable=1'b0;
+                Logic_Enable=1'b0;
+                CMP_Enable=1'b0;
+                Shift_Enable=1'b0;
+            end
+
     end
 
 endmodule

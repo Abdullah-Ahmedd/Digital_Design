@@ -3,12 +3,12 @@ module MUX
 (
 //Declaring inputs
     input wire signed [ Output_data_width - 1 : 0 ] In0,
-    input wire signed  [ Output_data_width - 1 : 0 ] In1,
-    input wire signed  [ Output_data_width - 1 : 0 ] In2,
-    input wire signed [ Output_data_width - 1 : 0 ] In3,
+    input wire   [ Output_data_width - 1 : 0 ] In1,
+    input wire   [ Output_data_width - 1 : 0 ] In2,
+    input wire   [ Output_data_width - 1 : 0 ] In3,
     input wire  [ 1 : 0 ] Sel,
 //Declaring outputs
-    output reg signed [ Output_data_width - 1 : 0 ] Out
+    output reg  [ Output_data_width - 1 : 0 ] Out
 );
 
 always@( * )

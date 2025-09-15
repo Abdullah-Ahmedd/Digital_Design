@@ -10,7 +10,7 @@ module CMP_UNIT#( parameter Input_data_width ='d8 , parameter Output_data_width 
     input wire CMP_Enable,
 
 //Declaring outputs
-    output reg signed [ Output_data_width - 1 : 0 ] CMP_OUT,
+    output reg  [ Output_data_width - 1 : 0 ] CMP_OUT,
     output reg CMP_Flag
 
 );
@@ -45,7 +45,7 @@ always@( posedge CLK or negedge RST )
                         CMP_OUT <='d0;
                         
                 endcase
-                        CMP_Flag <=1'b1;
+                        CMP_Flag <='b1;
             end
         else
             begin
