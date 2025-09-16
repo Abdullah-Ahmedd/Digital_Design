@@ -4,12 +4,13 @@
 `include "CMP_UNIT.v"
 `include "Decoder.v"
 `include "MUX.v"
-module ALU#( parameter Input_data_width ='d8 , parameter Output_data_width ='d16  )
+module ALU
+#( parameter Input_data_width ='d8 , parameter Output_data_width ='d16  )
 (
 
 //Declaring inputs
-    input wire signed [ Input_data_width - 1 : 0 ] A,
-    input wire signed [ Input_data_width - 1 : 0 ] B,
+    input wire [ Input_data_width - 1 : 0 ] A,
+    input wire [ Input_data_width - 1 : 0 ] B,
     input wire [ 3 : 0 ] ALU_FUN,
     input wire CLK,
     input wire RST, //Active low asynchronus reset 

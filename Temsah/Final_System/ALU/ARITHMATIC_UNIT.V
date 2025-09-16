@@ -3,15 +3,15 @@ module ARITHMATIC_UNIT
 (
 
 //Declaring inputs 
-    input wire signed [ Input_data_width - 1 : 0 ] A,
-    input wire signed [ Input_data_width - 1 : 0 ] B,
+    input wire [ Input_data_width - 1 : 0 ] A,
+    input wire [ Input_data_width - 1 : 0 ] B,
     input wire [ 1 : 0 ] ALU_FUN,
     input wire CLK,
     input wire RST, //Active low asynchronus reset 
     input wire Arith_Enable,
 
 //Declaring outputs
-    output reg signed [  Output_data_width - 1 : 0 ] Arith_OUT,
+    output reg [  Output_data_width - 1 : 0 ] Arith_OUT,
     output reg Arith_Flag
 
 );
