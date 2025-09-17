@@ -46,10 +46,14 @@ module SYS_CNTRL
 
 //Declaring internal registers to store the command , data to be written , ALU op code , data to be sent to the tx  and address
     reg [ 7 : 0 ] command;
-    reg [ 3 : 0 ] ALU_fun;
+   // reg [ 3 : 0 ] ALU_fun;
     reg [ Address_width - 1 : 0 ] RF_Address;
     reg [ Data_width - 1 : 0 ] RF_Data;
     reg [ Data_width - 1 : 0 ] TX_data;
+
+
+    reg [ Data_width - 1 : 0 ] A;
+    reg [ Data_width - 1 : 0 ] B;
 
 //making the clock divider enable always equal one 
 assign clk_div_en = 1'b1;
@@ -173,58 +177,65 @@ always@( * )
     CLK_EN = 0;
     TX_p_data = 0;
     TX_d_valid = 0;
+    command = command;
+    WrData =WrData;
 
-    Address = RF_Address ;
-    WrData = RF_Data ;
-    ALU_FUN = ALU_fun;
+    //Address = RF_Address ;
+   // ALU_FUN = ALU_fun;
+    
     
     
             case( Current_state )
             Idle:
                 begin
-
+                        WrData = RF_Data;
                 end
 
             Receive_Command:
                 begin    
                     
                     if( RX_d_valid )
-                        command = RX_p_data;  
+                        command = RX_p_data;
+                        WrData = RF_Data;  
                                       
                 end
 
             Register_file_address:
                 begin
                     if( RX_d_valid )
-                        RF_Address = RX_p_data [ Address_width - 1 : 0 ]; 
+                       // RF_Address = RX_p_data [ Address_width - 1 : 0 ]; 
+                        WrData = RF_Data;
                 end
 
             Register_file_data:
                 begin
                     if( RX_d_valid )
-                        RF_Data = RX_p_data; 
+                       // RF_Data = RX_p_data;
+                        WrData = RF_Data; 
 
                 end
 
-            /*
+            
             Read_operation:
                 begin
-                    RdEN = 1;
+                    //RdEN = 1;
+                    WrData = RF_Data;
                 end
 
             Write_operation:
                 begin
-                    WrEN = 1;
+                   // WrEN = 1;
                     WrData = RF_Data; 
             end
-            */
+            
 
             ALU_operand_A:
                 begin
                     if( RX_d_valid )
                         begin
-                            //WrEN = 1;
-                            Address = 'd0;
+                           // WrEN = 1; //if you found operand B not read correclty uncomment this and comment the one in the sequential always block 
+                            //Address = 'd0;
+                           // RF_Address = 'd0;
                             WrData = RX_p_data;  
                         end
                 end
@@ -234,7 +245,8 @@ always@( * )
                     if( RX_d_valid )
                         begin
                             //WrEN = 1;
-                            Address = 'd1;
+                            //Address = 'd1;
+                           // RF_Address = 'd1;
                             WrData = RX_p_data;  
                         end
                 end
@@ -242,14 +254,16 @@ always@( * )
             ALU_OP_code:
                 begin
                     if( RX_d_valid )
-                    ALU_fun = RX_p_data[ 3 : 0 ]; 
+                    //ALU_fun = RX_p_data[ 3 : 0 ]; 
+                    WrData = RX_p_data;
                 end
 
             ALU_operation:
                 begin
                     CLK_EN = 1;
                     ALU_EN = 1;
-                    ALU_FUN = ALU_fun;
+                   // ALU_FUN = ALU_fun;
+                    WrData = RX_p_data;
                 end
                 
             Send_data_TX:
@@ -258,11 +272,13 @@ always@( * )
                         begin
                         TX_p_data = TX_data;
                         TX_d_valid = 1; 
+                        WrData = RX_p_data;
                         end
                 end
             default:
                 begin
-
+                    WrData = RF_Data;
+                    
                 end    
             endcase
     end
@@ -273,10 +289,11 @@ always@(  posedge CLK  or negedge RST  )
         if( !RST )
             begin
                 RF_Address <= 0;
-                RF_Data <= 0;
-                ALU_fun <= 0;
+                Address<=0;
+               // RF_Data <= 0;
+                ALU_FUN <= 0;
                 TX_data <= 0;
-                command <= 0;
+                //command <= 0;
                 RdEN <=0;
                 WrEN <=0;
             end
@@ -289,14 +306,15 @@ always@(  posedge CLK  or negedge RST  )
                         Receive_Command: 
                              begin
                                // if( RX_d_valid )
-                                  //  command <= RX_p_data;                           
+                                  //  command <= RX_p_data; 
+
                             end                       
                         Register_file_address:
                             begin
                                 if( RX_d_valid )
                                     begin
                                         RF_Address <= RX_p_data[ Address_width - 1 : 0 ];
-                                        RF_Data <= 0;  
+                                        Address <= RX_p_data[ Address_width - 1 : 0 ];
                                     end                              
                             end                        
                         Register_file_data:
@@ -314,13 +332,27 @@ always@(  posedge CLK  or negedge RST  )
                         Write_operation:
                             begin
                                 WrEN <=1;
-                            end                        
+                            end 
+                                                   
+                        ALU_operand_A:
+                            begin
+                                WrEN <= 1;
+                                RF_Address <= 'd0;    
+                                Address <= 'd0;                        
+                            end 
+
+                        ALU_operand_B:
+                            begin
+                                WrEN <= 1;
+                                RF_Address <= 'd1;   
+                                Address <= 'd1;                           
+                            end  
 
                         ALU_OP_code:
                             begin
                                 if( RX_d_valid )
                                     begin
-                                        ALU_fun <= RX_p_data; 
+                                        ALU_FUN <= RX_p_data; 
                                     end                             
                             end                        
                         ALU_operation:
