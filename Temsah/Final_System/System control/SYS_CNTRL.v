@@ -1,5 +1,5 @@
 module SYS_CNTRL 
-#( parameter Input_data_width = 'd8 , parameter Output_data_width = 'd8 , parameter Address_width = 'd4 )
+#( parameter Data_width = 'd8 , parameter Address_width = 'd4 )
 (
 
 //Declaring ingputs
@@ -16,35 +16,35 @@ module SYS_CNTRL
 //Declaring outputs
     output reg ALU_EN,
     output reg [ 3 : 0 ] ALU_FUN,
-    output reg [ Data_width - 1 : 0 ] CLK_EN,
-    output reg [ Data_width - 1 : 0 ] Address,
+    output reg  CLK_EN,
+    output reg [ Address_width - 1 : 0 ] Address,
     output reg WrEN,
     output reg RdEN,
     output reg [ Data_width - 1 : 0 ] WrData,
     output reg [ Data_width - 1 : 0 ] TX_p_data,
     output reg TX_d_valid,
-    output reg clk_div_en,
+    output wire clk_div_en
 
 );
 /*
-//Isolating ALU_OUT , RX_P_data and Rd_data
+//Isolating ALU_OUT , RX_p_data and Rd_data
    input wire [ Data_width - 1 : 0 ] ALU_OUT_isolated,
    input wire [ Data_width - 1 : 0 ] RX_p_data_isolated,
    input wire [ Data_width - 1 : 0 ] Rd_data_isolated,
 */
 
 //FSM encoding
-    localparam Idle = 4'0000;
-    localparam Receive_Command = 4'0001;
-    localparam Register_file_address = 4'0010;
-    localparam Register_file_data = 4'0011;
-    localparam Read_operation = 4'0100;
-    localparam Write_operation = 4'0101;
-    localparam ALU_operand_A = 4'0110;
-    localparam ALU_operand_B = 4'0111;
-    localparam ALU_OP_code = 4'1000;
-    localparam ALU_operation = 4'1001;
-    localparam Send_data_TX = 4'1010;
+    localparam Idle = 4'b0000;
+    localparam Receive_Command = 4'b0001;
+    localparam Register_file_address = 4'b0010;
+    localparam Register_file_data = 4'b0011;
+    localparam Read_operation = 4'b0100;
+    localparam Write_operation = 4'b0101;
+    localparam ALU_operand_A = 4'b0110;
+    localparam ALU_operand_B = 4'b0111;
+    localparam ALU_OP_code = 4'b1000;
+    localparam ALU_operation = 4'b1001;
+    localparam Send_data_TX = 4'b1010;
 
 //Declaring internal registers to store the current and next state 
     reg [ 3 : 0 ] Current_state; 
@@ -52,8 +52,10 @@ module SYS_CNTRL
 
 //Declaring internal registers to store the command , data to be written , ALU op code , data to be sent to the tx  and address
     reg [ 7 : 0 ] command;
+    /*
     reg [ Data_width - 1 : 0 ] A;
     reg [ Data_width - 1 : 0 ] B;
+    */
     reg [ 3 : 0 ] ALU_fun;
     reg [ Address_width - 1 : 0 ] RF_Address;
     reg [ Data_width - 1 : 0 ] RF_Data;
@@ -100,7 +102,7 @@ always@( * )
                     begin
                         if( command == 8'hAA )
                             Next_state = Register_file_data;
-                        else if( command == 8'BB )
+                        else if( command == 8'hBB )
                             Next_state = Read_operation;
                         else
                             Next_state = Idle;
@@ -197,20 +199,22 @@ always@( * )
 
             Receive_Command:
                 begin    
+                    /*
                     if( RX_d_valid )
-                        command = RX_P_data;                     
+                        command = RX_p_data;  
+                    */                   
                 end
 
             Register_file_address:
                 begin
                     if( RX_d_valid )
-                        RF_Address = RX_P_data; 
+                        RF_Address = RX_p_data [ Address_width - 1 : 0 ]; 
                 end
 
             Register_file_data:
                 begin
                     if( RX_d_valid )
-                        RF_Data = RX_P_data; 
+                        RF_Data = RX_p_data; 
 
                 end
 
@@ -230,8 +234,8 @@ always@( * )
                     if( RX_d_valid )
                         begin
                             WrEN = 1;
-                            Address = 'h00;
-                            WrData = RX_P_data;  
+                            Address = 'd0;
+                            WrData = RX_p_data;  
                         end
                 end
 
@@ -240,21 +244,22 @@ always@( * )
                     if( RX_d_valid )
                         begin
                             WrEN = 1;
-                            Address = 'h01;
-                            WrData = RX_P_data;  
+                            Address = 'd1;
+                            WrData = RX_p_data;  
                         end
                 end
 
             ALU_OP_code:
                 begin
                     if( RX_d_valid )
-                    ALU_fun = RX_P_data; 
+                    ALU_fun = RX_p_data[ 3 : 0 ]; 
                 end
 
             ALU_operation:
                 begin
                     CLK_EN = 1;
                     ALU_EN = 1;
+                    ALU_FUN = ALU_fun;
                 end
                 
             Send_data_TX:
@@ -270,24 +275,73 @@ always@( * )
             endcase
     end
 
-//Registering     
-/*
-always@( posedge CLK or negedge RST )
+
+always@(  posedge CLK  or negedge RST  )
     begin
         if( !RST )
             begin
-                   input wire [ Data_width - 1 : 0 ] ALU_OUT_isolated,
-   input wire [ Data_width - 1 : 0 ] RX_p_data_isolated,
-   input wire [ Data_width - 1 : 0 ] Rd_data_isolated,
-       reg [ 7 : 0 ] command;
-    reg [ Data_width - 1 : 0 ] A;
-    reg [ Data_width - 1 : 0 ] B;
-    reg [ 3 : 0 ] ALU_fun;
-    reg [ Address_width - 1 : 0 ] RF_Address;
-    reg [ Data_width - 1 : 0 ] RF_Data;
-   
+                RF_Address <= 0;
+                RF_Data <= 0;
+                ALU_fun <= 0;
+                TX_data <= 0;
+                command <= 0;
             end
-        else 
+        else
+            begin
+                case( Current_state )  
+                        Receive_Command: 
+                             begin
+                                if( RX_d_valid )
+                                    command <= RX_p_data;                           
+                            end                       
+                        Register_file_address:
+                            begin
+                                if( RX_d_valid )
+                                    begin
+                                        RF_Address <= RX_p_data[ Address_width - 1 : 0 ];
+                                        RF_Data <= 0;  
+                                    end                              
+                            end                        
+                        Register_file_data:
+                            begin
+                                if( RX_d_valid )
+                                    begin
+                                        RF_Address <= 0;
+                                        RF_Data <= RX_p_data;  
+                                    end                               
+                            end                        
+                        Read_operation:
+                            begin
+                                TX_data <= Rd_data;                 
+                            end                        
+                        Write_operation:
+                            begin
+
+                            end                        
+
+                        ALU_OP_code:
+                            begin
+                                if( RX_d_valid )
+                                    begin
+                                        RF_Address <= 0;
+                                        RF_Data <= 0;
+                                        ALU_fun <= RX_p_data; 
+
+                                    end                             
+                            end                        
+                        ALU_operation:
+                            begin
+                                if( OUT_VALID )
+                                    begin
+                                        TX_data <= ALU_OUT;
+                                    end                              
+                            end                        
+                        default: 
+                            begin
+                              
+                            end                        
+                                  
+                endcase       
+            end
     end
-    */
 endmodule 
