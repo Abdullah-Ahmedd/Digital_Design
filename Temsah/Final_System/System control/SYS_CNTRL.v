@@ -71,7 +71,8 @@ always@(  posedge CLK  or  negedge RST  )
             begin
                 Current_state <= Idle;
             end
-                Current_state <= Next_state;
+        else        
+        Current_state <= Next_state;
     end
 //Next state logic
 always@( * )
@@ -92,7 +93,7 @@ always@( * )
                 8'hBB: Next_state = Register_file_address;
                 8'hCC: Next_state = ALU_operand_A;
                 8'hDD: Next_state = ALU_OP_code;
-                default: Next_state = Idle;
+                default: Next_state = Current_state;
                 endcase              
             end
 
@@ -179,10 +180,10 @@ always@( * )
     begin
 //Default values
     ALU_EN = 0;
-    ALU_FUN = 4'b1000;
+    //ALU_FUN = 4'b1000;
     CLK_EN = 0;
-    WrEN = 0;
-    RdEN = 0;
+   // WrEN = 0;
+   // RdEN = 0;
     TX_p_data = 0;
     TX_d_valid = 0;
 
@@ -199,10 +200,10 @@ always@( * )
 
             Receive_Command:
                 begin    
-                    /*
+                    
                     if( RX_d_valid )
                         command = RX_p_data;  
-                    */                   
+                                      
                 end
 
             Register_file_address:
@@ -218,22 +219,22 @@ always@( * )
 
                 end
 
-            Read_operation:
-                begin
-                    RdEN = 1;
-                end
+          //  Read_operation:
+               // begin
+               //     RdEN = 1;
+             //   end
 
-            Write_operation:
-                begin
-                    WrEN = 1;
-                    WrData = RF_Data; 
-                end
+           // Write_operation:
+             //   begin
+               //     WrEN = 1;
+              //      WrData = RF_Data; 
+                //end
 
             ALU_operand_A:
                 begin
                     if( RX_d_valid )
                         begin
-                            WrEN = 1;
+                            //WrEN = 1;
                             Address = 'd0;
                             WrData = RX_p_data;  
                         end
@@ -243,7 +244,7 @@ always@( * )
                 begin
                     if( RX_d_valid )
                         begin
-                            WrEN = 1;
+                            //WrEN = 1;
                             Address = 'd1;
                             WrData = RX_p_data;  
                         end
@@ -265,8 +266,10 @@ always@( * )
             Send_data_TX:
                 begin
                     if( !FIFO_full ) 
+                        begin
                         TX_p_data = TX_data;
                         TX_d_valid = 1; 
+                        end
                 end
             default:
                 begin
@@ -285,14 +288,19 @@ always@(  posedge CLK  or negedge RST  )
                 ALU_fun <= 0;
                 TX_data <= 0;
                 command <= 0;
+                RdEN <=0;
+                WrEN <=0;
             end
         else
             begin
+                //Default values
+                RdEN<=0;
+                WrEN<=0;
                 case( Current_state )  
                         Receive_Command: 
                              begin
-                                if( RX_d_valid )
-                                    command <= RX_p_data;                           
+                               // if( RX_d_valid )
+                                  //  command <= RX_p_data;                           
                             end                       
                         Register_file_address:
                             begin
@@ -306,27 +314,25 @@ always@(  posedge CLK  or negedge RST  )
                             begin
                                 if( RX_d_valid )
                                     begin
-                                        RF_Address <= 0;
                                         RF_Data <= RX_p_data;  
                                     end                               
                             end                        
                         Read_operation:
                             begin
+                                RdEN <=1;
+                               // if(RdData_valid) ///////////////////////////////////////
                                 TX_data <= Rd_data;                 
                             end                        
                         Write_operation:
                             begin
-
+                                WrEN <=1;
                             end                        
 
                         ALU_OP_code:
                             begin
                                 if( RX_d_valid )
                                     begin
-                                        RF_Address <= 0;
-                                        RF_Data <= 0;
                                         ALU_fun <= RX_p_data; 
-
                                     end                             
                             end                        
                         ALU_operation:
