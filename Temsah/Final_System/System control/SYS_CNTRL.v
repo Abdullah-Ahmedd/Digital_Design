@@ -26,12 +26,6 @@ module SYS_CNTRL
     output wire clk_div_en
 
 );
-/*
-//Isolating ALU_OUT , RX_p_data and Rd_data
-   input wire [ Data_width - 1 : 0 ] ALU_OUT_isolated,
-   input wire [ Data_width - 1 : 0 ] RX_p_data_isolated,
-   input wire [ Data_width - 1 : 0 ] Rd_data_isolated,
-*/
 
 //FSM encoding
     localparam Idle = 4'b0000;
@@ -52,10 +46,6 @@ module SYS_CNTRL
 
 //Declaring internal registers to store the command , data to be written , ALU op code , data to be sent to the tx  and address
     reg [ 7 : 0 ] command;
-    /*
-    reg [ Data_width - 1 : 0 ] A;
-    reg [ Data_width - 1 : 0 ] B;
-    */
     reg [ 3 : 0 ] ALU_fun;
     reg [ Address_width - 1 : 0 ] RF_Address;
     reg [ Data_width - 1 : 0 ] RF_Data;
@@ -180,10 +170,7 @@ always@( * )
     begin
 //Default values
     ALU_EN = 0;
-    //ALU_FUN = 4'b1000;
     CLK_EN = 0;
-   // WrEN = 0;
-   // RdEN = 0;
     TX_p_data = 0;
     TX_d_valid = 0;
 
@@ -219,16 +206,18 @@ always@( * )
 
                 end
 
-          //  Read_operation:
-               // begin
-               //     RdEN = 1;
-             //   end
+            /*
+            Read_operation:
+                begin
+                    RdEN = 1;
+                end
 
-           // Write_operation:
-             //   begin
-               //     WrEN = 1;
-              //      WrData = RF_Data; 
-                //end
+            Write_operation:
+                begin
+                    WrEN = 1;
+                    WrData = RF_Data; 
+            end
+            */
 
             ALU_operand_A:
                 begin
@@ -320,7 +309,6 @@ always@(  posedge CLK  or negedge RST  )
                         Read_operation:
                             begin
                                 RdEN <=1;
-                               // if(RdData_valid) ///////////////////////////////////////
                                 TX_data <= Rd_data;                 
                             end                        
                         Write_operation:
