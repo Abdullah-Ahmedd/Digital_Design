@@ -5,7 +5,7 @@
 `include "Decoder.v"
 `include "MUX.v"
 module ALU
-#( parameter Input_data_width ='d8 , parameter Output_data_width ='d16  )
+#( parameter Input_data_width ='d8 , parameter Output_data_width ='d8  )
 (
 
 //Declaring inputs

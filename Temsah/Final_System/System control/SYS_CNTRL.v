@@ -1,5 +1,5 @@
 module SYS_CNTRL 
-#( parameter Input_data_width = 'd8 , parameter Output_data_width = 'd16 , parameter Address_width = 'd4 )
+#( parameter Input_data_width = 'd8 , parameter Output_data_width = 'd8 , parameter Address_width = 'd4 )
 (
 
 //Declaring ingputs
@@ -26,10 +26,12 @@ module SYS_CNTRL
     output reg clk_div_en,
 
 );
+/*
 //Isolating ALU_OUT , RX_P_data and Rd_data
    input wire [ Data_width - 1 : 0 ] ALU_OUT_isolated,
    input wire [ Data_width - 1 : 0 ] RX_p_data_isolated,
    input wire [ Data_width - 1 : 0 ] Rd_data_isolated,
+*/
 
 //FSM encoding
     localparam Idle = 4'0000;
@@ -48,12 +50,14 @@ module SYS_CNTRL
     reg [ 3 : 0 ] Current_state; 
     reg [ 3 : 0 ] Next_state;
 
-//Declaring internal registers to store the command , data to be written  , address
+//Declaring internal registers to store the command , data to be written , ALU op code , data to be sent to the tx  and address
     reg [ 7 : 0 ] command;
     reg [ Data_width - 1 : 0 ] A;
     reg [ Data_width - 1 : 0 ] B;
+    reg [ 3 : 0 ] ALU_fun;
     reg [ Address_width - 1 : 0 ] RF_Address;
     reg [ Data_width - 1 : 0 ] RF_Data;
+    reg [ Data_width - 1 : 0 ] TX_data;
 
 //making the clock divider enable always equal one 
 assign clk_div_en = 1'b1;
@@ -173,60 +177,117 @@ always@( * )
     begin
 //Default values
     ALU_EN = 0;
-    ALU_FUN = 1000;
+    ALU_FUN = 4'b1000;
     CLK_EN = 0;
     WrEN = 0;
     RdEN = 0;
     TX_p_data = 0;
     TX_d_valid = 0;
+
     Address = RF_Address ;
     WrData = RF_Data ;
+    ALU_FUN = ALU_fun;
+    
     
             case( Current_state )
             Idle:
                 begin
+
                 end
 
             Receive_Command:
-                begin              
+                begin    
+                    if( RX_d_valid )
+                        command = RX_P_data;                     
                 end
 
             Register_file_address:
                 begin
+                    if( RX_d_valid )
+                        RF_Address = RX_P_data; 
                 end
 
             Register_file_data:
                 begin
+                    if( RX_d_valid )
+                        RF_Data = RX_P_data; 
+
                 end
 
             Read_operation:
                 begin
+                    RdEN = 1;
                 end
 
             Write_operation:
                 begin
+                    WrEN = 1;
+                    WrData = RF_Data; 
                 end
 
             ALU_operand_A:
                 begin
+                    if( RX_d_valid )
+                        begin
+                            WrEN = 1;
+                            Address = 'h00;
+                            WrData = RX_P_data;  
+                        end
                 end
 
             ALU_operand_B:
                 begin
+                    if( RX_d_valid )
+                        begin
+                            WrEN = 1;
+                            Address = 'h01;
+                            WrData = RX_P_data;  
+                        end
                 end
 
             ALU_OP_code:
                 begin
+                    if( RX_d_valid )
+                    ALU_fun = RX_P_data; 
                 end
 
             ALU_operation:
                 begin
+                    CLK_EN = 1;
+                    ALU_EN = 1;
                 end
                 
             Send_data_TX:
                 begin
+                    if( !FIFO_full ) 
+                        TX_p_data = TX_data;
+                        TX_d_valid = 1; 
                 end
+            default:
+                begin
+
+                end    
             endcase
     end
 
+//Registering     
+/*
+always@( posedge CLK or negedge RST )
+    begin
+        if( !RST )
+            begin
+                   input wire [ Data_width - 1 : 0 ] ALU_OUT_isolated,
+   input wire [ Data_width - 1 : 0 ] RX_p_data_isolated,
+   input wire [ Data_width - 1 : 0 ] Rd_data_isolated,
+       reg [ 7 : 0 ] command;
+    reg [ Data_width - 1 : 0 ] A;
+    reg [ Data_width - 1 : 0 ] B;
+    reg [ 3 : 0 ] ALU_fun;
+    reg [ Address_width - 1 : 0 ] RF_Address;
+    reg [ Data_width - 1 : 0 ] RF_Data;
+   
+            end
+        else 
+    end
+    */
 endmodule 
