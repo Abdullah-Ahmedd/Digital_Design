@@ -44,9 +44,9 @@ module SYS_CNTRL
     reg [ 3 : 0 ] Current_state; 
     reg [ 3 : 0 ] Next_state;
 
-//Declaring internal registers to store the command , data to be written , ALU op code , data to be sent to the tx  and address
+//Declaring internal registers to store the command and a register to avoid latches , data to be written  , data to be sent to the tx  and address
     reg [ 7 : 0 ] command;
-   // reg [ 3 : 0 ] ALU_fun;
+    reg [ 7 : 0 ] command_reg; 
     reg [ Address_width - 1 : 0 ] RF_Address;
     reg [ Data_width - 1 : 0 ] RF_Data;
     reg [ Data_width - 1 : 0 ] TX_data;
@@ -177,8 +177,8 @@ always@( * )
     CLK_EN = 0;
     TX_p_data = 0;
     TX_d_valid = 0;
-    command = command;
-    WrData =WrData;
+   // command = command;
+   // WrData = WrData;
 
     //Address = RF_Address ;
    // ALU_FUN = ALU_fun;
@@ -189,30 +189,37 @@ always@( * )
             Idle:
                 begin
                         WrData = RF_Data;
+                        command = 0;
                 end
 
             Receive_Command:
                 begin    
-                    
+                    /*
                     if( RX_d_valid )
+                        begin
                         command = RX_p_data;
-                        WrData = RF_Data;  
+                        WrData = RF_Data;
+                     end
+                     */
+                          command = RX_p_data;
+                          WrData = RF_Data;
                                       
                 end
 
             Register_file_address:
                 begin
-                    if( RX_d_valid )
+                    //if( RX_d_valid )
                        // RF_Address = RX_p_data [ Address_width - 1 : 0 ]; 
                         WrData = RF_Data;
+                        command=command_reg;
                 end
 
             Register_file_data:
                 begin
-                    if( RX_d_valid )
+                    //if( RX_d_valid )
                        // RF_Data = RX_p_data;
                         WrData = RF_Data; 
-
+                         command=command_reg;
                 end
 
             
@@ -220,42 +227,55 @@ always@( * )
                 begin
                     //RdEN = 1;
                     WrData = RF_Data;
+                     command=command_reg;
                 end
 
             Write_operation:
                 begin
                    // WrEN = 1;
                     WrData = RF_Data; 
+                     command=command_reg;
             end
             
 
             ALU_operand_A:
                 begin
+                    /*
                     if( RX_d_valid )
                         begin
                            // WrEN = 1; //if you found operand B not read correclty uncomment this and comment the one in the sequential always block 
                             //Address = 'd0;
                            // RF_Address = 'd0;
-                            WrData = RX_p_data;  
+                            WrData = RX_p_data; 
+                            command=command_reg; 
                         end
+                        */
+                         command=command_reg;
+                          WrData = RX_p_data; 
                 end
 
             ALU_operand_B:
                 begin
+                    /*
                     if( RX_d_valid )
                         begin
                             //WrEN = 1;
                             //Address = 'd1;
                            // RF_Address = 'd1;
-                            WrData = RX_p_data;  
+                            WrData = RX_p_data; 
+                            command=command_reg; 
                         end
+                        */
+                        command=command_reg;
+                        WrData = RX_p_data;
                 end
 
             ALU_OP_code:
                 begin
-                    if( RX_d_valid )
+                    //if( RX_d_valid )
                     //ALU_fun = RX_p_data[ 3 : 0 ]; 
                     WrData = RX_p_data;
+                     command=command_reg;
                 end
 
             ALU_operation:
@@ -264,6 +284,7 @@ always@( * )
                     ALU_EN = 1;
                    // ALU_FUN = ALU_fun;
                     WrData = RX_p_data;
+                     command=command_reg;
                 end
                 
             Send_data_TX:
@@ -273,11 +294,15 @@ always@( * )
                         TX_p_data = TX_data;
                         TX_d_valid = 1; 
                         WrData = RX_p_data;
+                        command=command_reg;
                         end
+                        command=command_reg;
+                        WrData = RX_p_data;
                 end
             default:
                 begin
                     WrData = RF_Data;
+                     command=command_reg;
                     
                 end    
             endcase
@@ -305,8 +330,8 @@ always@(  posedge CLK  or negedge RST  )
                 case( Current_state )  
                         Receive_Command: 
                              begin
-                               // if( RX_d_valid )
-                                  //  command <= RX_p_data; 
+                                //if( RX_d_valid )
+                                    command_reg <= RX_p_data; 
 
                             end                       
                         Register_file_address:
