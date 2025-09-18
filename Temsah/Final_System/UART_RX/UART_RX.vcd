@@ -1,5 +1,5 @@
 $date
-	Tue Sep 16 18:59:53 2025
+	Thu Sep 18 16:16:09 2025
 $end
 $version
 	Icarus Verilog
@@ -8,8 +8,8 @@ $timescale
 	1ns
 $end
 $scope module UART_RX_tb $end
-$var wire 1 ! data_valid_tb $end
-$var wire 8 " P_DATA_tb [7:0] $end
+$var wire 1 ! RX_data_valid_tb $end
+$var wire 8 " RX_P_DATA_tb [7:0] $end
 $var parameter 32 # Data_width $end
 $var reg 1 $ CLK_tb $end
 $var reg 1 % PAR_EN_tb $end
@@ -40,10 +40,10 @@ $var wire 1 7 parity_checker_enable_internal $end
 $var wire 1 8 enable_internal $end
 $var wire 6 9 edge_cnt_counter_internal [5:0] $end
 $var wire 1 : deserializer_enable_internal $end
-$var wire 1 ! data_valid $end
 $var wire 1 ; data_sample_enable_internal $end
 $var wire 4 < bit_cnt_internal [3:0] $end
-$var wire 8 = P_DATA [7:0] $end
+$var wire 1 ! RX_data_valid $end
+$var wire 8 = RX_P_DATA [7:0] $end
 $var parameter 32 > Data_width $end
 $scope module FSM1 $end
 $var wire 1 $ CLK $end

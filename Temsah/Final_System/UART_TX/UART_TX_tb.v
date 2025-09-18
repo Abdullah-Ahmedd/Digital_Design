@@ -6,8 +6,8 @@ parameter Data_width = 8;
 //Declaring the clock period
 parameter clock_period=10;
 //Declaring the testbench signals 
-reg [ 7 : 0 ] P_DATA_tb;
-reg Data_valid_tb;
+reg [ 7 : 0 ] TX_P_DATA_tb;
+reg TX_Data_valid_tb;
 reg PAR_EN_tb;
 reg PAR_TYP_tb;
 reg CLK_tb;
@@ -92,8 +92,8 @@ initial
 task initialization();
     begin
     RST_tb=0;
-    P_DATA_tb=8'b0;
-    Data_valid_tb=0;
+    TX_P_DATA_tb=8'b0;
+    TX_Data_valid_tb=0;
     PAR_EN_tb=0;
     PAR_TYP_tb=0;
     reset();
@@ -112,12 +112,12 @@ endtask
 task do_operation (input [ Data_width - 1 : 0 ] data  , input parity_enable , input parity_type );
     begin
         @( posedge CLK_tb )
-        P_DATA_tb = data;
-        Data_valid_tb = 1'b1;
+        TX_P_DATA_tb = data;
+        TX_Data_valid_tb = 1'b1;
         PAR_EN_tb =parity_enable;
         PAR_TYP_tb=parity_type;
         @( posedge CLK_tb )
-        Data_valid_tb=1'b0;
+        TX_Data_valid_tb=1'b0;
     end
 endtask
 
@@ -156,7 +156,7 @@ endtask
 task parity_checker( output valid );
 reg expected_parity;
 begin
-    expected_parity = ^ P_DATA_tb;
+    expected_parity = ^ TX_P_DATA_tb;
     if( PAR_TYP_tb ) //odd parity
         if(  TX_OUT_tb == ~ expected_parity )
             valid=1;
@@ -175,8 +175,8 @@ UART_TX
 #( .Data_width ( Data_width ) )
 DUT
 (
-.P_DATA( P_DATA_tb ),
-.Data_valid( Data_valid_tb ),
+.TX_P_DATA( TX_P_DATA_tb ),
+.TX_Data_valid( TX_Data_valid_tb ),
 .PAR_EN( PAR_EN_tb ),
 .PAR_TYP( PAR_TYP_tb ),
 .CLK( CLK_tb ),

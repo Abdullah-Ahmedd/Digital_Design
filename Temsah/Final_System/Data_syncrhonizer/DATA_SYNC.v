@@ -4,8 +4,8 @@ module DATA_SYNC
 //Declaring inputs
     input wire [ BUS_WIDTH - 1 : 0 ] unsync_bus,
     input wire bus_enable,
-    input wire CLK,
-    input wire RST,
+    input wire CLK, //Destination clock 
+    input wire RST, //Destination reset
 //Declaring outputs
     output reg [ BUS_WIDTH - 1 : 0 ] sync_bus,
     output reg enable_pulse

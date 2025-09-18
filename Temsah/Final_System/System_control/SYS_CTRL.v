@@ -1,4 +1,4 @@
-module SYS_CNTRL 
+module SYS_CTRL 
 #( parameter Data_width = 'd8 , parameter Address_width = 'd4 )
 (
 

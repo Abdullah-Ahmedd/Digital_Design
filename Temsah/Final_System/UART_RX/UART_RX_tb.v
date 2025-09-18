@@ -26,8 +26,8 @@ parameter Data_width = 8;
     reg [ 5 : 0 ]prescale_tb;
     reg  PAR_EN_tb;
     reg PAR_TYP_tb;
-    wire [ Data_width - 1 : 0 ]P_DATA_tb;
-    wire data_valid_tb;
+    wire [ Data_width - 1 : 0 ]RX_P_DATA_tb;
+    wire RX_data_valid_tb;
 
 //Declaring the loop parameters
 integer i;
@@ -202,12 +202,12 @@ endtask
 
 task check_output (input [ Data_width - 1 : 0 ] data , input parity_enable , input parity_bit );
     begin
-        if( P_DATA_tb == data )
+        if( RX_P_DATA_tb == data )
             begin
                 $display("The data is received correctly");
             end
         else
-                $display("The received data is %0h ,while the expected data to be received is %0h " , data ,P_DATA_tb ); 
+                $display("The received data is %0h ,while the expected data to be received is %0h " , data ,RX_P_DATA_tb ); 
     end
 endtask
 
@@ -223,8 +223,8 @@ UART1
 .prescale( prescale_tb ),
 .PAR_EN( PAR_EN_tb ),
 .PAR_TYP( PAR_TYP_tb ),
-.P_DATA( P_DATA_tb ),
-.data_valid( data_valid_tb )
+.RX_P_DATA( RX_P_DATA_tb ),
+.RX_data_valid( RX_data_valid_tb )
 );
 
 

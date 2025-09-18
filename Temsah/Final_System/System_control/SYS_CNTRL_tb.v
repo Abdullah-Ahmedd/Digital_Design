@@ -1,5 +1,5 @@
 `timescale 1ns/1ps
-`include "SYS_CNTRL.v"
+`include "SYS_CTRL.v"
 
 module SYS_CTRL_TB();
 
@@ -37,7 +37,7 @@ module SYS_CTRL_TB();
     integer fail_count = 0;
 
     // DUT
-    SYS_CNTRL #(
+    SYS_CTRL #(
         .Data_width(Data_width),
         .Address_width(Address_width)
     ) DUT (

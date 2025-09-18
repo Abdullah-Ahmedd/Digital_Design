@@ -6,8 +6,8 @@ module UART_TX
 #( parameter Data_width = 8 )
 (
 //Declaring inputs    
-    input wire [ Data_width - 1 : 0 ] P_DATA,
-    input wire Data_valid,
+    input wire [ Data_width - 1 : 0 ] TX_P_DATA,
+    input wire TX_Data_valid,
     input wire PAR_EN,
     input wire PAR_TYP,
     input wire CLK,
@@ -30,7 +30,7 @@ module UART_TX
     #( .Data_width ( Data_width ) )
     S1 
     (
-    .P_DATA( P_DATA ),
+    .P_DATA( TX_P_DATA ),
     .ser_en( ser_en_internal ),
     //.Data_valid(Data_valid_tb),
     .CLK( CLK ),
@@ -42,7 +42,7 @@ module UART_TX
     #( .Data_width ( Data_width ) )
     P1
     (
-    .P_DATA( P_DATA ),
+    .P_DATA( TX_P_DATA ),
     //.Data_valid( Data_valid ),
     .PAR_TYP( PAR_TYP ),
     .par_bit( par_bit_internal )
@@ -50,7 +50,7 @@ module UART_TX
     );
     FSM FSM1
     (
-    .Data_valid( Data_valid ),
+    .Data_valid( TX_Data_valid ),
     .PAR_EN( PAR_EN ),
     .ser_done( ser_done_internal ),
     .CLK( CLK ),

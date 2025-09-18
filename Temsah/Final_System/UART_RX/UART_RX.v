@@ -17,8 +17,8 @@ module UART_RX
     input wire PAR_EN,
     input wire PAR_TYP,
 //Declaring outputs
-    output wire [ Data_width - 1 : 0 ] P_DATA,
-    output wire data_valid
+    output wire [ Data_width - 1 : 0 ] RX_P_DATA,
+    output wire RX_data_valid
 );
 //Declaring internal signals
     wire reset_counters_internal;
@@ -67,7 +67,7 @@ d
 .sampled_bit( sampled_bit_internal ),
 .deserializer_enable( deserializer_enable_internal ),
 .bit_cnt( bit_cnt_internal ),
-.P_DATA( P_DATA )
+.P_DATA( RX_P_DATA )
 );
 
 parity_checker
@@ -118,7 +118,7 @@ FSM1
 .data_sample_enable( data_sample_enable_internal ),
 .enable( enable_internal ),
 .deserializer_enable( deserializer_enable_internal ),
-.data_valid(data_valid),
+.data_valid(RX_data_valid),
 .stop_checker_enable( stop_checker_enable_internal ),
 .start_checker_enable( start_checker_enable_internal ),
 .parity_checker_enable( parity_checker_enable_internal ),
