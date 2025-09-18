@@ -1,4 +1,4 @@
-module FSM
+module UART_TX_FSM
 (
 //Declaring inputs
     input wire Data_valid,

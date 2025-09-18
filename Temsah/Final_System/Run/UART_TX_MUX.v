@@ -1,4 +1,4 @@
-module MUX
+module UART_TX_MUX
 (
 input wire [1:0] mux_sel ,
 input wire ser_data,

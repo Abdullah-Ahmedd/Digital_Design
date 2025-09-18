@@ -1,4 +1,4 @@
-module FSM
+module UART_RX_FSM
 #( parameter Data_width = 8 )
 (
 //Declaring inputs

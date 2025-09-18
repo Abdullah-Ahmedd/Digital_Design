@@ -1,0 +1,401 @@
+$date
+	Thu Sep 18 15:28:03 2025
+$end
+$version
+	Icarus Verilog
+$end
+$timescale
+	1ps
+$end
+$scope module SYS_CTRL_TB $end
+$scope module DUT $end
+$var wire 8 ! ALU_OUT [7:0] $end
+$var wire 1 " CLK $end
+$var wire 1 # FIFO_full $end
+$var wire 1 $ OUT_VALID $end
+$var wire 1 % RST $end
+$var wire 1 & RX_d_valid $end
+$var wire 8 ' RX_p_data [7:0] $end
+$var wire 1 ( RdData_valid $end
+$var wire 8 ) Rd_data [7:0] $end
+$var wire 1 * clk_div_en $end
+$var parameter 4 + ALU_OP_code $end
+$var parameter 4 , ALU_operand_A $end
+$var parameter 4 - ALU_operand_B $end
+$var parameter 4 . ALU_operation $end
+$var parameter 32 / Address_width $end
+$var parameter 32 0 Data_width $end
+$var parameter 4 1 Idle $end
+$var parameter 4 2 Read_operation $end
+$var parameter 4 3 Receive_Command $end
+$var parameter 4 4 Register_file_address $end
+$var parameter 4 5 Register_file_data $end
+$var parameter 4 6 Send_data_TX $end
+$var parameter 4 7 Write_operation $end
+$var reg 1 8 ALU_EN $end
+$var reg 4 9 ALU_FUN [3:0] $end
+$var reg 4 : Address [3:0] $end
+$var reg 1 ; CLK_EN $end
+$var reg 4 < Current_state [3:0] $end
+$var reg 4 = Next_state [3:0] $end
+$var reg 4 > RF_Address [3:0] $end
+$var reg 8 ? RF_Data [7:0] $end
+$var reg 1 @ RdEN $end
+$var reg 1 A TX_d_valid $end
+$var reg 8 B TX_data [7:0] $end
+$var reg 8 C TX_p_data [7:0] $end
+$var reg 8 D WrData [7:0] $end
+$var reg 1 E WrEN $end
+$var reg 8 F command [7:0] $end
+$var reg 8 G command_reg [7:0] $end
+$upscope $end
+$upscope $end
+$enddefinitions $end
+$comment Show the parameter values. $end
+$dumpall
+b101 7
+b1010 6
+b11 5
+b10 4
+b1 3
+b100 2
+b0 1
+b1000 0
+b100 /
+b1001 .
+b111 -
+b110 ,
+b1000 +
+$end
+#0
+$dumpvars
+bx G
+b0 F
+0E
+bx D
+b0 C
+b0 B
+0A
+0@
+bx ?
+b0 >
+b0 =
+b0 <
+0;
+b0 :
+b0 9
+08
+1*
+b0 )
+0(
+b0 '
+0&
+0%
+0$
+0#
+0"
+b0 !
+$end
+#10000
+1"
+#20000
+0"
+#30000
+1"
+#40000
+0"
+1%
+#50000
+1"
+#60000
+b1 =
+1&
+b10101010 '
+0"
+#70000
+b10 =
+b10101010 F
+b1 <
+1"
+#80000
+0&
+0"
+#90000
+b10101010 G
+b10 <
+1"
+#100000
+b11 =
+1&
+b101 '
+0"
+#110000
+b101 =
+b11 <
+b101 :
+b101 >
+1"
+#120000
+b11 =
+0&
+0"
+#130000
+1"
+#140000
+b101 =
+1&
+b10101011 '
+0"
+#150000
+b1010 =
+b10101011 D
+b101 <
+b10101011 ?
+1"
+#160000
+0&
+0"
+#170000
+1A
+b0 =
+1E
+b1010 <
+1"
+#180000
+0"
+#190000
+b0 F
+0A
+b0 <
+0E
+1"
+#200000
+b1 =
+1&
+b10111011 '
+0"
+#210000
+b10 =
+b10111011 F
+b1 <
+1"
+#220000
+0&
+0"
+#230000
+b10 <
+b10111011 G
+1"
+#240000
+b100 =
+1&
+b101 '
+0"
+#250000
+b100 <
+1"
+#260000
+0&
+0"
+#270000
+1@
+1"
+#280000
+0"
+#290000
+b10101011 B
+1@
+b1010 =
+1(
+b10101011 )
+1"
+#300000
+0"
+#310000
+b101 D
+1A
+b10101011 C
+b1010 <
+1@
+b0 =
+0(
+1"
+#320000
+0"
+#330000
+b0 F
+b10101011 D
+0A
+b0 C
+0@
+b0 <
+1"
+#340000
+b1 =
+1&
+b11001100 '
+0"
+#350000
+b110 =
+b11001100 F
+b1 <
+1"
+#360000
+0&
+0"
+#370000
+b11001100 D
+b11001100 G
+b110 <
+1"
+#380000
+b111 =
+b10000 D
+1&
+b10000 '
+0"
+#390000
+b1000 =
+b111 <
+b0 :
+b0 >
+1E
+1"
+#400000
+b111 =
+0&
+0"
+#410000
+b1 :
+b1 >
+1E
+1"
+#420000
+b1000 =
+b100101 D
+1&
+b100101 '
+0"
+#430000
+b1001 =
+b1000 <
+1E
+1"
+#440000
+b1000 =
+0&
+0"
+#450000
+0E
+1"
+#460000
+b1001 =
+b0 D
+1&
+b0 '
+0"
+#470000
+18
+1;
+b1001 <
+1"
+#480000
+0&
+0"
+#490000
+1"
+#500000
+0"
+#510000
+1;
+18
+b110101 B
+b1010 =
+1$
+b110101 !
+1"
+#520000
+0"
+#530000
+1A
+b110101 C
+0;
+08
+b1010 <
+b0 =
+0$
+1"
+#540000
+0"
+#550000
+b0 F
+b10101011 D
+0A
+b0 C
+b0 <
+1"
+#560000
+b1 =
+1&
+b11011101 '
+0"
+#570000
+b1000 =
+b11011101 F
+b1 <
+1"
+#580000
+0&
+0"
+#590000
+b11011101 D
+b1000 <
+b11011101 G
+1"
+#600000
+b1001 =
+b1 D
+1&
+b1 '
+0"
+#610000
+18
+1;
+b1 9
+b1001 <
+1"
+#620000
+0&
+0"
+#630000
+1"
+#640000
+0"
+#650000
+1;
+18
+b1010100 B
+b1010 =
+1$
+b1010100 !
+1"
+#660000
+0"
+#670000
+1A
+b1010100 C
+0;
+08
+b1010 <
+b0 =
+0$
+1"
+#680000
+0"
+#690000
+b0 F
+b10101011 D
+0A
+b0 C
+b0 <
+1"

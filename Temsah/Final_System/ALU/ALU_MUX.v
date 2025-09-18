@@ -1,8 +1,8 @@
-module MUX
+module ALU_MUX
 #( parameter Output_data_width ='d8 )
 (
 //Declaring inputs
-    input wire signed [ Output_data_width - 1 : 0 ] In0,
+    input wire   [ Output_data_width - 1 : 0 ] In0,
     input wire   [ Output_data_width - 1 : 0 ] In1,
     input wire   [ Output_data_width - 1 : 0 ] In2,
     input wire   [ Output_data_width - 1 : 0 ] In3,

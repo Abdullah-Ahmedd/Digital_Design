@@ -1,15 +1,16 @@
-`include "../Reset_syncrhonizer.RST_SYNC.v"
-`include "../Clock_divider.ClkDiv.v"
-`include "../System_control.SYS_CNTRL.v"
-`include "../Data_syncrhonizer.DATA_SYNC.v"
-`include "../UART_RX.UART_RX.v"
-`include "../UART_TX.UART_TX.v"
-`include "../Pulse_generator.PULSE_GEN.v"
-`include "../Asyncrhonous_FIFO.ASYNC_FIFO.v"
-`include "../MUX.MUX.v"
-`include "../Clock_gating.CLK_gate.v"
-`include "../ALU.ALU.v"
-`include "../Register_file.Register_file.v"
+`include "../Reset_syncrhonizer/RST_SYNC.v"
+`include "../Clock_divider/ClkDiv.v"
+`include "../System_control/SYS_CTRL.v"
+`include "../Data_syncrhonizer/DATA_SYNC.v"
+`include "../UART_RX/UART_RX.v"
+`include "../UART_TX/UART_TX.v"
+`include "../Pulse_generator/PULSE_GEN.v"
+`include "../Asyncrhonous_FIFO/ASYNC_FIFO.v"
+`include "../MUX/MUX.v"
+`include "../Clock_gating/CLK_gate.v"
+`include "../ALU/ALU.v"
+`include "../Register_file/Register_file.v"
+
 
 
 module SYS_TOP
@@ -63,6 +64,9 @@ wire Rdata_internal;
 wire RX_clock_div_ratio_internal;
 
 wire ALU_clk_internal;
+
+wire REG0_internal;
+wire REG1_internal'
 
 
 //Reset synchronizer for clock domain 1
@@ -195,7 +199,7 @@ ASYNC_FIFO
 .Rinc( Rinc_internal ),
 .Rrst( SYNC_RST_domain_2 ),
 .Rclk( UART_TX_clk_internal ),
-.Wrdata( WrData_internal ),
+.Wrdata( TX_p_data_inetrnal ),
 .Wfull( Wfull_internal ),
 .Rempty( Rempty_internal ),
 .Rdata( Rdata_internal )
@@ -217,10 +221,36 @@ CLK_gate clock_gating_ALU
 );
 
 //ALU
-
-
+ALU
+#(.Input_data_width ( Data_width ) , .Output_data_width ( DATA_width ) )
+ALU1
+(
+.A( REG0_internal ),
+.B( REG1_internal ),
+.ALU_FUN( ALU_FUN_internal ),
+.CLK( ALU_clk_internal ),
+.RST( SYNC_RST_domain_1 ),
+.ALU_EN( ALU_EN_internal ),
+.ALU_OUT( ALU_OUT_internal ),
+.OUT_VALID( OUT_VALID_internal )
+);
 //Register file
-
+Register_file
+#( .DATA_width ( DATA_width )  , .Address_width ( Address_width ) )
+Regfile
+(
+.WrData(WrData_internal),
+.Address( Address_internal ),
+.WrEn( WrEN_internal ),
+.CLK( Ref_clk ),
+.RST( SYNC_RST_domain_1 ),
+.RdData( Rd_data_internal ),
+.RdData_valid( RdData_valid_internal ),
+.REG0( REG0_internal ),
+.REG1( REG1_internal ),
+.REG2( REG2_internal ),
+.REG3( REG3_internal )
+);
 
 
 endmodule
