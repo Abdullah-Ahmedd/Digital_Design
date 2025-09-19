@@ -1,0 +1,995 @@
+$date
+	Fri Sep 19 01:40:36 2025
+$end
+$version
+	Icarus Verilog
+$end
+$timescale
+	1ps
+$end
+$scope module UART_TX_tb $end
+$var wire 1 ! busy_tb $end
+$var wire 1 " TX_OUT_tb $end
+$var parameter 32 # Data_width $end
+$var parameter 32 $ clock_period $end
+$var reg 1 % CLK_tb $end
+$var reg 1 & PAR_EN_tb $end
+$var reg 1 ' PAR_TYP_tb $end
+$var reg 1 ( RST_tb $end
+$var reg 1 ) TX_Data_valid_tb $end
+$var reg 8 * TX_P_DATA_tb [7:0] $end
+$var integer 32 + i [31:0] $end
+$scope module DUT $end
+$var wire 1 % CLK $end
+$var wire 1 & PAR_EN $end
+$var wire 1 ' PAR_TYP $end
+$var wire 1 ( RST $end
+$var wire 1 ) TX_Data_valid $end
+$var wire 8 , TX_P_DATA [7:0] $end
+$var wire 1 - ser_en_internal $end
+$var wire 1 . ser_done_internal $end
+$var wire 1 / ser_data_internal $end
+$var wire 1 0 par_bit_internal $end
+$var wire 2 1 mux_sel_internal [1:0] $end
+$var wire 1 ! busy $end
+$var wire 1 " TX_OUT $end
+$var parameter 32 2 Data_width $end
+$scope module FSM1 $end
+$var wire 1 % CLK $end
+$var wire 1 ) Data_valid $end
+$var wire 1 & PAR_EN $end
+$var wire 1 ( RST $end
+$var wire 1 . ser_done $end
+$var parameter 5 3 Idle $end
+$var parameter 5 4 Parity_Bit $end
+$var parameter 5 5 Send_data $end
+$var parameter 5 6 Start_bit $end
+$var parameter 5 7 Stop_bit $end
+$var reg 5 8 Current_state [4:0] $end
+$var reg 5 9 Next_state [4:0] $end
+$var reg 1 ! busy $end
+$var reg 2 : mux_sel [1:0] $end
+$var reg 1 - ser_en $end
+$upscope $end
+$scope module M1 $end
+$var wire 2 ; mux_sel [1:0] $end
+$var wire 1 / ser_data $end
+$var wire 1 0 par_bit $end
+$var reg 1 " MUX_OUT $end
+$upscope $end
+$scope module P1 $end
+$var wire 1 ' PAR_TYP $end
+$var wire 8 < P_DATA [7:0] $end
+$var wire 8 = P_DATA_ioslated [7:0] $end
+$var wire 1 > P_flag $end
+$var parameter 32 ? Data_width $end
+$var reg 1 0 par_bit $end
+$upscope $end
+$scope module S1 $end
+$var wire 1 % CLK $end
+$var wire 8 @ P_DATA [7:0] $end
+$var wire 1 ( RST $end
+$var wire 1 - ser_en $end
+$var parameter 32 A Data_width $end
+$var reg 8 B P_DATA_ioslated [7:0] $end
+$var reg 4 C counter [3:0] $end
+$var reg 1 D ready $end
+$var reg 1 / ser_data $end
+$var reg 1 . ser_done $end
+$upscope $end
+$upscope $end
+$scope task check_TX $end
+$var reg 8 E data [7:0] $end
+$var reg 1 F is_parity_ok $end
+$upscope $end
+$scope task do_operation $end
+$var reg 8 G data [7:0] $end
+$var reg 1 H parity_enable $end
+$var reg 1 I parity_type $end
+$upscope $end
+$scope task initialization $end
+$upscope $end
+$scope task parity_checker $end
+$var reg 1 J expected_parity $end
+$var reg 1 K valid $end
+$upscope $end
+$scope task reset $end
+$upscope $end
+$upscope $end
+$enddefinitions $end
+$comment Show the parameter values. $end
+$dumpall
+b1000 A
+b1000 ?
+b10000 7
+b10 6
+b100 5
+b1000 4
+b1 3
+b1000 2
+b1010 $
+b1000 #
+$end
+#0
+$dumpvars
+xK
+xJ
+xI
+xH
+bx G
+xF
+bx E
+0D
+b0 C
+b0 B
+b0 @
+0>
+b0 =
+b0 <
+b1 ;
+b1 :
+b1 9
+b1 8
+b1 1
+00
+0/
+0.
+0-
+b0 ,
+bx +
+b0 *
+0)
+0(
+0'
+0&
+0%
+1"
+0!
+$end
+#5000
+1%
+#10000
+0%
+1(
+#15000
+1%
+#20000
+0I
+0H
+b0 G
+0%
+#25000
+b10 9
+1)
+1%
+#30000
+0%
+#35000
+1-
+b10 8
+b100 9
+0)
+1%
+#40000
+0%
+#45000
+0"
+b10 1
+b10 :
+b10 ;
+1!
+1-
+b100 8
+1D
+1%
+b0 E
+#50000
+0%
+#55000
+b1 C
+1%
+b0 +
+#60000
+0%
+#65000
+b10 C
+1%
+b1 +
+#70000
+0%
+#75000
+b11 C
+1%
+b10 +
+#80000
+0%
+#85000
+b100 C
+1%
+b11 +
+#90000
+0%
+#95000
+b101 C
+1%
+b100 +
+#100000
+0%
+#105000
+b110 C
+1%
+b101 +
+#110000
+0%
+#115000
+b111 C
+1%
+b110 +
+#120000
+0%
+#125000
+b10000 9
+0D
+1.
+b1000 C
+1%
+b111 +
+#130000
+0%
+#135000
+1"
+b1 1
+b1 :
+b1 ;
+1!
+0-
+b1 9
+0.
+1D
+b0 C
+b10000 8
+1%
+b1000 +
+#140000
+0%
+#145000
+0!
+b1 8
+b1 C
+1%
+#150000
+0%
+#155000
+0D
+b0 C
+1%
+0(
+#160000
+0%
+#165000
+1%
+1(
+#170000
+0%
+#175000
+1%
+#180000
+b11111111 G
+0%
+#185000
+b10 9
+1)
+b11111111 =
+b11111111 *
+b11111111 ,
+b11111111 <
+b11111111 @
+1%
+#190000
+0%
+#195000
+1-
+b10 8
+b100 9
+0)
+1%
+#200000
+0%
+#205000
+0"
+b10 1
+b10 :
+b10 ;
+1!
+1-
+b100 8
+1D
+b11111111 B
+1%
+b11111111 E
+#210000
+0%
+#215000
+1"
+b1 C
+b1111111 B
+1/
+1%
+b0 +
+#220000
+0%
+#225000
+b10 C
+b111111 B
+1%
+b1 +
+#230000
+0%
+#235000
+b11 C
+b11111 B
+1%
+b10 +
+#240000
+0%
+#245000
+b100 C
+b1111 B
+1%
+b11 +
+#250000
+0%
+#255000
+b101 C
+b111 B
+1%
+b100 +
+#260000
+0%
+#265000
+b110 C
+b11 B
+1%
+b101 +
+#270000
+0%
+#275000
+b111 C
+b1 B
+1%
+b110 +
+#280000
+0%
+#285000
+b10000 9
+0D
+1.
+b1000 C
+b0 B
+1%
+b111 +
+#290000
+0%
+#295000
+b1 1
+b1 :
+b1 ;
+1!
+0-
+b1 9
+0.
+1D
+b11111111 B
+b0 C
+b10000 8
+1%
+b1000 +
+#300000
+0%
+#305000
+0!
+b1 8
+b1 C
+b1111111 B
+1%
+#310000
+0%
+#315000
+0D
+b0 C
+b0 B
+0/
+1%
+0(
+#320000
+0%
+#325000
+1%
+1(
+#330000
+0%
+#335000
+1%
+#340000
+b1 G
+0%
+#345000
+b10 9
+10
+1)
+1>
+b1 =
+b1 *
+b1 ,
+b1 <
+b1 @
+1%
+#350000
+0%
+#355000
+1-
+b10 8
+b100 9
+0)
+1%
+#360000
+0%
+#365000
+0"
+b10 1
+b10 :
+b10 ;
+1!
+1-
+b100 8
+1D
+b1 B
+1%
+b1 E
+#370000
+0%
+#375000
+1"
+b1 C
+b0 B
+1/
+1%
+b0 +
+#380000
+0%
+#385000
+0"
+b10 C
+0/
+1%
+b1 +
+#390000
+0%
+#395000
+b11 C
+1%
+b10 +
+#400000
+0%
+#405000
+b100 C
+1%
+b11 +
+#410000
+0%
+#415000
+b101 C
+1%
+b100 +
+#420000
+0%
+#425000
+b110 C
+1%
+b101 +
+#430000
+0%
+#435000
+b111 C
+1%
+b110 +
+#440000
+0%
+#445000
+b10000 9
+0D
+1.
+b1000 C
+1%
+b111 +
+#450000
+0%
+#455000
+1"
+b1 1
+b1 :
+b1 ;
+1!
+0-
+b1 9
+0.
+1D
+b1 B
+b0 C
+b10000 8
+1%
+b1000 +
+#460000
+0%
+#465000
+0!
+b1 8
+b1 C
+b0 B
+1/
+1%
+#470000
+0%
+#475000
+0D
+b0 C
+0/
+1%
+0(
+#480000
+0%
+#485000
+1%
+1(
+#490000
+0%
+#495000
+1%
+#500000
+b10101011 G
+0%
+#505000
+b10 9
+1)
+b10101011 =
+b10101011 *
+b10101011 ,
+b10101011 <
+b10101011 @
+1%
+#510000
+0%
+#515000
+1-
+b10 8
+b100 9
+0)
+1%
+#520000
+0%
+#525000
+0"
+b10 1
+b10 :
+b10 ;
+1!
+1-
+b100 8
+1D
+b10101011 B
+1%
+b10101011 E
+#530000
+0%
+#535000
+1"
+b1 C
+b1010101 B
+1/
+1%
+b0 +
+#540000
+0%
+#545000
+b10 C
+b101010 B
+1%
+b1 +
+#550000
+0%
+#555000
+0"
+b11 C
+b10101 B
+0/
+1%
+b10 +
+#560000
+0%
+#565000
+1"
+b100 C
+b1010 B
+1/
+1%
+b11 +
+#570000
+0%
+#575000
+0"
+b101 C
+b101 B
+0/
+1%
+b100 +
+#580000
+0%
+#585000
+1"
+b110 C
+b10 B
+1/
+1%
+b101 +
+#590000
+0%
+#595000
+0"
+b111 C
+b1 B
+0/
+1%
+b110 +
+#600000
+0%
+#605000
+b10000 9
+1"
+0D
+1.
+b1000 C
+b0 B
+1/
+1%
+b111 +
+#610000
+0%
+#615000
+b1 1
+b1 :
+b1 ;
+1!
+0-
+b1 9
+0.
+1D
+b10101011 B
+b0 C
+b10000 8
+1%
+b1000 +
+#620000
+0%
+#625000
+0!
+b1 8
+b1 C
+b1010101 B
+1%
+#630000
+0%
+#635000
+0D
+b0 C
+b0 B
+0/
+1%
+0(
+#640000
+0%
+#645000
+1%
+1(
+#650000
+0%
+#655000
+1%
+#660000
+1H
+b1001000 G
+0%
+#665000
+b10 9
+00
+1&
+1)
+0>
+b1001000 =
+b1001000 *
+b1001000 ,
+b1001000 <
+b1001000 @
+1%
+#670000
+0%
+#675000
+1-
+b10 8
+b100 9
+0)
+1%
+#680000
+0%
+#685000
+0"
+b10 1
+b10 :
+b10 ;
+1!
+1-
+b100 8
+1D
+b1001000 B
+1%
+b1001000 E
+#690000
+0%
+#695000
+b1 C
+b100100 B
+1%
+b0 +
+#700000
+0%
+#705000
+b10 C
+b10010 B
+1%
+b1 +
+#710000
+0%
+#715000
+b11 C
+b1001 B
+1%
+b10 +
+#720000
+0%
+#725000
+1"
+b100 C
+b100 B
+1/
+1%
+b11 +
+#730000
+0%
+#735000
+0"
+b101 C
+b10 B
+0/
+1%
+b100 +
+#740000
+0%
+#745000
+b110 C
+b1 B
+1%
+b101 +
+#750000
+0%
+#755000
+1"
+b111 C
+b0 B
+1/
+1%
+b110 +
+#760000
+0%
+#765000
+b1000 9
+0"
+0D
+1.
+b1000 C
+0/
+1%
+b111 +
+#770000
+0%
+#775000
+b11 1
+b11 :
+b11 ;
+1!
+0-
+b10000 9
+0.
+1D
+b1001000 B
+b0 C
+b1000 8
+1%
+b1000 +
+#780000
+0%
+#785000
+1"
+b1 1
+b1 :
+b1 ;
+1!
+b1 9
+b10000 8
+b1 C
+b100100 B
+1%
+1F
+1K
+0J
+#790000
+0%
+#795000
+0!
+0D
+b0 C
+b0 B
+b1 8
+1%
+0(
+#800000
+0%
+#805000
+1%
+1(
+#810000
+0%
+#815000
+1%
+#820000
+1I
+0%
+#825000
+10
+b10 9
+1'
+1)
+1%
+#830000
+0%
+#835000
+1-
+b10 8
+b100 9
+0)
+1%
+#840000
+0%
+#845000
+0"
+b10 1
+b10 :
+b10 ;
+1!
+1-
+b100 8
+1D
+b1001000 B
+1%
+#850000
+0%
+#855000
+b1 C
+b100100 B
+1%
+b0 +
+#860000
+0%
+#865000
+b10 C
+b10010 B
+1%
+b1 +
+#870000
+0%
+#875000
+b11 C
+b1001 B
+1%
+b10 +
+#880000
+0%
+#885000
+1"
+b100 C
+b100 B
+1/
+1%
+b11 +
+#890000
+0%
+#895000
+0"
+b101 C
+b10 B
+0/
+1%
+b100 +
+#900000
+0%
+#905000
+b110 C
+b1 B
+1%
+b101 +
+#910000
+0%
+#915000
+1"
+b111 C
+b0 B
+1/
+1%
+b110 +
+#920000
+0%
+#925000
+b1000 9
+0"
+0D
+1.
+b1000 C
+0/
+1%
+b111 +
+#930000
+0%
+#935000
+1"
+b11 1
+b11 :
+b11 ;
+1!
+0-
+b10000 9
+0.
+1D
+b1001000 B
+b0 C
+b1000 8
+1%
+b1000 +
+#940000
+0%
+#945000
+b1 1
+b1 :
+b1 ;
+1!
+b1 9
+b10000 8
+b1 C
+b100100 B
+1%
+#950000
+0%
+#955000
+0!
+0D
+b0 C
+b0 B
+b1 8
+1%
+0(
+#960000
+0%
+#965000
+1%
+1(
+#970000
+0%
+#975000
+1%

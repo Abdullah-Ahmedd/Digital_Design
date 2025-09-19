@@ -1,15 +1,15 @@
-`include "../Reset_syncrhonizer/RST_SYNC.v"
-`include "../Clock_divider/ClkDiv.v"
-`include "../System_control/SYS_CTRL.v"
-`include "../Data_syncrhonizer/DATA_SYNC.v"
-`include "../UART_RX/UART_RX.v"
-`include "../UART_TX/UART_TX.v"
-`include "../Pulse_generator/PULSE_GEN.v"
-`include "../Asyncrhonous_FIFO/ASYNC_FIFO.v"
-`include "../MUX/MUX.v"
-`include "../Clock_gating/CLK_gate.v"
-`include "../ALU/ALU.v"
-`include "../Register_file/Register_file.v"
+`include "RST_SYNC.v"
+`include "ClkDiv.v"
+`include "SYS_CTRL.v"
+`include "DATA_SYNC.v"
+`include "UART_RX.v"
+`include "UART_TX.v"
+`include "PULSE_GEN.v"
+`include "ASYNC_FIFO.v"
+`include "MUX_prescale.v"
+`include "CLK_gate.v"
+`include "ALU.v"
+`include "Register_file.v"
 
 
 
@@ -61,14 +61,14 @@ wire Rempty_internal;
 
 wire [ Data_width - 1 : 0 ] Rdata_internal;
 
-wire [ 3 : 0 ] RX_clock_div_ratio_internal;
+wire [ 2 : 0 ] RX_clock_div_ratio_internal;
 
 wire ALU_clk_internal;
 
 wire [ Data_width - 1 : 0 ] REG0_internal;
 wire [ Data_width - 1 : 0 ] REG1_internal;
 
-wire [ Data_width - 1 : 0 ] TX_p_data_inetrnal;
+wire [ Data_width - 1 : 0 ] TX_p_data_internal;
 
 //Reset synchronizer for clock domain 1
 RST_SYNC
@@ -96,7 +96,7 @@ ClkDiv clock_divider_UART_RX
 .i_ref_clk( UART_clk ),
 .i_rst_n( SYNC_RST_domain_2 ),
 .i_clk_en( clk_div_en_internal ),
-.i_div_ratio( {4'b0000,RX_clock_div_ratio_internal} ),
+.i_div_ratio( {5'b00000,RX_clock_div_ratio_internal} ),
 .o_div_clk( UART_RX_clk_internal )
 );
 
@@ -131,7 +131,7 @@ System_control
 .WrEN( WrEN_internal ),
 .RdEN( RdEN_internal ),
 .WrData( WrData_internal ),
-.TX_p_data( TX_p_data_inetrnal ), // Wrdata ( FIFO )
+.TX_p_data( TX_p_data_internal ), // Wrdata ( FIFO )
 .TX_d_valid( TX_d_valid_internal ), // Winc ( FIFO )
 .clk_div_en( clk_div_en_internal )
 );
@@ -200,14 +200,14 @@ FIFO
 .Rinc( Rinc_internal ),
 .Rrst( SYNC_RST_domain_2 ),
 .Rclk( UART_TX_clk_internal ),
-.Wrdata( TX_p_data_inetrnal ),
+.Wrdata( TX_p_data_internal ),
 .Wfull( Wfull_internal ),
 .Rempty( Rempty_internal ),
 .Rdata( Rdata_internal )
 );
 
 //MUX
-MUX Prescale_MUX
+MUX_prescale Prescale_MUX
 (
 .prescale( REG2_internal [ 7 : 2 ] ),
 .OUT( RX_clock_div_ratio_internal )
@@ -243,6 +243,7 @@ Regfile
 .WrData(WrData_internal),
 .Address( Address_internal ),
 .WrEn( WrEN_internal ),
+.RdEn(RdEN_internal),
 .CLK( Ref_clk ),
 .RST( SYNC_RST_domain_1 ),
 .RdData( Rd_data_internal ),
