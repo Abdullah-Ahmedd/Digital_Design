@@ -1,27 +1,54 @@
-module parity_calc
-#( parameter Data_width = 8 )
+module parity_calc # ( parameter WIDTH = 8 )
+
 (
-//Declaring inputs 
-    input wire [ Data_width - 1 : 0 ] P_DATA,
-    input wire PAR_TYP,
-
-//Declaring outputs
-    output reg par_bit
+ input   wire                  CLK,
+ input   wire                  RST,
+ input   wire                  parity_enable,
+ input   wire                  parity_type,
+ input   wire                  Busy, 
+ input   wire   [WIDTH-1:0]    DATA,
+ input   wire                  Data_Valid,
+ output  reg                   parity 
 );
-//isolating P_DATA 
-    wire [ Data_width - 1 : 0 ] P_DATA_ioslated; 
+
+reg  [WIDTH-1:0]    DATA_V ;
+
+//isolate input 
+always @ (posedge CLK or negedge RST)
+ begin
+  if(!RST)
+   begin
+    DATA_V <= 'b0 ;
+   end
+  else if(Data_Valid && !Busy)
+   begin
+    DATA_V <= DATA ;
+   end 
+ end
+ 
+
+always @ (posedge CLK or negedge RST)
+ begin
+  if(!RST)
+   begin
+    parity <= 'b0 ;
+   end
+  else
+   begin
+    if (parity_enable)
+	 begin
+	  case(parity_type)
+	  1'b0 : begin                 
+	          parity <= ^DATA_V  ;     // Even Parity
+	         end
+	  1'b1 : begin
+	          parity <= ~^DATA_V ;     // Odd Parity
+	         end		
+	  endcase       	 
+	 end
+   end
+ end 
 
 
-assign P_DATA_ioslated = P_DATA;
-//Declaring a wire parity flag that is equal one when the number of of ones in P_DATA is odd
-    wire P_flag = ^P_DATA_ioslated;
-
-always@( * )
-    begin
-        if( PAR_TYP )
-        par_bit =! P_flag;
-        else
-        par_bit = P_flag;
-
-    end
 endmodule
+ 

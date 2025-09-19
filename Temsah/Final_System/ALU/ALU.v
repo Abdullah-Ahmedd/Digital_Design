@@ -1,9 +1,11 @@
+/*
 `include "ARITHMATIC_UNIT.v"
 `include "LOGIC_UNIT.v"
 `include "SHIFT_UNIT.v"
 `include "CMP_UNIT.v"
 `include "Decoder.v"
 `include "ALU_MUX.v"
+*/
 module ALU
 #( parameter Input_data_width ='d8 , parameter Output_data_width ='d8  )
 (

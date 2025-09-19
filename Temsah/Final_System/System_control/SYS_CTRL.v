@@ -54,6 +54,7 @@ module SYS_CTRL
 
     reg [ Data_width - 1 : 0 ] A;
     reg [ Data_width - 1 : 0 ] B;
+    
 
 //making the clock divider enable always equal one 
 assign clk_div_en = 1'b1;
@@ -276,6 +277,7 @@ always@( * )
                     //ALU_fun = RX_p_data[ 3 : 0 ]; 
                     WrData = RX_p_data;
                      command=command_reg;
+                     CLK_EN = 1;
                 end
 
             ALU_operation:

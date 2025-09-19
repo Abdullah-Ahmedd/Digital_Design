@@ -1,3 +1,4 @@
+/*
 `include "edge_bit_counter.v"
 `include "data_sampling.v"
 `include "deserializer.v"
@@ -5,7 +6,7 @@
 `include "start_checker.v"
 `include "stop_checker.v"
 `include "UART_RX_FSM.v"
-
+*/
 module UART_RX
 #( parameter Data_width = 8 )
 (

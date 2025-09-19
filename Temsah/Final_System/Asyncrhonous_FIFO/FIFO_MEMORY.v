@@ -7,12 +7,12 @@ module FIFO_MEMORY
 (
 //Declaring write ports
     input wire [ Data_width - 1 : 0 ] Wrdata,
-    input wire [ Address_width - 1 : 0 ] Wadder,
+    input wire [ Address_width - 2 : 0 ] Wadder,
     input wire Wclken,
     input wire Wclk,
 //Declaring read ports
     output reg [ Data_width - 1 : 0 ] Rdata,
-    input wire [ Address_width - 1 : 0 ] Radder,
+    input wire [ Address_width - 2 : 0 ] Radder,
     input wire Rempty_flag,
     input wire Rclk
 );

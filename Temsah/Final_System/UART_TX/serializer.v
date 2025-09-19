@@ -1,58 +1,61 @@
-module serializer
-#( parameter Data_width = 8 )
+
+module Serializer # ( parameter WIDTH = 8 )
+
 (
-//Declaring inputs
-    input wire [ Data_width - 1 : 0 ] P_DATA,
-    input wire ser_en,
-    input wire CLK,
-    input wire RST, //Asynchronus active-low reset
-
-//Declaring outputs
-    output reg ser_data,
-    output reg ser_done
+ input   wire                  CLK,
+ input   wire                  RST,
+ input   wire   [WIDTH-1:0]    DATA,
+ input   wire                  Enable, 
+ input   wire                  Busy,
+ input   wire                  Data_Valid, 
+ output  wire                  ser_out,
+ output  wire                  ser_done
 );
-//Declaring a counter to know how many clock cylces are left for the whole data to be fully sent
-    reg [ 3 : 0 ] counter;
-//isolating P_DATA  
-    reg [ Data_width - 1 : 0 ] P_DATA_ioslated;
-//Declaring an internal flag that is equal 1 when the data is stored successfully in the internal registers and ready to be outputted 
-    reg ready;
 
-always@( posedge CLK or negedge RST )
-    begin
-        if( !RST )
-            begin
-                ser_data <= 1'b0;
-                ser_done <= 1'b0;
-                P_DATA_ioslated <= 'b0;
-                counter <= 4'b0;
-                ready <= 1'b0;
-            end
-        else begin
-            if( !ready && ser_en )
-                begin
-                    counter <= 4'b0;
-                    P_DATA_ioslated <= P_DATA;
-                    ready <= 1'b1;
-                    ser_done <= 1'b0;
-                end   
-            else if( ready )
-                begin
-                    if( counter <= Data_width - 1 )
-                        begin
-                            ser_data <= P_DATA_ioslated[ 0 ];
-                            P_DATA_ioslated <= P_DATA_ioslated >> 1;
-                            counter <= counter + 1;
-                            ser_done <= 1'b0;
-                        end
-                    if ( counter == Data_width - 1 )
-                        begin
-                            ser_done <= 1'b1;
-                            ready <= 0;
-                           counter <= counter + 1;
-                        end
-                end                
-        end
-    end
+reg  [WIDTH-1:0]    DATA_V ;
+reg  [2:0]          ser_count ;
+              
+//isolate input 
+always @ (posedge CLK or negedge RST)
+ begin
+  if(!RST)
+   begin
+    DATA_V <= 'b0 ;
+   end
+  else if(Data_Valid && !Busy)
+   begin
+    DATA_V <= DATA ;
+   end	
+  else if(Enable)
+   begin
+    DATA_V <= DATA_V >> 1 ;         // shift register
+   end
+ end
+ 
+
+//counter
+always @ (posedge CLK or negedge RST)
+ begin
+  if(!RST)
+   begin
+    ser_count <= 'b0 ;
+   end
+  else
+   begin
+    if (Enable)
+	 begin
+      ser_count <= ser_count + 'b1 ;		 
+	 end
+	else 
+	 begin
+      ser_count <= 'b0 ;		 
+	 end	
+   end
+ end 
+
+assign ser_done = (ser_count == 'b111) ? 1'b1 : 1'b0 ;
+
+assign ser_out = DATA_V[0] ;
 
 endmodule
+ 
