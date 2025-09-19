@@ -26,10 +26,10 @@ module ASYNC_FIFO
 );
 //Internal signals
 wire [ Address_width : 0 ] Wq2_rptr_internal;
-wire [ Address_width - 1 : 0 ] Wadder_internal;
+wire [ Address_width - 2 : 0 ] Wadder_internal;
 wire [ Address_width : 0 ] Wptr_internal;
 wire Wclken_internal;
-wire [ Address_width - 1 : 0 ] Radder_internal;
+wire [ Address_width - 2 : 0 ] Radder_internal;
 wire [ Address_width : 0 ]R2q_wptr_internal;
 wire [ Address_width : 0 ] Rptr_internal;
 wire Rempty_flag_internal;
@@ -37,7 +37,7 @@ wire Rempty_flag_internal;
 
 //Modules instantiation
 
-FIFO_wptr_wfull 
+FIFO_wprt_wfull 
 #( .Address_width ( Address_width ) )
 FIFO_WPTRFULL
 (

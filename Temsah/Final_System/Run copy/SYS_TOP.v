@@ -223,7 +223,7 @@ CLK_gate clock_gating_ALU
 
 //ALU
 ALU
-#(.OPER_WIDTH ( Data_width ) )
+#(.Input_data_width ( Data_width ) , .Output_data_width ( Data_width ) )
 ALU1
 (
 .A( REG0_internal ),
@@ -231,7 +231,7 @@ ALU1
 .ALU_FUN( ALU_FUN_internal ),
 .CLK( ALU_clk_internal ),
 .RST( SYNC_RST_domain_1 ),
-.EN( ALU_EN_internal ),
+.ALU_EN( ALU_EN_internal ),
 .ALU_OUT( ALU_OUT_internal ),
 .OUT_VALID( OUT_VALID_internal )
 );

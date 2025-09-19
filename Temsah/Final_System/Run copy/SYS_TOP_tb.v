@@ -150,7 +150,7 @@ module SYS_TOP_tb;
     $display("========================================");
     
     // System configuration
-    $display("\n[CONFIG] Setting up UART configuration...");
+    //$display("\n[CONFIG] Setting up UART configuration...");
    // send_byte(8'hAA); send_byte(8'h02); send_byte(8'h81); #(BIT_PERIOD * 20);
     //send_byte(8'hAA); send_byte(8'h03); send_byte(8'd32); #(BIT_PERIOD * 20);
     
@@ -172,9 +172,9 @@ module SYS_TOP_tb;
     run_test(8'd35, "ALU ADD 10+25");
     
     // Test 4: ALU Subtraction  
-   // $display("\n[TEST 4] ALU Subtraction Test");
-   // send_byte(8'hCC); send_byte(8'd50); send_byte(8'd20); send_byte(8'h01);
-   // run_test(8'd30, "ALU SUB 50-20");
+    $display("\n[TEST 4] ALU Subtraction Test");
+    send_byte(8'hCC); send_byte(8'd50); send_byte(8'd20); send_byte(8'h01);
+    run_test(8'd30, "ALU SUB 50-20");
     
     // Test 5: ALU Multiplication
     $display("\n[TEST 5] ALU Multiplication Test");
@@ -189,12 +189,17 @@ module SYS_TOP_tb;
    //Test 7: ALU AND with stored registers
     $display("\n[TEST 7] ALU AND Test (REG0 & REG1)");
     send_byte(8'hDD); send_byte(8'd04);
-    run_test(8'd4, "ALU AND REG0&REG1"); // 20 & 4 = 2 from previous test
+    run_test(8'd4, "ALU AND REG0&REG1"); // 20 & 4 = 4 from previous test
     
     // Test 8: ALU OR with stored registers  
-    //$display("\n[TEST 8] ALU OR Test (REG0 & REG1)");
-    //send_byte(8'hDD); send_byte(8'h05);
-    //run_test(8'd7, "ALU OR REG0|REG1"); // 6 | 7 = 7
+    $display("\n[TEST 8] ALU OR Test (REG0 & REG1)");
+    send_byte(8'hDD); send_byte(8'h05);
+    run_test(8'h14, "ALU OR REG0|REG1"); // 20 | 4 = 14
+
+        // Test 9: ALU NAND with stored registers  
+    $display("\n[TEST 9] ALU OR Test (REG0 & REG1)");
+    send_byte(8'hDD); send_byte(8'd06);
+    run_test(8'hfb, "ALU OR REG0|REG1"); // 20 NAND 4 = fb
     
     // Test 9: Different register addresses
    // $display("\n[TEST 9] Multiple Register Test");

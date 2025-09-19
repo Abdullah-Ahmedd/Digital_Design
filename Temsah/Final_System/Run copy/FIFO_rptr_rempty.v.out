@@ -7,7 +7,7 @@
 :vpi_module "C:\iverilog\lib\ivl\vhdl_textio.vpi";
 :vpi_module "C:\iverilog\lib\ivl\v2005_math.vpi";
 :vpi_module "C:\iverilog\lib\ivl\va_math.vpi";
-S_00000132521f5560 .scope module, "FIFO_rptr_rempty" "FIFO_rptr_rempty" 2 1;
+S_00000258fcc96570 .scope module, "FIFO_rptr_rempty" "FIFO_rptr_rempty" 2 1;
  .timescale 0 0;
     .port_info 0 /INPUT 1 "Rinc";
     .port_info 1 /INPUT 1 "Rclk";
@@ -15,91 +15,90 @@ S_00000132521f5560 .scope module, "FIFO_rptr_rempty" "FIFO_rptr_rempty" 2 1;
     .port_info 3 /INPUT 4 "R2q_wptr";
     .port_info 4 /OUTPUT 3 "Radder";
     .port_info 5 /OUTPUT 1 "Rempty";
-    .port_info 6 /OUTPUT 1 "Rempty_flag";
-    .port_info 7 /OUTPUT 4 "Rptr";
-P_00000132521baac0 .param/l "Address_width" 0 2 1, +C4<00000000000000000000000000000011>;
-o0000013252208fd8 .functor BUFZ 4, C4<zzzz>; HiZ drive
-v00000132521d2b30_0 .net "R2q_wptr", 3 0, o0000013252208fd8;  0 drivers
-v00000132522039a0_0 .net "Radder", 2 0, L_0000013252203fe0;  1 drivers
-v0000013252203a40_0 .var "Radder_binary_current", 3 0;
-v0000013252203ae0_0 .var "Radder_binary_next", 3 0;
-v0000013252203b80_0 .var "Radder_gray_next", 3 0;
-o00000132522090c8 .functor BUFZ 1, C4<z>; HiZ drive
-v0000013252203c20_0 .net "Rclk", 0 0, o00000132522090c8;  0 drivers
-v0000013252203cc0_0 .var "Rempty", 0 0;
-v0000013252203d60_0 .var "Rempty_flag", 0 0;
-o0000013252209158 .functor BUFZ 1, C4<z>; HiZ drive
-v0000013252203e00_0 .net "Rinc", 0 0, o0000013252209158;  0 drivers
-v0000013252203ea0_0 .var "Rptr", 3 0;
-o00000132522091b8 .functor BUFZ 1, C4<z>; HiZ drive
-v0000013252203f40_0 .net "Rrst", 0 0, o00000132522091b8;  0 drivers
-E_00000132521bb100/0 .event negedge, v0000013252203f40_0;
-E_00000132521bb100/1 .event posedge, v0000013252203c20_0;
-E_00000132521bb100 .event/or E_00000132521bb100/0, E_00000132521bb100/1;
-E_00000132521bac00 .event anyedge, v0000013252203a40_0, v0000013252203e00_0, v0000013252203cc0_0, v0000013252203ae0_0;
-L_0000013252203fe0 .part v0000013252203a40_0, 0, 3;
-    .scope S_00000132521f5560;
+    .port_info 6 /OUTPUT 4 "Rptr";
+P_00000258fcdaa490 .param/l "Address_width" 0 2 2, +C4<00000000000000000000000000000011>;
+o00000258fcca8fd8 .functor BUFZ 4, C4<zzzz>; HiZ drive
+v00000258fcc72b30_0 .net "R2q_wptr", 3 0, o00000258fcca8fd8;  0 drivers
+v00000258fcca39a0_0 .net "Radder", 2 0, L_00000258fccf03e0;  1 drivers
+v00000258fcca3a40_0 .var "Radder_binary_current", 2 0;
+v00000258fcca3ae0_0 .var "Radder_binary_next", 2 0;
+v00000258fcca3b80_0 .var "Radder_gray_next", 2 0;
+o00000258fcca90c8 .functor BUFZ 1, C4<z>; HiZ drive
+v00000258fcca3c20_0 .net "Rclk", 0 0, o00000258fcca90c8;  0 drivers
+v00000258fcca3cc0_0 .var "Rempty", 0 0;
+o00000258fcca9128 .functor BUFZ 1, C4<z>; HiZ drive
+v00000258fcca3d60_0 .net "Rinc", 0 0, o00000258fcca9128;  0 drivers
+v00000258fcca3e00_0 .var "Rptr", 3 0;
+o00000258fcca9188 .functor BUFZ 1, C4<z>; HiZ drive
+v00000258fcca3ea0_0 .net "Rrst", 0 0, o00000258fcca9188;  0 drivers
+v00000258fcca3f40_0 .net *"_ivl_1", 1 0, L_00000258fccf0160;  1 drivers
+L_00000258fccf0868 .functor BUFT 1, C4<0>, C4<0>, C4<0>, C4<0>;
+v00000258fcca3fe0_0 .net *"_ivl_5", 0 0, L_00000258fccf0868;  1 drivers
+E_00000258fcda9790/0 .event negedge, v00000258fcca3ea0_0;
+E_00000258fcda9790/1 .event posedge, v00000258fcca3c20_0;
+E_00000258fcda9790 .event/or E_00000258fcda9790/0, E_00000258fcda9790/1;
+E_00000258fcda9890 .event anyedge, v00000258fcca3a40_0, v00000258fcca3d60_0, v00000258fcca3cc0_0, v00000258fcca3ae0_0;
+L_00000258fccf0160 .part v00000258fcca3a40_0, 0, 2;
+L_00000258fccf03e0 .concat [ 2 1 0 0], L_00000258fccf0160, L_00000258fccf0868;
+    .scope S_00000258fcc96570;
 T_0 ;
-    %wait E_00000132521bac00;
-    %load/vec4 v0000013252203a40_0;
-    %load/vec4 v0000013252203e00_0;
-    %pad/u 4;
-    %load/vec4 v0000013252203cc0_0;
-    %pad/u 4;
+    %wait E_00000258fcda9890;
+    %load/vec4 v00000258fcca3a40_0;
+    %load/vec4 v00000258fcca3d60_0;
+    %pad/u 3;
+    %load/vec4 v00000258fcca3cc0_0;
+    %pad/u 3;
     %inv;
     %and;
     %add;
-    %store/vec4 v0000013252203ae0_0, 0, 4;
-    %load/vec4 v0000013252203ae0_0;
+    %store/vec4 v00000258fcca3ae0_0, 0, 3;
+    %load/vec4 v00000258fcca3ae0_0;
     %ix/load 4, 1, 0;
     %flag_set/imm 4, 0;
     %shiftr 4;
-    %load/vec4 v0000013252203ae0_0;
+    %load/vec4 v00000258fcca3ae0_0;
     %xor;
-    %store/vec4 v0000013252203b80_0, 0, 4;
+    %store/vec4 v00000258fcca3b80_0, 0, 3;
     %jmp T_0;
     .thread T_0, $push;
-    .scope S_00000132521f5560;
+    .scope S_00000258fcc96570;
 T_1 ;
-    %wait E_00000132521bb100;
-    %load/vec4 v0000013252203f40_0;
+    %wait E_00000258fcda9790;
+    %load/vec4 v00000258fcca3ea0_0;
     %nor/r;
     %flag_set/vec4 8;
     %jmp/0xz  T_1.0, 8;
+    %pushi/vec4 0, 0, 3;
+    %assign/vec4 v00000258fcca3a40_0, 0;
     %pushi/vec4 0, 0, 4;
-    %assign/vec4 v0000013252203a40_0, 0;
-    %pushi/vec4 0, 0, 4;
-    %assign/vec4 v0000013252203ea0_0, 0;
+    %assign/vec4 v00000258fcca3e00_0, 0;
     %jmp T_1.1;
 T_1.0 ;
-    %load/vec4 v0000013252203ae0_0;
-    %assign/vec4 v0000013252203a40_0, 0;
-    %load/vec4 v0000013252203b80_0;
-    %assign/vec4 v0000013252203ea0_0, 0;
+    %load/vec4 v00000258fcca3ae0_0;
+    %assign/vec4 v00000258fcca3a40_0, 0;
+    %load/vec4 v00000258fcca3b80_0;
+    %pad/u 4;
+    %assign/vec4 v00000258fcca3e00_0, 0;
 T_1.1 ;
     %jmp T_1;
     .thread T_1;
-    .scope S_00000132521f5560;
+    .scope S_00000258fcc96570;
 T_2 ;
-    %wait E_00000132521bb100;
-    %load/vec4 v0000013252203f40_0;
+    %wait E_00000258fcda9790;
+    %load/vec4 v00000258fcca3ea0_0;
     %nor/r;
     %flag_set/vec4 8;
     %jmp/0xz  T_2.0, 8;
     %pushi/vec4 1, 0, 1;
-    %assign/vec4 v0000013252203cc0_0, 0;
+    %assign/vec4 v00000258fcca3cc0_0, 0;
     %jmp T_2.1;
 T_2.0 ;
-    %load/vec4 v0000013252203b80_0;
-    %load/vec4 v00000132521d2b30_0;
+    %load/vec4 v00000258fcca3b80_0;
+    %pad/u 4;
+    %load/vec4 v00000258fcc72b30_0;
     %cmp/e;
     %flag_get/vec4 4;
-    %assign/vec4 v0000013252203cc0_0, 0;
-    %load/vec4 v0000013252203b80_0;
-    %load/vec4 v00000132521d2b30_0;
-    %cmp/e;
-    %flag_get/vec4 4;
-    %assign/vec4 v0000013252203d60_0, 0;
+    %assign/vec4 v00000258fcca3cc0_0, 0;
 T_2.1 ;
     %jmp T_2;
     .thread T_2;

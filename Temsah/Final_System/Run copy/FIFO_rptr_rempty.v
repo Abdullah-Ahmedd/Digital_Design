@@ -6,7 +6,7 @@ module FIFO_rptr_rempty #( parameter Address_width = 3 ) //Depth = 2^(Address)
     input wire Rrst,
     input wire [ Address_width : 0 ] R2q_wptr,
 //Declaring outputs
-    output wire [ Address_width - 1 : 0 ] Radder,
+    output wire [ Address_width - 2 : 0 ] Radder,
     output reg Rempty,
     output reg Rempty_flag,
     output reg [ Address_width : 0 ] Rptr
