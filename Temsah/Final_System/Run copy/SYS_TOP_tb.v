@@ -3,11 +3,11 @@
 
 module SYS_TOP_tb;
 
-  // Parameters - corrected based on actual DUT timing
+  // Parameters
   parameter REF_CLK_PERIOD  = 20;      // 50 MHz
   parameter UART_CLK_PERIOD = 271;     // ~3.6864 MHz
   parameter PRESCALE        = 32;      
-  parameter BIT_PERIOD      = 8640;    // Actual DUT bit period (measured)
+  parameter BIT_PERIOD      = PRESCALE * UART_CLK_PERIOD;    // Actual DUT bit period
   
   // Signals
   reg  Ref_clk;
@@ -19,7 +19,7 @@ module SYS_TOP_tb;
   // Test status counters
   integer tests_passed = 0;
   integer tests_failed = 0;
-  integer total_tests = 0;
+  integer total_tests  = 0;
 
   // DUT
   SYS_TOP #(
@@ -80,40 +80,24 @@ module SYS_TOP_tb;
     end
   endtask
 
-  // UART receive task - working version
+  // UART receive task (clean event-driven)
   task receive_byte;
     output [7:0] data;
-    output success;
-    integer wait_count;
+    integer i;
     begin
-      data = 8'h00;
-      success = 0;
-      wait_count = 0;
-      
-      // Wait for start bit
-      while (TX_OUT == 1'b1 && wait_count < 300000) begin
-        #10;
-        wait_count = wait_count + 1;
+      //data = 0;
+      // Wait for start bit (falling edge)
+      @(negedge TX_OUT);
+      // Move to middle of first data bit
+      #(BIT_PERIOD + BIT_PERIOD/2);
+      // Sample 8 data bits (LSB first)
+      for (i = 0; i < 8; i = i + 1) begin
+        data[i] = TX_OUT;
+        #(BIT_PERIOD);
       end
-      
-      if (wait_count >= 300000) begin
-        success = 0;
-      end else begin
-        // Wait 1.5 bit periods to sample first data bit
-        #(BIT_PERIOD + BIT_PERIOD/2);
-        
-        // Sample data bits
-        data[0] = TX_OUT; #(BIT_PERIOD);
-        data[1] = TX_OUT; #(BIT_PERIOD);
-        data[2] = TX_OUT; #(BIT_PERIOD);
-        data[3] = TX_OUT; #(BIT_PERIOD);
-        data[4] = TX_OUT; #(BIT_PERIOD);
-        data[5] = TX_OUT; #(BIT_PERIOD);
-        data[6] = TX_OUT; #(BIT_PERIOD);
-        data[7] = TX_OUT;
-        
-        success = 1;
-      end
+      // Stop bit check
+      //if (TX_OUT !== 1'b1)
+       // $display("⚠️ UART Stop bit error at time %t", $time);
     end
   endtask
 
@@ -122,17 +106,13 @@ module SYS_TOP_tb;
     input [7:0] expected;
     input [159:0] test_name; // 20 chars max
     reg [7:0] received;
-    reg success;
     begin
       total_tests = total_tests + 1;
-      receive_byte(received, success);
+      receive_byte(received);
       
-      if (success && received == expected) begin
+      if (received == expected) begin
         $display("✓ PASS: %s - Expected: 0x%02h, Got: 0x%02h", test_name, expected, received);
         tests_passed = tests_passed + 1;
-      end else if (!success) begin
-        $display("✗ FAIL: %s - TIMEOUT (no response)", test_name);
-        tests_failed = tests_failed + 1;
       end else begin
         $display("✗ FAIL: %s - Expected: 0x%02h, Got: 0x%02h", test_name, expected, received);
         tests_failed = tests_failed + 1;
@@ -148,11 +128,6 @@ module SYS_TOP_tb;
     $display("========================================");
     $display("SYS_TOP COMPREHENSIVE TEST SUITE");
     $display("========================================");
-    
-    // System configuration
-    //$display("\n[CONFIG] Setting up UART configuration...");
-   // send_byte(8'hAA); send_byte(8'h02); send_byte(8'h81); #(BIT_PERIOD * 20);
-    //send_byte(8'hAA); send_byte(8'h03); send_byte(8'd32); #(BIT_PERIOD * 20);
     
     // Test 1: Basic Register Write/Read
     $display("\n[TEST 1] Register Write/Read Test");
@@ -186,32 +161,25 @@ module SYS_TOP_tb;
     send_byte(8'hCC); send_byte(8'd20); send_byte(8'd4); send_byte(8'h03);
     run_test(8'd5, "ALU DIV 20/4");
     
-   //Test 7: ALU AND with stored registers
+    // Test 7: ALU AND with stored registers
     $display("\n[TEST 7] ALU AND Test (REG0 & REG1)");
     send_byte(8'hDD); send_byte(8'd04);
-    run_test(8'd4, "ALU AND REG0&REG1"); // 20 & 4 = 4 from previous test
+    run_test(8'd4, "ALU AND REG0&REG1"); // 20 & 4 = 4
     
     // Test 8: ALU OR with stored registers  
     $display("\n[TEST 8] ALU OR Test (REG0 & REG1)");
     send_byte(8'hDD); send_byte(8'h05);
     run_test(8'h14, "ALU OR REG0|REG1"); // 20 | 4 = 14
 
-        // Test 9: ALU NAND with stored registers  
-    $display("\n[TEST 9] ALU OR Test (REG0 & REG1)");
+    // Test 9: ALU NAND with stored registers  
+    $display("\n[TEST 9] ALU NAND Test (REG0 & REG1)");
     send_byte(8'hDD); send_byte(8'd06);
-    run_test(8'hfb, "ALU OR REG0|REG1"); // 20 NAND 4 = fb
+    run_test(8'hFB, "ALU NAND REG0 NAND REG1"); // ~(20&4) = FB
     
-    // Test 9: Different register addresses
-   // $display("\n[TEST 9] Multiple Register Test");
-   // send_byte(8'hAA); send_byte(8'h07); send_byte(8'h33); #(BIT_PERIOD * 20);
-   // send_byte(8'hBB); send_byte(8'h07);
-    //run_test(8'h33, "Reg[7] Write/Read");
-    
-    // Test 10: Edge case - zero value
-    //$display("\n[TEST 10] Zero Value Test");
-    //send_byte(8'hAA); send_byte(8'h04); send_byte(8'h00); #(BIT_PERIOD * 20);
-    //send_byte(8'hBB); send_byte(8'h04);
-    //run_test(8'h00, "Zero Value Test");
+    // Test 10: ALU NOR with stored registers  
+    $display("\n[TEST 10] ALU NOR Test (REG0 & REG1)");
+    send_byte(8'hDD); send_byte(8'd07);
+    run_test(8'hEB, "ALU NOR REG0 NOR REG1"); // ~(20|4) = EB
     
     // Final results
     $display("\n========================================");
@@ -221,11 +189,10 @@ module SYS_TOP_tb;
     $display("Passed:      %0d", tests_passed);
     $display("Failed:      %0d", tests_failed);
     
-    if (tests_failed == 0) begin
+    if (tests_failed == 0)
       $display("🎉 ALL TESTS PASSED! 🎉");
-    end else begin
+    else
       $display("❌ %0d TEST(S) FAILED", tests_failed);
-    end
     
     $display("========================================");
     

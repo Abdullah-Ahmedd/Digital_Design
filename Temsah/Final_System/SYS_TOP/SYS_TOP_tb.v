@@ -1,243 +1,178 @@
-`timescale 1ns/1ps
 `include "SYS_TOP.v"
+`timescale 1ns/1ps
 
-module SYS_TOP_tb;
+module SYS_TOP_tb();
 
-  // Parameters - corrected based on actual DUT timing
-  parameter REF_CLK_PERIOD  = 20;      // 50 MHz
-  parameter UART_CLK_PERIOD = 271;     // ~3.6864 MHz
-  parameter PRESCALE        = 32;      
-  parameter BIT_PERIOD      = 8640;    // Actual DUT bit period (measured)
+//Declaring the parameters
+  parameter Data_width = 'd8 ;
+  parameter Address_width = 'd4 ;
+  parameter NUM_STAGES = 'd2 ;
+  parameter Depth = 'd8;
+  parameter PRESCALE = 32;
+
+//Declaring the ref clock and the UART clock
+  parameter REF_CLK = 20 ;
+  parameter UART_CLK = 271 ;
+  parameter BIT_PERIOD = PRESCALE * UART_CLK ; 
+
+//Declaring the testbench signals
+  reg Ref_clk_tb;
+  reg RST_tb;
+  reg UART_clk_tb;
+  reg RX_IN_tb;
+  wire TX_OUT_tb;
+
+//Declaring the loop parameters
+integer i,j;
+
+//Clock generation
+always 
+  begin
+    Ref_clk_tb = 0;
+    #( REF_CLK/2.0 );
+    Ref_clk_tb = 1;
+    #( REF_CLK/2.0 );
+  end
+always
+  begin
+    UART_clk_tb=0;
+    #( UART_CLK/2.0 );
+    UART_clk_tb = 1;
+    #( UART_CLK/2.0 );
+  end
+
+//initial block
+initial 
+  begin
+    $dumpfile("SYS_TOP.vcd");
+    $dumpvars;
+
+    reset();
+    #( BIT_PERIOD * 10 );
+
+//Testcase 1
+    $display("Test case 1: Write data then read it");
+    send_data(8'hAA); send_data(8'h05); send_data(8'h55); 
+    #(BIT_PERIOD * 10);
+    send_data(8'hBB); send_data(8'h05);
+    expected_result(8'h55);
+
+//Testcase 2
+    $display("Test case 2: ALU addition ( 10 + 25 ) (with OP)");
+    send_data(8'hCC); send_data(8'd10); send_data(8'd25); send_data(8'd00);
+    expected_result(8'd35);   
   
-  // Signals
-  reg  Ref_clk;
-  reg  UART_clk;
-  reg  RST;
-  reg  RX_IN;
-  wire TX_OUT;
+  //Testcase 3
+    $display("Test case 3: ALU subtraction ( 50 - 20 ) (with OP)");
+    send_data(8'hCC); send_data(8'd50); send_data(8'd20); send_data(8'd01);
+    expected_result(8'd30); 
 
-  // Test status counters
-  integer tests_passed = 0;
-  integer tests_failed = 0;
-  integer total_tests = 0;
+//Testcase 4
+    $display("Test case 4: ALU multiplication ( 6 * 7 ) (with OP)");
+    send_data(8'hCC); send_data(8'd06); send_data(8'd07); send_data(8'd02);
+    expected_result(8'd42); 
 
-  // DUT
-  SYS_TOP #(
-    .Data_width   (8),
-    .Address_width(4),
-    .NUM_STAGES   (2),
-    .Depth        (8)
-  ) dut (
-    .Ref_clk (Ref_clk),
-    .UART_clk(UART_clk),
-    .RST     (RST),
-    .RX_IN   (RX_IN),
-    .TX_OUT  (TX_OUT)
-  );
+//Testcase 5
+    $display("Test case 5: ALU division ( 12 / 4 ) (with OP)");
+    send_data(8'hCC); send_data(8'd12); send_data(8'd04); send_data(8'd03);
+    expected_result(8'd3); 
 
-  // Clock generation
-  initial begin
-    Ref_clk = 0;
-    forever #(REF_CLK_PERIOD/2) Ref_clk = ~Ref_clk;
-  end
 
-  initial begin
-    UART_clk = 0;
-    forever #(UART_CLK_PERIOD/2) UART_clk = ~UART_clk;
-  end
+//Testcase 6
+    $display("Test case 6: ALU 12 AND 4 ( NO OP )");
+    send_data(8'hDD); send_data(8'd04);
+    expected_result(8'h04);     
 
-  // VCD dump
-  initial begin
-    $dumpfile("sys_top_final.vcd");
-    $dumpvars(0, SYS_TOP_tb);
-    $dumpvars(0, dut);
-  end
 
-  // Reset
-  initial begin
-    RX_IN = 1'b1;
-    RST   = 1'b0;
-    #(100*REF_CLK_PERIOD);
-    RST   = 1'b1;
-    #(200*REF_CLK_PERIOD);
-  end
+//Testcase 7
+    $display("Test case 7: ALU  12 OR 4 ( NO OP )");
+    send_data(8'hDD); send_data(8'd05);
+    expected_result(8'h0c); 
 
-  // UART send task
-  task send_byte;
-    input [7:0] data;
-    integer i;
-    begin
-      // Start bit
-      RX_IN = 1'b0;  #(BIT_PERIOD);
-      // Data bits (LSB first)
-      for (i = 0; i < 8; i = i + 1) begin
-        RX_IN = data[i];  #(BIT_PERIOD);
-      end
-      // Stop bit
-      RX_IN = 1'b1;  #(BIT_PERIOD);
-      // Inter-frame gap
-      #(BIT_PERIOD * 2);
-    end
-  endtask
+//Testcase 8
+    $display("Test case 8: ALU  12 NAND 4 ( NO OP )");
+    send_data(8'hDD); send_data(8'd06);
+    expected_result(8'hfb); 
 
-  // UART receive task - working version
-  task receive_byte;
-    output [7:0] data;
-    output success;
-    integer wait_count;
-    begin
-      data = 8'h00;
-      success = 0;
-      wait_count = 0;
-      
-      // Wait for start bit
-      while (TX_OUT == 1'b1 && wait_count < 300000) begin
-        #10;
-        wait_count = wait_count + 1;
-      end
-      
-      if (wait_count >= 300000) begin
-        success = 0;
-      end else begin
-        // Wait 1.5 bit periods to sample first data bit
-        #(BIT_PERIOD + BIT_PERIOD/2);
-        
-        // Sample data bits
-        data[0] = TX_OUT; #(BIT_PERIOD);
-        data[1] = TX_OUT; #(BIT_PERIOD);
-        data[2] = TX_OUT; #(BIT_PERIOD);
-        data[3] = TX_OUT; #(BIT_PERIOD);
-        data[4] = TX_OUT; #(BIT_PERIOD);
-        data[5] = TX_OUT; #(BIT_PERIOD);
-        data[6] = TX_OUT; #(BIT_PERIOD);
-        data[7] = TX_OUT;
-        
-        success = 1;
-      end
-    end
-  endtask
+//Testcase 9
+    $display("Test case 9: ALU  12 NOR 4 ( NO OP )");
+    send_data(8'hDD); send_data(8'd07);
+    expected_result(8'hf3); 
 
-  // Test helper task
-  task run_test;
-    input [7:0] expected;
-    input [159:0] test_name; // 20 chars max
-    reg [7:0] received;
-    reg success;
-    begin
-      total_tests = total_tests + 1;
-      receive_byte(received, success);
-      
-      if (success && received == expected) begin
-        $display("✓ PASS: %s - Expected: 0x%02h, Got: 0x%02h", test_name, expected, received);
-        tests_passed = tests_passed + 1;
-      end else if (!success) begin
-        $display("✗ FAIL: %s - TIMEOUT (no response)", test_name);
-        tests_failed = tests_failed + 1;
-      end else begin
-        $display("✗ FAIL: %s - Expected: 0x%02h, Got: 0x%02h", test_name, expected, received);
-        tests_failed = tests_failed + 1;
-      end
-    end
-  endtask
+//Testcase 10
+    $display("Test case 10: ALU checking whether 12 > 4 ( NO OP )");
+    send_data(8'hDD); send_data(8'd10);
+    expected_result(8'h02); 
 
-  // Main test sequence
-  initial begin
-    wait(RST == 1'b1);
-    #(500*REF_CLK_PERIOD);
-    
-    $display("========================================");
-    $display("SYS_TOP COMPREHENSIVE TEST SUITE");
-    $display("========================================");
-    
-    // System configuration
-    //$display("\n[CONFIG] Setting up UART configuration...");
-   // send_byte(8'hAA); send_byte(8'h02); send_byte(8'h81); #(BIT_PERIOD * 20);
-    //send_byte(8'hAA); send_byte(8'h03); send_byte(8'd32); #(BIT_PERIOD * 20);
-    
-    // Test 1: Basic Register Write/Read
-    $display("\n[TEST 1] Register Write/Read Test");
-    send_byte(8'hAA); send_byte(8'h05); send_byte(8'h55); #(BIT_PERIOD * 20);
-    send_byte(8'hBB); send_byte(8'h05);
-    run_test(8'h55, "Reg Write/Read 0x55");
-    
-    // Test 2: Different pattern
-    $display("\n[TEST 2] Different Pattern Test"); 
-    send_byte(8'hAA); send_byte(8'h06); send_byte(8'hAA); #(BIT_PERIOD * 20);
-    send_byte(8'hBB); send_byte(8'h06);
-    run_test(8'hAA, "Reg Write/Read 0xAA");
-    
-    // Test 3: ALU Addition
-    $display("\n[TEST 3] ALU Addition Test");
-    send_byte(8'hCC); send_byte(8'd10); send_byte(8'd25); send_byte(8'h00);
-    run_test(8'd35, "ALU ADD 10+25");
-    
-    // Test 4: ALU Subtraction  
-    $display("\n[TEST 4] ALU Subtraction Test");
-    send_byte(8'hCC); send_byte(8'd50); send_byte(8'd20); send_byte(8'h01);
-    run_test(8'd30, "ALU SUB 50-20");
-    
-    // Test 5: ALU Multiplication
-    $display("\n[TEST 5] ALU Multiplication Test");
-    send_byte(8'hCC); send_byte(8'd6); send_byte(8'd7); send_byte(8'h02);
-    run_test(8'd42, "ALU MUL 6*7");
-    
-    // Test 6: ALU Division
-    $display("\n[TEST 6] ALU Division Test");
-    send_byte(8'hCC); send_byte(8'd20); send_byte(8'd4); send_byte(8'h03);
-    run_test(8'd5, "ALU DIV 20/4");
-    
-   //Test 7: ALU AND with stored registers
-    $display("\n[TEST 7] ALU AND Test (REG0 & REG1)");
-    send_byte(8'hDD); send_byte(8'd04);
-    run_test(8'd4, "ALU AND REG0&REG1"); // 20 & 4 = 4 from previous test
-    
-    // Test 8: ALU OR with stored registers  
-    $display("\n[TEST 8] ALU OR Test (REG0 & REG1)");
-    send_byte(8'hDD); send_byte(8'h05);
-    run_test(8'h14, "ALU OR REG0|REG1"); // 20 | 4 = 14
 
-        // Test 9: ALU NAND with stored registers  
-    $display("\n[TEST 9] ALU OR Test (REG0 & REG1)");
-    send_byte(8'hDD); send_byte(8'd06);
-    run_test(8'hfb, "ALU OR REG0|REG1"); // 20 NAND 4 = fb
-    
-    // Test 9: Different register addresses
-   // $display("\n[TEST 9] Multiple Register Test");
-   // send_byte(8'hAA); send_byte(8'h07); send_byte(8'h33); #(BIT_PERIOD * 20);
-   // send_byte(8'hBB); send_byte(8'h07);
-    //run_test(8'h33, "Reg[7] Write/Read");
-    
-    // Test 10: Edge case - zero value
-    //$display("\n[TEST 10] Zero Value Test");
-    //send_byte(8'hAA); send_byte(8'h04); send_byte(8'h00); #(BIT_PERIOD * 20);
-    //send_byte(8'hBB); send_byte(8'h04);
-    //run_test(8'h00, "Zero Value Test");
-    
-    // Final results
-    $display("\n========================================");
-    $display("TEST RESULTS SUMMARY");
-    $display("========================================");
-    $display("Total Tests: %0d", total_tests);
-    $display("Passed:      %0d", tests_passed);
-    $display("Failed:      %0d", tests_failed);
-    
-    if (tests_failed == 0) begin
-      $display("🎉 ALL TESTS PASSED! 🎉");
-    end else begin
-      $display("❌ %0d TEST(S) FAILED", tests_failed);
-    end
-    
-    $display("========================================");
-    
-    #(BIT_PERIOD * 50);
+
+    #( BIT_PERIOD * 100 );
     $finish;
   end
 
-  // Simulation timeout
-  initial begin
-    #(50000000 * BIT_PERIOD);
-    $display("SIMULATION TIMEOUT!");
-    $finish;
+//Tasks
+//reset task
+task reset();
+  begin
+    RST_tb = 0;
+    #( 10 * REF_CLK );
+    RST_tb = 1;
+    #( 10 * REF_CLK );
   end
+endtask
+//send data
+task send_data( input [ Data_width - 1 : 0 ] data  );
+  begin
+        //start bit
+          RX_IN_tb = 0;
+          #( BIT_PERIOD );
+        //Data
+          for(  i = 0  ;  i < Data_width  ; i = i + 1  )
+            begin
+              RX_IN_tb = data [ i ];
+              #( BIT_PERIOD );
+            end
+        //stop
+        RX_IN_tb = 1; 
+        #( BIT_PERIOD );
+        #( BIT_PERIOD * 2 ); //a must to make sure you are past the sending packets and you are simply in the constant default bit (1)
+  end
+endtask
+//receive data
+task receive_data( output [ Data_width - 1 : 0 ] data  );
+  begin
+    @(negedge TX_OUT_tb )
+    #( 1.5 * BIT_PERIOD );
+    for(  j = 0  ;  j < Data_width  ;  j = j + 1  )
+      begin
+        data[ j ] = TX_OUT_tb;
+        #( BIT_PERIOD ); 
+      end
+  end
+endtask
+//expected result task
+task expected_result( input [ Data_width - 1 : 0 ] expected_data );
+    reg [ Data_width - 1 : 0 ] received_data;
+  begin
+    receive_data(received_data);
+    if(received_data == expected_data)
+    $display("Passed successfully as the expected data is 0x%0h and the received data is 0x%0h",expected_data , received_data );
+    else
+    $display ("There is an error as the expected data is 0x%0h and the received data is 0x%0h",expected_data , received_data );
+  end
+endtask
 
-endmodule
+//Module instantiaion
+SYS_TOP
+#(.Data_width ( Data_width ), .Address_width ( Address_width ) , .NUM_STAGES ( NUM_STAGES ) , .Depth ( Depth ) )
+system_top
+(
+.Ref_clk( Ref_clk_tb ),
+.RST( RST_tb ),
+.UART_clk( UART_clk_tb ),
+.RX_IN( RX_IN_tb ),
+.TX_OUT( TX_OUT_tb )
+);
+
+
+endmodule 

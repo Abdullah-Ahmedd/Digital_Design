@@ -1,9 +1,13 @@
+//Reset syncrhonizer
 `include "../Reset_syncrhonizer/RST_SYNC.v"
 
+//Clock divider
 `include "../Clock_divider/ClkDiv.v"
 
+//system control
 `include "../System_control/SYS_CTRL.v"
 
+//Data syncrhonizer
 `include "../Data_syncrhonizer/DATA_SYNC.v"
 
 //UART RX files
@@ -23,6 +27,7 @@
 `include "../UART_TX/Serializer.v"
 `include "../UART_TX/uart_tx_fsm.v"
 
+//Pulse generator 
 `include "../Pulse_generator/PULSE_GEN.v"
 
 //ASYNC fifo files
@@ -33,8 +38,10 @@
 `include "../Asyncrhonous_FIFO/FIFO_rptr_rempty.v"
 `include "../Asyncrhonous_FIFO/BIT_SYNC.v"
 
+//Prescale MUX
 `include "../MUX/MUX_prescale.v"
 
+//Clock gate
 `include "../Clock_gating/CLK_gate.v"
 
 //ALU files
@@ -46,6 +53,7 @@
 `include "../ALU/Decoder.v"
 `include "../ALU/ALU_MUX.v"
 
+//Register file
 `include "../Register_file/Register_file.v"
 
 
@@ -60,7 +68,6 @@ module SYS_TOP
     input wire RX_IN,
 //Declaring output
     output wire TX_OUT
-
 );
 //Declaring internal signals
 wire SYNC_RST_domain_1;
