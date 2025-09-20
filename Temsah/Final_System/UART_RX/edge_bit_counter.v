@@ -14,10 +14,14 @@ module edge_bit_counter
 //edge counter 
 always@( posedge CLK  or  negedge RST ) 
     begin
-        if( !RST | reset_counters ) 
+        if( !RST ) 
             begin
                 edge_cnt <= 0;
-            end     
+            end 
+        else if( reset_counters )
+            begin
+                edge_cnt <= 0;    
+            end
         else if ( enable )
             begin                
                 if( edge_cnt == prescale -1 )
@@ -31,10 +35,14 @@ always@( posedge CLK  or  negedge RST )
 //bit counter 
 always@( posedge CLK  or  negedge RST )
     begin
-        if( !RST | reset_counters )
+        if( !RST )
             begin
                 bit_cnt <= 0;
             end
+        else if( reset_counters )
+            begin
+                bit_cnt <= 0;
+            end            
         else if( enable )
             begin
                 if( edge_cnt == prescale - 1 )
