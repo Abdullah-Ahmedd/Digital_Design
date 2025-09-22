@@ -19,7 +19,9 @@ module UART_RX
     input wire PAR_TYP,
 //Declaring outputs
     output wire [ Data_width - 1 : 0 ] RX_P_DATA,
-    output wire RX_data_valid
+    output wire RX_data_valid,
+    output wire parity_error,
+    output wire framing_error
 );
 //Declaring internal signals
     wire reset_counters_internal;
@@ -126,5 +128,7 @@ FSM1
 .reset_counters( reset_counters_internal )
 );
 
+assign parity_error = parity_error_internal;
+assign framing_error = stop_error_internal;
 
 endmodule

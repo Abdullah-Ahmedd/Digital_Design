@@ -21,6 +21,8 @@ module SYS_TOP_tb();
   reg UART_clk_tb;
   reg RX_IN_tb;
   wire TX_OUT_tb;
+  wire framing_error_tb;
+  wire parity_error_tb;
 
 //Declaring the loop parameters
 integer i,j;
@@ -155,10 +157,15 @@ task expected_result( input [ Data_width - 1 : 0 ] expected_data );
     reg [ Data_width - 1 : 0 ] received_data;
   begin
     receive_data(received_data);
-    if(received_data == expected_data)
-    $display("Passed successfully as the expected data is 0x%0h and the received data is 0x%0h",expected_data , received_data );
-    else
-    $display ("There is an error as the expected data is 0x%0h and the received data is 0x%0h",expected_data , received_data );
+    if( parity_error_tb == 0  &&  framing_error_tb==0 )
+      begin
+        if(received_data == expected_data)
+        $display("Passed successfully as the expected data is 0x%0h and the received data is 0x%0h",expected_data , received_data );
+        else
+        $display ("There is an error as the expected data is 0x%0h and the received data is 0x%0h",expected_data , received_data );
+      end
+      else
+       $display ("There is an error as the expected data is 0x%0h and the received data is 0x%0h",expected_data , received_data );
   end
 endtask
 
@@ -171,7 +178,9 @@ system_top
 .RST( RST_tb ),
 .UART_clk( UART_clk_tb ),
 .RX_IN( RX_IN_tb ),
-.TX_OUT( TX_OUT_tb )
+.TX_OUT( TX_OUT_tb ),
+.parity_error( parity_error_tb ),
+.framing_error( framing_error_tb )
 );
 
 

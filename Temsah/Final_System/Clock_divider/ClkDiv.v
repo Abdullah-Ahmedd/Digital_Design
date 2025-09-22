@@ -1,4 +1,5 @@
 module ClkDiv
+#( parameter Ratio_width ='d8 )
 (
 //Declaring inputs
     input wire i_ref_clk,
@@ -9,93 +10,55 @@ module ClkDiv
     output wire o_div_clk
 );
 
-//Declaring some internal registers
-    reg clock_divider_on;
-    reg [ 7 : 0 ] counter_even;
-    reg [ 7 : 0 ] counter_odd_up;
-    reg [ 7 : 0 ] counter_odd_down;
-
-    wire [ 7 : 0 ] half_period;
-    wire [ 7 : 0 ] half_period_plus_1;
-    wire clock_divider_off;
-    wire odd; //odd flag that equals one when the input clock ratio is odd
-    wire flag; //flag equals one when the output of the clock divider equals one 
-
-//Computing the half period value in addition to odd and the flag 
-    assign half_period =  i_div_ratio >> 1 ;
-    assign half_period_plus_1 =  ( i_div_ratio >> 1 ) + 1 ;
-    assign odd = i_div_ratio[ 0 ] ;
-    assign flag =(clk_divider_en)? clock_divider_on : clock_divider_off ;
-    assign o_div_clk = (clk_divider_en)? clock_divider_on:clock_divider_off;
-    assign clock_divider_off = i_ref_clk;
-
-//Declaring the clock divider enable
-    wire clk_divider_en;
-    assign clk_divider_en = i_clk_en && ( i_div_ratio != 0 ) && ( i_div_ratio != 1 ); 
-    
-
-always@( posedge i_ref_clk  or  negedge i_rst_n )
-    begin
-        if( !i_rst_n )
-            begin
-                counter_even<= 0;
-                counter_odd_down<= 0;
-                counter_odd_up<= 0;
-                clock_divider_on <= 0;
-            end
-            
-            else if( clk_divider_en )
-        begin
+//Declaring internal registers
+reg [ Ratio_width - 1 : 0 ] count;
+wire [ Ratio_width - 2 : 0 ] Counter_half;
+wire [ Ratio_width - 2 : 0 ] Counter_full; 
+reg div_clk;
+reg odd_edge_tog ;               
+wire is_one ;
+wire is_zero;
+wire clk_en;
+wire is_odd;
 
 
-         if( !odd )
-         if( counter_even == half_period - 1 ) 
-            begin
-                counter_even <= 0;
-                clock_divider_on <= ~clock_divider_on;
-            end
-        else counter_even <= counter_even+1;
-        else if( odd )
-            begin
-                if( flag )
-                begin
-                    if( counter_odd_up == half_period-1 )
-                        begin
-                            counter_odd_up <=0;
-                            clock_divider_on <= ~clock_divider_on;
-                       end
-                    else counter_odd_up <= counter_odd_up + 1;
-                end
-                else if( !flag )
-                    begin
-                        if( counter_odd_down == half_period_plus_1-1 )
-                            begin
-                                counter_odd_down <=0;
-                                clock_divider_on <= ~clock_divider_on;
-                        end
-                        else counter_odd_down <= counter_odd_down + 1;
-                    end                
-            end
-        end
-        
-    end
-    
-/*
-always@( i_ref_clk )
-begin
-    if(  clk_divider_en == 0  ||  i_clk_en == 0  )
-        begin
-            clock_divider_off = i_ref_clk;
-        end
-end
-*/
 
-always@( i_div_ratio )
-begin
-                counter_even= 0;
-                counter_odd_down= 0;
-                counter_odd_up= 0;
-end
+always @(posedge i_ref_clk or negedge i_rst_n)               // counter reset condition 
+ begin : counter_proc
+  if(!i_rst_n)
+   begin
+    count <= 0 ;
+	div_clk <= 0 ;	
+    odd_edge_tog <= 1 ;
+   end
+    else if(clk_en) 
+     begin
+      if(!is_odd && (count == Counter_half))              // even edge flip condition 
+       begin
+        count <= 0 ;                                        // reset counter
+        div_clk <= ~div_clk ;                               // clock inversion		
+       end
+      else if((is_odd && (count == Counter_half) && odd_edge_tog ) || (is_odd && (count == Counter_full) && !odd_edge_tog ))  // odd edge flip condition
+       begin  
+        count <= 0 ;                                        // reset counter
+        div_clk <= ~div_clk ;		                        // clock inversion
+        odd_edge_tog <= ~odd_edge_tog ;                      
+       end
+    else
+     count <= count + 1'b1 ;
+   end
+ end
 
 
-endmodule 
+
+assign is_odd = i_div_ratio[0] ;
+assign Counter_half = ((i_div_ratio >> 1) - 1 ) ;
+assign Counter_full = (i_div_ratio >> 1) ;
+
+assign is_zero = ~|i_div_ratio ;                               // check if ratio equals to 0 
+assign is_one  = (i_div_ratio == 1'b1) ;                       // check if ratio equals to 1 
+assign clk_en = i_clk_en & !is_one & !is_zero;                 // Enable if div_ratio not equal to 0 or 1 and block is enabled
+assign o_div_clk = clk_en ? div_clk : i_ref_clk ;              // if clock divider is disabled : generated clock is the reference clock
+
+
+endmodule

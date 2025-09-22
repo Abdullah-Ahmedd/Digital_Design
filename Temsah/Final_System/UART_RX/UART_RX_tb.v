@@ -28,6 +28,8 @@ parameter Data_width = 8;
     reg PAR_TYP_tb;
     wire [ Data_width - 1 : 0 ]RX_P_DATA_tb;
     wire RX_data_valid_tb;
+    wire parity_error_tb;
+    wire framing_error_tb;
 
 //Declaring the loop parameters
 integer i;
@@ -202,12 +204,18 @@ endtask
 
 task check_output (input [ Data_width - 1 : 0 ] data , input parity_enable , input parity_bit );
     begin
-        if( RX_P_DATA_tb == data )
+        if(parity_error_tb == 0 && framing_error_tb== 0)
             begin
-                $display("The data is received correctly");
+                if( RX_P_DATA_tb == data )
+                    begin
+                        $display("The data is received correctly");
+                    end
+                else
+                        $display("The received data is %0h ,while the expected data to be received is %0h " , data ,RX_P_DATA_tb ); 
+
             end
         else
-                $display("The received data is %0h ,while the expected data to be received is %0h " , data ,RX_P_DATA_tb ); 
+             $display("The received data is %0h ,while the expected data to be received is %0h " , data ,RX_P_DATA_tb ); 
     end
 endtask
 
@@ -224,7 +232,9 @@ UART1
 .PAR_EN( PAR_EN_tb ),
 .PAR_TYP( PAR_TYP_tb ),
 .RX_P_DATA( RX_P_DATA_tb ),
-.RX_data_valid( RX_data_valid_tb )
+.RX_data_valid( RX_data_valid_tb ),
+.parity_error(parity_error_tb),
+.framing_error(framing_error_tb)
 );
 
 

@@ -20,7 +20,11 @@ module Decoder
 
 always@( * )
     begin
-
+        //Default values
+                Arith_Enable=1'b0;
+                Logic_Enable=1'b0;
+                CMP_Enable=1'b0;
+                Shift_Enable=1'b0;
         if( ALU_EN )
         case( ALU_FUN )
 
@@ -28,6 +32,9 @@ always@( * )
             Logic: Logic_Enable=1'b1;
             CMP: CMP_Enable=1'b1;
             Shift: Shift_Enable=1'b1;
+            default:
+                begin
+                end
 
         endcase
         else

@@ -67,7 +67,9 @@ module SYS_TOP
     input wire UART_clk,
     input wire RX_IN,
 //Declaring output
-    output wire TX_OUT
+    output wire TX_OUT,
+    output wire parity_error,
+    output wire framing_error
 );
 //Declaring internal signals
 wire SYNC_RST_domain_1;
@@ -205,7 +207,9 @@ UARTRX
 .PAR_EN( REG2_internal [ 0 ] ),
 .PAR_TYP(REG2_internal [ 1 ]),
 .RX_P_DATA( RX_P_DATA_internal ),
-.RX_data_valid( RX_data_valid_internal )
+.RX_data_valid( RX_data_valid_internal ),
+.parity_error( parity_error ),
+.framing_error( framing_error )
 );
 
 //UART TX
