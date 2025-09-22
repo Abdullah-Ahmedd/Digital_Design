@@ -49,12 +49,7 @@ module SYS_CTRL
     reg [ 7 : 0 ] command_reg; 
     reg [ Address_width - 1 : 0 ] RF_Address;
     reg [ Data_width - 1 : 0 ] RF_Data;
-    reg [ Data_width - 1 : 0 ] TX_data;
-
-
-    reg [ Data_width - 1 : 0 ] A;
-    reg [ Data_width - 1 : 0 ] B;
-    
+    reg [ Data_width - 1 : 0 ] TX_data;    
 
 //making the clock divider enable always equal one 
 assign clk_div_en = 1'b1;
