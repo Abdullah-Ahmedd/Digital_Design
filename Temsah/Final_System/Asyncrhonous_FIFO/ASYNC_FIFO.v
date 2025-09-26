@@ -74,7 +74,6 @@ FIFO_MEM
 .Rdata( Rdata ),
 .Radder( Radder_internal ),
 .Rclk( Rclk ),
-.Wrst(Wrst),
 .Rempty_flag( Rempty_flag_internal )
 );
 
