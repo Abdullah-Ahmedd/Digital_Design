@@ -44,6 +44,7 @@ always@( posedge Rclk  or  negedge Rrst )
         if( !Rrst )
             begin
                 Rempty <= 1;
+                Rempty_flag <=1;
             end
         else
             begin

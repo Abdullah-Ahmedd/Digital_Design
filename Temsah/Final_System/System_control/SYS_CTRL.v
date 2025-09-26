@@ -312,10 +312,10 @@ always@(  posedge CLK  or negedge RST  )
             begin
                 RF_Address <= 0;
                 Address<=0;
-               // RF_Data <= 0;
+                RF_Data <= 0;
                 ALU_FUN <= 0;
                 TX_data <= 0;
-                //command <= 0;
+                command_reg <= 0;
                 RdEN <=0;
                 WrEN <=0;
             end
