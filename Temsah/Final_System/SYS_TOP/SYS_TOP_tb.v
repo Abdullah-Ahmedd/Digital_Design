@@ -8,13 +8,15 @@ module SYS_TOP_tb();
   parameter Address_width = 'd4 ;
   parameter NUM_STAGES = 'd2 ;
   parameter Depth = 'd8;
-  parameter PRESCALE = 32;
+  
+  wire [ 5 : 0 ] PRESCALE  ;
+  assign PRESCALE = system_top.Regfile.Regfile[ 2 ][ 7 : 2 ];
 
 //Declaring the ref clock and the UART clock
   parameter REF_CLK = 20 ;
   parameter UART_CLK = 271 ;
-  parameter BIT_PERIOD = PRESCALE * UART_CLK ; 
-
+  reg [ 31 : 0 ] BIT_PERIOD ;
+  
 //Declaring the testbench signals
   reg Ref_clk_tb;
   reg RST_tb;
@@ -51,6 +53,8 @@ initial
 
     reset();
     #( BIT_PERIOD * 10 );
+
+    BIT_PERIOD = PRESCALE * UART_CLK ; 
 
 //Testcase 1
     $display("Test case 1: Write data then read it");
