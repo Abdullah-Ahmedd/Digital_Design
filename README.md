@@ -14,3 +14,7 @@ you didnt do the UART TX or the clock divider (clock divider had race conditions
 whenever you are free make them 
 
 fifo temsah said it is important so do it whenever you are free again to make sure you are better in it and understand it more 
+
+
+![WhatsApp Image 2025-09-27 at 17 10 28_187333df](https://github.com/user-attachments/assets/6fdd2564-e8c5-4b32-854f-834e4525d34c)
+
