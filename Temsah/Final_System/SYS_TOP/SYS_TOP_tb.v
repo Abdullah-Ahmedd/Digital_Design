@@ -5,6 +5,8 @@ it is simply beacause yes rx is working with a way faster clock than bit period 
 if my asnwer made you question then what is the use of making the RX faster then?
 the answer that it is faster to make it do the prescale and check if the bit sent it read correclty or no and store in PDATA before the tx send the 
 next bit
+thats why we input the prescale to the clock divider to make uart rx clock and input the prescale to the rx to let it know that your clock is x(prescale)
+times of the uart tx clock
 */
 `include "SYS_TOP.v"
 `timescale 1ns/1ps
