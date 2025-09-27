@@ -1,3 +1,11 @@
+/*
+if you are asking why you used BIT_PERIOD in both send and recive taks? 
+it is simply beacause yes rx is working with a way faster clock than bit period (which is tx period ) but rx is receiving the data from a TX
+(so you will still need to check the new value after BIT_PERIOD)
+if my asnwer made you question then what is the use of making the RX faster then?
+the answer that it is faster to make it do the prescale and check if the bit sent it read correclty or no and store in PDATA before the tx send the 
+next bit
+*/
 `include "SYS_TOP.v"
 `timescale 1ns/1ps
 
@@ -8,13 +16,13 @@ module SYS_TOP_tb();
   parameter Address_width = 'd4 ;
   parameter NUM_STAGES = 'd2 ;
   parameter Depth = 'd8;
-  
+
   wire [ 5 : 0 ] PRESCALE  ;
   assign PRESCALE = system_top.Regfile.Regfile[ 2 ][ 7 : 2 ];
 
 //Declaring the ref clock and the UART clock
   parameter REF_CLK = 20 ;
-  parameter UART_CLK = 271 ;
+  parameter UART_CLK = 271;
   reg [ 31 : 0 ] BIT_PERIOD ;
   
 //Declaring the testbench signals
