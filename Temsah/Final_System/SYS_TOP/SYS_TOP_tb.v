@@ -188,11 +188,11 @@ SYS_TOP
 #(.Data_width ( Data_width ), .Address_width ( Address_width ) , .NUM_STAGES ( NUM_STAGES ) , .Depth ( Depth ) )
 system_top
 (
-.Ref_clk( Ref_clk_tb ),
-.RST( RST_tb ),
-.UART_clk( UART_clk_tb ),
-.RX_IN( RX_IN_tb ),
-.TX_OUT( TX_OUT_tb ),
+.REF_CLK( Ref_clk_tb ),
+.RST_N( RST_tb ),
+.UART_CLK( UART_clk_tb ),
+.UART_RX_IN( RX_IN_tb ),
+.UART_TX_O( TX_OUT_tb ),
 .parity_error( parity_error_tb ),
 .framing_error( framing_error_tb )
 );

@@ -62,12 +62,12 @@ module SYS_TOP
 #(  parameter Data_width = 'd8 , parameter Address_width = 'd4 , parameter NUM_STAGES = 'd2 , parameter Depth = 'd8 )
 (
 //Declaring inputs
-    input wire Ref_clk,
-    input wire RST,
-    input wire UART_clk,
-    input wire RX_IN,
+    input wire REF_CLK,
+    input wire RST_N,
+    input wire UART_CLK,
+    input wire UART_RX_IN,
 //Declaring output
-    output wire TX_OUT,
+    output wire UART_TX_O,
     output wire parity_error,
     output wire framing_error
 );
@@ -121,8 +121,8 @@ RST_SYNC
 #(.NUM_STAGES ( NUM_STAGES ) )
 Reset_synchronizer1
 (
-.RST( RST ),
-.CLK( Ref_clk ),
+.RST( RST_N ),
+.CLK( REF_CLK ),
 .SYNC_RST( SYNC_RST_domain_1 )
 );
 
@@ -131,15 +131,15 @@ RST_SYNC
 #(.NUM_STAGES ( NUM_STAGES ) )
 Reset_synchronizer2
 (
-.RST( RST ),
-.CLK( UART_clk ),
+.RST( RST_N ),
+.CLK( UART_CLK ),
 .SYNC_RST( SYNC_RST_domain_2 )
 );
 
 //Clock divider for UART RX
 ClkDiv clock_divider_UART_RX
 (
-.i_ref_clk( UART_clk ),
+.i_ref_clk( UART_CLK ),
 .i_rst_n( SYNC_RST_domain_2 ),
 .i_clk_en( clk_div_en_internal ),
 .i_div_ratio( {5'b00000,RX_clock_div_ratio_internal} ),
@@ -149,7 +149,7 @@ ClkDiv clock_divider_UART_RX
 //Clock divider for UART TX
 ClkDiv clock_divider_UART_TX
 (
-.i_ref_clk( UART_clk ),
+.i_ref_clk( UART_CLK ),
 .i_rst_n( SYNC_RST_domain_2 ),
 .i_clk_en( clk_div_en_internal ),
 .i_div_ratio( REG3_internal ),
@@ -168,7 +168,7 @@ System_control
 .Rd_data( Rd_data_internal ),
 .RdData_valid( RdData_valid_internal ),
 .FIFO_full( Wfull_internal ),
-.CLK( Ref_clk ),
+.CLK( REF_CLK ),
 .RST( SYNC_RST_domain_1 ),
 .ALU_EN( ALU_EN_internal ),
 .ALU_FUN( ALU_FUN_internal ),
@@ -189,7 +189,7 @@ Data_syncrhonizer
 (
 .unsync_bus( RX_P_DATA_internal ),
 .bus_enable( RX_data_valid_internal ),
-.CLK( Ref_clk ),
+.CLK( REF_CLK ),
 .RST( SYNC_RST_domain_1 ),
 .sync_bus( RX_p_data_SYNC_internal ),
 .enable_pulse( RX_d_valid_SYNC_internal ) 
@@ -202,7 +202,7 @@ UARTRX
 (
 .CLK( UART_RX_clk_internal ),
 .RST( SYNC_RST_domain_2 ),
-.RX_IN( RX_IN ),
+.RX_IN( UART_RX_IN ),
 .prescale(REG2_internal [ 7 : 2 ] ),
 .PAR_EN( REG2_internal [ 0 ] ),
 .PAR_TYP(REG2_internal [ 1 ]),
@@ -223,7 +223,7 @@ UARTTX
 .parity_type( REG2_internal [ 1 ] ),
 .CLK( UART_TX_clk_internal ),
 .RST( SYNC_RST_domain_2 ),
-.TX_OUT( TX_OUT ),
+.TX_OUT( UART_TX_O ),
 .busy( busy_internal )
 );
 
@@ -244,7 +244,7 @@ FIFO
 (
 .Winc( TX_d_valid_internal ),
 .Wrst( SYNC_RST_domain_1 ),
-.Wclk( Ref_clk ),
+.Wclk( REF_CLK ),
 .Rinc( Rinc_internal ),
 .Rrst( SYNC_RST_domain_2 ),
 .Rclk( UART_TX_clk_internal ),
@@ -265,7 +265,7 @@ MUX_prescale Prescale_MUX
 CLK_gate clock_gating_ALU
 (
 .CLK_EN( CLK_EN_internal ),
-.CLK( Ref_clk ),
+.CLK( REF_CLK ),
 .GATED_CLK( ALU_clk_internal )    
 );
 
@@ -292,7 +292,7 @@ Regfile
 .Address( Address_internal ),
 .WrEn( WrEN_internal ),
 .RdEn(RdEN_internal),
-.CLK( Ref_clk ),
+.CLK( REF_CLK ),
 .RST( SYNC_RST_domain_1 ),
 .RdData( Rd_data_internal ),
 .RdData_valid( RdData_valid_internal ),
