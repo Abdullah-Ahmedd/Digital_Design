@@ -1,0 +1,22 @@
+{
+  "extensionVersion": "1.4.1",
+  "fileName": "c:\\Users\\User\\Github\\Digital_Design\\Temsah\\Final_System\\SYS_TOP\\SYS_TOP.vcd",
+  "markerTime": null,
+  "altMarkerTime": null,
+  "selectedSignal": null,
+  "zoomRatio": 0.0002,
+  "scrollLeft": 0,
+  "displayedSignals": [
+    {
+      "dataType": "netlist-variable",
+      "netlistId": 14,
+      "name": "SYS_TOP_tb.UART_clk_tb",
+      "numberFormat": "binary",
+      "colorIndex": 0,
+      "rowHeight": 1,
+      "verticalScale": 1,
+      "renderType": "binary",
+      "valueLinkCommand": ""
+    }
+  ]
+}
