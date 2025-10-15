@@ -20,3 +20,12 @@ fifo temsah said it is important so do it whenever you are free again to make su
 remeber to check this approach as the testbench you did in your sys top was not a correct approach 
 ![WhatsApp Image 2025-09-27 at 17 10 28_187333df](https://github.com/user-attachments/assets/6fdd2564-e8c5-4b32-854f-834e4525d34c)
 
+
+ 
+
+NPTEL 
+دي مؤسسة او جامعة هندية وقاسمة الكورس ع ٢ بلاي ليست 
+ https://youtube.com/playlist?list=PLyqSpQzTE6M8iOrfy70ELk9W72JG5a98V&si=yIi0lcLsHiShkcyH
+
+ https://youtube.com/playlist?list=PLyqSpQzTE6M_WlKg31y8qI7DMhJS5eHBY&si=kAR1TFdL1oW-EKAM
+
