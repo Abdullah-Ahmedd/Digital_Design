@@ -13,28 +13,28 @@ module EX_MEM_Reg (
     
 
     // ================= DATA SIGNALS (INPUTS) =================
-    input wire [15:0] alu_out,    
-    input wire [15:0] RD2,      
+    input wire [7:0] alu_out,    
+    input wire [7:0] RD2,      
     input wire [1:0]  ADDER,      
     input wire [7:0]  IN_PORT,    
     input wire [1:0]  RA,         
     input wire [1:0]  RB,         
-    input wire [15:0] instr_in,   
-    input wire [15:0] MUX_DMEM_1, 
-    input wire [15:0] MUX_DMEM_2, 
+    input wire [7:0] instr_in,   
+    input wire [7:0] MUX_DMEM_1, 
+    input wire [7:0] MUX_DMEM_2, 
     
     // ================= OUTPUTS TO MEMORY STAGE =================
     output reg        wr_en_regf_M, wr_en_dmem_M, rd_en_M,
     output reg        out_port_sel_M, is_ret_M, branch_taken_M,
     output reg        mux_out_sel_M, mux_rdata_sel_M,
-    output reg [15:0] alu_out_M,
-    output reg [15:0] RD2_M,
+    output reg [7:0] alu_out_M,
+    output reg [7:0] RD2_M,
     output reg [1:0]  rd_M,       
     output reg [7:0]  IN_PORT_M,
     output reg [1:0]  RA_M, RB_M,
-    output reg [15:0] instr_M,
-    output reg [15:0] mem_addr_M, // From MUX_DMEM_1
-    output reg [15:0] mem_wd_M    // From MUX_DMEM_2
+    output reg [7:0] instr_M,
+    output reg [7:0] mem_addr_M, // From MUX_DMEM_1
+    output reg [7:0] mem_wd_M    // From MUX_DMEM_2
 );
 
  
@@ -49,15 +49,15 @@ module EX_MEM_Reg (
             branch_taken_M   <= 1'b0;
             mux_out_sel_M    <= 1'b0;
             mux_rdata_sel_M  <= 1'b0;
-            alu_out_M        <= 16'b0;
-            RD2_M            <= 16'b0;
+            alu_out_M        <= 8'b0;
+            RD2_M            <= 8'b0;
             rd_M             <= 2'b0;
             IN_PORT_M        <= 8'b0;
             RA_M             <= 2'b0;
             RB_M             <= 2'b0;
-            instr_M          <= 16'b0;
-            mem_addr_M       <= 16'b0;
-            mem_wd_M         <= 16'b0;
+            instr_M          <= 8'b0;
+            mem_addr_M       <= 8'b0;
+            mem_wd_M         <= 8'b0;
         end 
         else begin
             wr_en_regf_M     <= wr_en_regf;

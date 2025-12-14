@@ -10,7 +10,9 @@ module Register_file(
     input wr_en,
 
     output [7:0] RD1,
-    output [7:0] RD2
+    output [7:0] RD2,
+    output [7:0] SP
+    
     );
 
     reg [7:0] R [0:3];

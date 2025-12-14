@@ -1,11 +1,11 @@
 module mux_4x1 (
-    input wire i0,    // Input 0
-    input wire i1,    // Input 1
-    input wire i2,    // Input 2
-    input wire i3,    // Input 3
+    input wire [ 7 : 0 ] i0,    // Input 0
+    input wire [ 7 : 0 ] i1,    // Input 1
+    input wire [ 7 : 0 ] i2,    // Input 2
+    input wire [ 7 : 0 ] i3,    // Input 3
     input wire s0,    // Select signal 0 (LSB)
     input wire s1,    // Select signal 1 (MSB)
-    output reg out    // Output
+    output reg [ 7 : 0 ] out    // Output
 );
 
     always @(*) begin

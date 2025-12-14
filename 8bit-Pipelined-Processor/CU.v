@@ -1,4 +1,4 @@
-module Control_Unit (
+module CU (
     // INPUTS 
     input clk,
     input rst, /// Active-high reset

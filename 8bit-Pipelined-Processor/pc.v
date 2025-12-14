@@ -1,4 +1,4 @@
-module pc_reg ( 
+module pc ( 
     input clk,
 	input enable , 
     input [7:0] pc_in,

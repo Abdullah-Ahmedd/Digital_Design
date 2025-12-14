@@ -19,16 +19,16 @@ module ID_EX_Reg (
     input wire out_port_sel, 
 
     // ================= DATA SIGNALS (INPUTS) =================
-    input wire [15:0] RD1, 
-    input wire [15:0] RD2, 
-    input wire [15:0] imm,       
-    input wire [15:0] pc_reg,    
-    input wire [15:0] pc_plus_1, 
+    input wire [7:0] RD1, 
+    input wire [7:0] RD2, 
+    input wire [7:0] imm,       
+    input wire [7:0] pc_reg,    
+    input wire [7:0] pc_plus_1, 
     input wire [1:0]  RA,        
     input wire [1:0]  RB,        
     input wire [1:0]  ADDER,        
     input wire [1:0]  old_rb,
-    input wire [15:0] instr_in,  
+    input wire [7:0] instr_in,  
     input wire [7:0]  sp,       
     input wire [7:0]  sp_plus_1_or_2,
     input wire [7:0]  IN_PORT,
@@ -40,12 +40,12 @@ module ID_EX_Reg (
     output reg        mux_dmem_wd_sel_E, mux_rdata_sel_E,
     output reg        f_save_E, f_restore_E, is_ret_E,
     output reg        branch_taken_E_out, out_port_sel_E,
-    output reg [15:0] RD1_E, RD2_E, imm_E,
-    output reg [15:0] pc_reg_E, pc_plus_1_E,
+    output reg [7:0] RD1_E, RD2_E, imm_E,
+    output reg [7:0] pc_reg_E, pc_plus_1_E,
     output reg [1:0]  RA_E, RB_E, ADDER_E,
     output reg [1:0]  old_rb_E,
-    output reg [15:0] instr_out,
-    output reg [15:0] sp_E, sp_plus_1_or_2_E,
+    output reg [7:0] instr_out,
+    output reg [7:0] sp_E, sp_plus_1_or_2_E,
     output reg [7:0]  IN_PORT_E
 );
 
@@ -66,18 +66,18 @@ module ID_EX_Reg (
             is_ret_E           <= 1'b0;
             branch_taken_E_out <= 1'b0;
             out_port_sel_E     <= 1'b0;
-            RD1_E              <= 16'b0;
-            RD2_E              <= 16'b0;
-            imm_E              <= 16'b0;
-            pc_reg_E           <= 16'b0;
-            pc_plus_1_E        <= 16'b0;
+            RD1_E              <= 8'b0;
+            RD2_E              <= 8'b0;
+            imm_E              <= 8'b0;
+            pc_reg_E           <= 8'b0;
+            pc_plus_1_E        <= 8'b0;
             RA_E               <= 2'b0;
             RB_E               <= 2'b0;
             ADDER_E            <= 2'b0;
             old_rb_E           <= 2'b0;
-            instr_out       <= 16'b0;
-            sp_E               <= 16'b0;
-            sp_plus_1_or_2_E   <= 16'b0;
+            instr_out       <= 8'b0;
+            sp_E               <= 8'b0;
+            sp_plus_1_or_2_E   <= 8'b0;
             IN_PORT_E          <= 8'b0;
         end 
         else begin

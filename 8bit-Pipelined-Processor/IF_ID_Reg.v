@@ -7,27 +7,27 @@ module IF_ID_Reg (
     input wire flush_D,   // If 1, the register clears to NOP (Clear)
 
     // --- Inputs from Fetch Stage ---
-    input wire [15:0] instr_in,      // From Instruction Memory
-    input wire [15:0] pc_reg_in,     // From PC Register
-    input wire [15:0] pc_plus_1_in,  // From PC Adder
+    input wire [7:0] instr_in,      // From Instruction Memory
+    input wire [7:0] pc_reg_in,     // From PC Register
+    input wire [7:0] pc_plus_1_in,  // From PC Adder
     
     // --- Outputs to Decode Stage ---
-    output reg [15:0] instr_out,
-    output reg [15:0] pc_reg_out,
-    output reg [15:0] pc_plus_1_out
+    output reg [7:0] instr_out,
+    output reg [7:0] pc_reg_out,
+    output reg [7:0] pc_plus_1_out
 );
 
     always @(posedge clk or negedge reset) begin
         if (~reset) begin
-            instr_out      <= 16'h0000;
-            pc_reg_out     <= 16'h0000;
-            pc_plus_1_out  <= 16'h0000;
+            instr_out      <= 8'h00;
+            pc_reg_out     <= 8'h00;
+            pc_plus_1_out  <= 8'h00;
         end 
         else if (flush_D) begin
             // Hazard detected 
-            instr_out      <= 16'h0000; 
-            pc_reg_out     <= 16'h0000;
-            pc_plus_1_out  <= 16'h0000;
+            instr_out      <= 8'h00; 
+            pc_reg_out     <= 8'h00;
+            pc_plus_1_out  <= 8'h00;
         end 
         else if (stall_D) begin
             // In  Hazard Unit, stall_D = 1 means "run" 

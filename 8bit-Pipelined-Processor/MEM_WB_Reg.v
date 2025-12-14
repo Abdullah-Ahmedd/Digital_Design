@@ -12,16 +12,16 @@ module MEM_WB_Reg (
     //////////////////////////////////////////////
     input wire [1:0] ADDER,     // Destination Register Address (rd_M)
     // Data Signals
-    input wire [15:0] read_data_M, // Data from Memory RD port
-    input wire [15:0] alu_out_M,   // ALU Result
+    input wire [7:0] read_data_M, // Data from Memory RD port
+    input wire [7:0] alu_out_M,   // ALU Result
     input wire [7:0]  IN_PORT_M,   // Input Port Data
-    input wire [15:0] instr_M,     // Current Instruction bits
-    input wire [15:0] RD2_M,       // Register Data 2
+    input wire [7:0] instr_M,     // Current Instruction bits
+    input wire [7:0] RD2_M,       // Register Data 2
     // ================= OUTPUTS TO WRITEBACK STAGE =================
     output reg        wr_en_regf_W, mux_out_sel_W, mux_rdata_sel_W,
     output reg        out_port_sel_W, branch_taken_W, rd_en_W,
     output reg [1:0]  ADDER_W,
-    output reg [15:0] read_data_W, alu_out_W, instr_W, RD2_W,
+    output reg [7:0] read_data_W, alu_out_W, instr_W, RD2_W,
     output reg [7:0]  IN_PORT_W
 );
 
@@ -34,11 +34,11 @@ module MEM_WB_Reg (
             branch_taken_W  <= 1'b0;
             rd_en_W         <= 1'b0;
             ADDER_W         <= 2'b0;
-            read_data_W     <= 16'b0;
-            alu_out_W       <= 16'b0;
+            read_data_W     <= 8'b0;
+            alu_out_W       <= 8'b0;
             IN_PORT_W       <= 8'b0;
-            instr_W         <= 16'b0;
-            RD2_W           <= 16'b0;
+            instr_W         <= 8'b0;
+            RD2_W           <= 8'b0;
         end 
         else begin
             wr_en_regf_W    <= wr_en_regf_M;
