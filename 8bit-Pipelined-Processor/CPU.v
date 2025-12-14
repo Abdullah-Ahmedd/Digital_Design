@@ -72,7 +72,7 @@ wire [ 1 : 0 ] ADDER_internal_Regf_Addr_MUX; //Register file address
 wire [ 7 : 0 ] SP_INC_DEC_internal; //Stack pointer after being incremeneted/decremented
 wire [ 7 : 0 ] RD_IM_internal_MWB_Stage_output; //Red data of the instruction memory outputted from the memory write back-stage register
 wire [ 7 : 0 ] RDATA_internal; //Read data of the register file
-wire [ 7 : 0 ] MUX_RDATA_Sel_internal_MWB_Stage_output; //MUX_RDATA selection line outputted from the memory write back-stage register
+wire [ 1 : 0 ] MUX_RDATA_Sel_internal_MWB_Stage_output; //MUX_RDATA selection line outputted from the memory write back-stage register
 
 wire [ 7 : 0 ] MUX_SP_OUTPUT_internal; //output of the stack pointer mux  
 
@@ -116,7 +116,34 @@ wire [ 7 : 0 ] MUX_RD2_output;
 
 wire [ 7 : 0 ] ALU_OUT_internal;
 
+wire [ 7 : 0 ] MUX1_ALU_output;
+wire [ 7 : 0 ] MUX2_ALU_output;
 wire [ 3 : 0 ] Flag_internal; 
+
+wire [ 7 : 0 ] MUX_DMEM_A_out;
+wire [ 7 : 0 ] MUX_DMEM_WD_out;
+
+wire wr_en_regf_internal_EXM_Stage_output;
+wire rd_en_internal_EXM_Stage_output;
+wire OUT_PORT_sel_internal_EXM_Stage_output;
+wire is_ret_internal_EXM_Stage_output;
+wire branch_taken_E_internal_EXM_Stage_output;
+wire MUX_OUT_Sel_internal_EXM_Stage_output;
+wire [ 1 : 0 ] MUX_RDATA_Sel_internal_EXM_Stage_output;
+wire [ 7 : 0 ] ALU_OUT_internal_EXM_Stage_output;
+wire [ 7 : 0 ] RD2_internal_EXM_Stage_output;
+wire [ 7 : 0 ] INPUT_EXM_Stage_output;
+wire [ 1 : 0 ] RA_internal_EXM_Stage_output;
+wire [ 1 : 0 ] RB_internal_EXM_Stage_output;
+wire [ 7 : 0 ] INSTR_internal_EXM_Stage_output;
+wire [ 7 : 0 ] MUX_DMEM_A_out_EXM_Stage_output;
+wire [ 7 : 0 ] MUX_DMEM_WD_out_EXM_Stage_output;
+wire [ 1 : 0 ] ADDER_internal_Regf_Addr_MUX_EXM_Stage_output;
+
+wire [ 7 : 0 ] RD_DM_internal;
+
+wire MUX_OUT_Sel_internal_MWB_Stage_output;
+wire MUX_RDATA_Sel_internal_EXM_Stage_output;
 
 
 /////////////////////////////////////////////////////////////////////////////////////
@@ -337,13 +364,13 @@ mux_2x1 MUX_RD2
 
 
 //MUX1_ALU
-mux_4x1 MUX1_ALU
+mux_4x1 MUX1_ALU 
 (
-.i0( RD1_internal_DEX_Stage_output ),    
+.i0(  ),    
 .i1(  ),   
-.i2(  ),   
+.i2(  ),   //////////////////////////////////////////////////////////////
 .i3(  ),    
-.s0( ),
+.s0(  ),
 .s1(  ),
 .out(  )
 );
@@ -353,7 +380,7 @@ mux_4x1 MUX2_ALU
 (
 .i0(  ),    
 .i1(  ),   
-.i2(  ),   
+.i2(  ),   //////////////////////////////////////////////////////////////////////
 .i3(  ),    
 .s0( ),
 .s1(  ),
@@ -374,12 +401,121 @@ ALU ALU1
 //CCR
 CCR CCR1
 (
-.CLK(  ),
-.RST(  ),
-.IN(  ),
-.F_Save( ),
-.F_Restore(  ),
-.OUT(  )
+.CLK( CLK ),
+.RST( RST ),
+.IN( Flag_internal ),
+.F_Save( F_Save_internal_DEX_Stage_output ),
+.F_Restore( F_Restore_internal_DEX_Stage_output ),
+.OUT( CCR_OUT_internal )
+);
+
+//MUX_DMEM_A
+mux_4x1 MUX_DMEM_A
+(
+.i0( ALU_OUT_internal ),    
+.i1( SP_internal_DEX_Stage_output ),   
+.i2( SP_INC_DEC_internal_DEX_Stage_output ),   
+.i3( IMM_internal_DEX_Stage_output ),    
+.s0( MUX_DMEM_A_Sel_internal_DEX_Stage_output [ 0 ] ),
+.s1( MUX_DMEM_A_Sel_internal_DEX_Stage_output [ 1 ] ),
+.out( MUX_DMEM_A_out )
+);
+
+
+//MUX_DMEM_WD
+mux_4x1 MUX_DMEM_WD
+(
+.i0( IMM_internal_DEX_Stage_output ),    
+.i1( RD2_internal_DEX_Stage_output ),   
+.i2( PC_P_one_internal_DEX_Stage_output ),   
+.i3( pc_out_internal_DEX_Stage_output ),    
+.s0( MUX_DMEM_WD_Sel_internal_DEX_Stage_output[ 0 ] ),
+.s1( MUX_DMEM_WD_Sel_internal_DEX_Stage_output[ 1 ] ),
+.out( MUX_DMEM_WD_out )
+);
+
+//Execute memory register
+EX_MEM_Reg EXecute_Memory_Register
+ (
+.clk( CLK ), 
+.reset( RST ),
+.wr_en_regf( wr_en_regf_internal_DEX_Stage_output ),     
+.wr_en_dmem( wr_en_dmem_internal_DEX_Stage_output ),     
+.rd_en( rd_en_internal_DEX_Stage_output ),          
+.out_port_sel( OUT_PORT_sel_internal_DEX_Stage_output ),   
+.is_ret( is_ret_internal_DEX_Stage_output ),         
+.branch_taken_E( branch_taken_E_internal_DEX_Stage_output ), 
+.mux_out_sel( MUX_OUT_Sel_internal_DEX_Stage_output ),   
+.mux_rdata_sel( MUX_RDATA_Sel_internal_DEX_Stage_output ),  
+.alu_out( ALU_OUT_internal ),    
+.RD2( RD2_internal_DEX_Stage_output ),      
+.ADDER( ADDER_internal_Regf_Addr_MUX_DEX_Stage_output ),      
+.IN_PORT( INPUT_DEX_Stage_output ),    
+.RA( RA_internal_DEX_Stage_output ),         
+.RB( RB_internal_DEX_Stage_output ),         
+.instr_in( INSTR_internal_DEX_Stage_output ),   
+.MUX_DMEM_1(MUX_DMEM_A_out ),
+.MUX_DMEM_2(MUX_DMEM_WD_out ), 
+.wr_en_regf_M( wr_en_regf_internal_EXM_Stage_output ), 
+.wr_en_dmem_M( wr_en_dmem_internal_EXM_Stage_output ) , 
+.rd_en_M( rd_en_internal_EXM_Stage_output ),
+.out_port_sel_M( OUT_PORT_sel_internal_EXM_Stage_output ), 
+.is_ret_M( is_ret_internal_EXM_Stage_output ), 
+.branch_taken_M( branch_taken_E_internal_EXM_Stage_output ),
+.mux_out_sel_M( MUX_OUT_Sel_internal_EXM_Stage_output ), 
+.mux_rdata_sel_M( MUX_RDATA_Sel_internal_EXM_Stage_output ),
+.alu_out_M( ALU_OUT_internal_EXM_Stage_output ),
+.RD2_M( RD2_internal_EXM_Stage_output ),
+.rd_M( ADDER_internal_Regf_Addr_MUX_EXM_Stage_output ),       
+.IN_PORT_M( INPUT_EXM_Stage_output ),
+.RA_M( RA_internal_EXM_Stage_output ), 
+.RB_M( RB_internal_EXM_Stage_output ),
+.instr_M( INSTR_internal_EXM_Stage_output ),
+.mem_addr_M( MUX_DMEM_A_out_EXM_Stage_output ), 
+.mem_wd_M( MUX_DMEM_WD_out_EXM_Stage_output )    
+);
+
+//Data memory
+Data_memory DM
+(
+.Write_EN( wr_en_dmem_internal_EXM_Stage_output ),
+.Read_EN( rd_en_internal_EXM_Stage_output ),
+.WD( MUX_DMEM_WD_out_EXM_Stage_output ),
+.A( MUX_DMEM_A_out_EXM_Stage_output ),
+.CLK( CLK ),
+.RST( RST ),
+.RD( RD_DM_internal )
+);
+
+//Memory write back register
+ MEM_WB_Reg Memory_WriteBack_Register
+ (
+.clk( CLK ), 
+.reset( RST ),
+.wr_en_regf_M( wr_en_regf_internal_EXM_Stage_output ),    
+.mux_out_sel_M( MUX_OUT_Sel_internal_EXM_Stage_output ),   
+.mux_rdata_sel_M( MUX_RDATA_Sel_internal_EXM_Stage_output ), 
+.out_port_sel_M( OUT_PORT_sel_internal_EXM_Stage_output ),  
+.branch_taken_E( branch_taken_E_internal_EXM_Stage_output ),  
+.rd_en_M( rd_en_internal_EXM_Stage_output ),         
+.ADDER( ADDER_internal_Regf_Addr_MUX_EXM_Stage_output ),    
+.read_data_M( RD_DM_internal ), 
+.alu_out_M( ALU_OUT_internal_EXM_Stage_output ),   
+.IN_PORT_M( INPUT_EXM_Stage_output ),   
+.instr_M( INSTR_internal_EXM_Stage_output ),     
+.RD2_M( RD2_internal_EXM_Stage_output ),      
+.wr_en_regf_W( wr_en_regf_internal_EXM_Stage_output ), 
+.mux_out_sel_W( MUX_OUT_Sel_internal_MWB_Stage_output ),
+.mux_rdata_sel_W(MUX_RDATA_Sel_internal_MWB_Stage_output),
+.out_port_sel_W(),
+.branch_taken_W(), 
+.rd_en_W(),
+.ADDER_W(),
+.read_data_W(), 
+.alu_out_W(), 
+.instr_W(), 
+.RD2_W(),
+.IN_PORT_W()
 );
 
 
