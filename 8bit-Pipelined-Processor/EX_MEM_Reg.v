@@ -8,8 +8,8 @@ module EX_MEM_Reg (
     input wire out_port_sel,   
     input wire is_ret,         
     input wire branch_taken_E, 
-    input wire mux_out_sel,    
-    input wire mux_rdata_sel,  
+    input wire mux_out_sel,    /// 1 bit 
+    input wire [1:0] mux_rdata_sel,  /// 2 bits 
     
 
     // ================= DATA SIGNALS (INPUTS) =================
@@ -26,7 +26,8 @@ module EX_MEM_Reg (
     // ================= OUTPUTS TO MEMORY STAGE =================
     output reg        wr_en_regf_M, wr_en_dmem_M, rd_en_M,
     output reg        out_port_sel_M, is_ret_M, branch_taken_M,
-    output reg        mux_out_sel_M, mux_rdata_sel_M,
+    output reg        mux_out_sel_M, 
+    output reg [1:0]  mux_rdata_sel_M,
     output reg [7:0] alu_out_M,
     output reg [7:0] RD2_M,
     output reg [1:0]  rd_M,       
@@ -48,7 +49,7 @@ module EX_MEM_Reg (
             is_ret_M         <= 1'b0;
             branch_taken_M   <= 1'b0;
             mux_out_sel_M    <= 1'b0;
-            mux_rdata_sel_M  <= 1'b0;
+            mux_rdata_sel_M  <= 2'b0;
             alu_out_M        <= 8'b0;
             RD2_M            <= 8'b0;
             rd_M             <= 2'b0;
@@ -79,4 +80,5 @@ module EX_MEM_Reg (
             mem_wd_M         <= MUX_DMEM_2;
         end
     end
+
 endmodule

@@ -83,7 +83,40 @@ wire wr_en_regf_internal_WMB_Stage_output; //Write enable of the rgister file ou
 wire [ 7 : 0 ] RD1_internal; //Register file output 1
 wire [ 7 : 0 ] RD2_internal; //Register file output 2
 
+wire flush_E_internal; //flushing the execute stage 
 
+wire [ 5 : 0 ] alu_control_internal_DEX_Stage_output; //alu control
+wire wr_en_regf_internal_DEX_Stage_output;
+wire wr_en_dmem_internal_DEX_Stage_output;
+wire rd_en_internal_DEX_Stage_output;
+wire RD2_Sel_internal_DEX_Stage_output;
+wire [ 7 : 0 ] INPUT_DEX_Stage_output;
+wire MUX_OUT_Sel_internal_DEX_Stage_output;
+wire [ 1 : 0 ] MUX_DMEM_A_Sel_internal_DEX_Stage_output;
+wire [ 1 : 0 ] MUX_DMEM_WD_Sel_internal_DEX_Stage_output;
+wire [ 1 : 0 ] MUX_RDATA_Sel_internal_DEX_Stage_output;
+wire F_Save_internal_DEX_Stage_output;
+wire F_Restore_internal_DEX_Stage_output;
+wire branch_taken_E_internal_DEX_Stage_output;
+wire OUT_PORT_sel_internal_DEX_Stage_output;
+wire [ 7 : 0 ] RD1_internal_DEX_Stage_output;
+wire [ 7 : 0 ] RD2_internal_DEX_Stage_output;
+wire [ 7 : 0 ] IMM_internal_DEX_Stage_output;
+wire [ 7 : 0 ] pc_out_internal_DEX_Stage_output;
+wire [ 7 : 0 ] PC_P_one_internal_DEX_Stage_output;
+wire [ 1 : 0 ] RA_internal_DEX_Stage_output;
+wire [ 1 : 0 ] RB_internal_DEX_Stage_output;
+wire [ 1 : 0 ] ADDER_internal_Regf_Addr_MUX_DEX_Stage_output;
+wire [ 1 : 0 ] old_rb_internal_DEX_Stage_output;
+wire [ 7 : 0 ] INSTR_internal_DEX_Stage_output;
+wire [ 7 : 0 ] SP_internal_DEX_Stage_output;
+wire [ 7 : 0 ] SP_INC_DEC_internal_DEX_Stage_output;
+
+wire [ 7 : 0 ] MUX_RD2_output;
+
+wire [ 7 : 0 ] ALU_OUT_internal;
+
+wire [ 3 : 0 ] Flag_internal; 
 
 
 /////////////////////////////////////////////////////////////////////////////////////
@@ -161,7 +194,7 @@ CU Control_unit
 .MUX_OUT_Sel( MUX_OUT_Sel_internal ),
 .PC_Sel( PC_Sel_internal ),
 .ADDR_Sel( ADDR_Sel_internal ),
-.branch_taken_E(branch_taken_E_internal),
+.branch_taken_E( branch_taken_E_internal ),
 .is_2byte_D( is_2byte_D_internal ),
 .F_Save( F_Save_internal ),
 .F_Restore( F_Restore_internal ),
@@ -231,6 +264,123 @@ Register_file Reg_file
 .SP( SP_internal )
 );
 
+//Decode-Execute register 
+ID_EX_Reg Decode_Execute_Register 
+(
+.clk( CLK ),
+.reset( RST ),
+.flush_E( flush_E_internal ),          
+.alu_control( alu_control_internal ), 
+.wr_en_regf( wr_en_regf_internal ),     
+.wr_en_dmem( wr_en_dmem_internal ),     
+.rd_en( rd_en_internal ),          
+.rd2_sel( RD2_Sel_internal ),        
+.mux_out_sel( MUX_OUT_Sel_internal ),    
+.mux_dmem_a_sel( MUX_DMEM_A_Sel_internal ), 
+.mux_dmem_wd_sel( MUX_DMEM_WD_Sel_internal ),
+.mux_rdata_sel( MUX_RDATA_Sel_internal ),  
+.f_save( F_Save_internal ),         
+.f_restore( F_Restore_internal ),      
+.is_ret( is_ret_internal ),         
+.branch_taken_E( branch_taken_E_internal ),  
+.out_port_sel( OUT_PORT_sel_internal ), 
+.RD1( RD1_internal ), 
+.RD2( RD2_internal ), 
+.imm( RD_IM_internal_FD_Stage_output ),       
+.pc_reg( pc_out_internal_FD_Stage_output ),    
+.pc_plus_1( PC_P_one_internal_FD_Stage_output ), 
+.RA( RD_IM_internal_FD_Stage_output [ 3 : 2 ] ),        
+.RB( RD_IM_internal_FD_Stage_output [ 1 : 0 ] ),        
+.ADDER( ADDER_internal_Regf_Addr_MUX ),        
+.old_rb( old_rb_internal ),
+.instr_in( RD_IM_internal_FD_Stage_output ),  
+.sp( SP_internal ),       
+.sp_plus_1_or_2( SP_INC_DEC_internal ),
+.IN_PORT( INPUT ),
+.alu_control_E( alu_control_internal_DEX_Stage_output ),
+.wr_en_regf_E( wr_en_regf_internal_DEX_Stage_output ),
+.wr_en_dmem_E( wr_en_dmem_internal_DEX_Stage_output ), 
+.rd_en_E( rd_en_internal_DEX_Stage_output ),
+.rd2_sel_E( RD2_Sel_internal_DEX_Stage_output ),
+.mux_out_sel_E( MUX_OUT_Sel_internal_DEX_Stage_output ),
+.mux_dmem_a_sel_E( MUX_DMEM_A_Sel_internal_DEX_Stage_output ),
+.mux_dmem_wd_sel_E( MUX_DMEM_WD_Sel_internal_DEX_Stage_output ),
+.mux_rdata_sel_E( MUX_RDATA_Sel_internal_DEX_Stage_output ),
+.f_save_E( F_Save_internal_DEX_Stage_output ),
+.f_restore_E( F_Restore_internal_DEX_Stage_output ), 
+.is_ret_E( is_ret_internal_DEX_Stage_output ),
+.branch_taken_E_out( branch_taken_E_internal_DEX_Stage_output ), 
+.out_port_sel_E( OUT_PORT_sel_internal_DEX_Stage_output ),
+.RD1_E( RD1_internal_DEX_Stage_output ), 
+.RD2_E( RD2_internal_DEX_Stage_output ), 
+.imm_E( IMM_internal_DEX_Stage_output ),
+.pc_reg_E( pc_out_internal_DEX_Stage_output ),
+.pc_plus_1_E( PC_P_one_internal_DEX_Stage_output ),
+.RA_E( RA_internal_DEX_Stage_output ), 
+.RB_E( RB_internal_DEX_Stage_output ), 
+.ADDER_E( ADDER_internal_Regf_Addr_MUX_DEX_Stage_output ),
+.old_rb_E( old_rb_internal_DEX_Stage_output ),
+.instr_out( INSTR_internal_DEX_Stage_output ),
+.sp_E( SP_internal_DEX_Stage_output ), 
+.sp_plus_1_or_2_E( SP_INC_DEC_internal_DEX_Stage_output ),
+.IN_PORT_E( INPUT_DEX_Stage_output )
+);
+
+//MUX_RD2
+mux_2x1 MUX_RD2
+(
+.i0( RD2_internal_DEX_Stage_output ),    
+.i1( { 6'b0 , old_rb_internal_DEX_Stage_output } ),   
+.s( RD2_Sel_internal_DEX_Stage_output ),    
+.out( MUX_RD2_output )    
+);
+
+
+//MUX1_ALU
+mux_4x1 MUX1_ALU
+(
+.i0( RD1_internal_DEX_Stage_output ),    
+.i1(  ),   
+.i2(  ),   
+.i3(  ),    
+.s0( ),
+.s1(  ),
+.out(  )
+);
+
+//MUX2_ALU
+mux_4x1 MUX2_ALU
+(
+.i0(  ),    
+.i1(  ),   
+.i2(  ),   
+.i3(  ),    
+.s0( ),
+.s1(  ),
+.out(  )
+);
+
+//ALU
+ALU ALU1
+(
+.reset( RST ),
+.a( MUX1_ALU_output ),
+.b( MUX2_ALU_output ),
+.alu_fun( alu_control_internal_DEX_Stage_output ), 
+.alu_out( ALU_OUT_internal ),
+.flags( Flag_internal )
+);
+
+//CCR
+CCR CCR1
+(
+.CLK(  ),
+.RST(  ),
+.IN(  ),
+.F_Save( ),
+.F_Restore(  ),
+.OUT(  )
+);
 
 
 endmodule 

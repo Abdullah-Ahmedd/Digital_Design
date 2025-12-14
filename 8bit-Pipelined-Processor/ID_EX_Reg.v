@@ -7,11 +7,11 @@ module ID_EX_Reg (
     input wire wr_en_regf,     
     input wire wr_en_dmem,     
     input wire rd_en,          
-    input wire rd2_sel,        
-    input wire mux_out_sel,    
-    input wire mux_dmem_a_sel, 
-    input wire mux_dmem_wd_sel,
-    input wire mux_rdata_sel,  
+    input wire rd2_sel,   //// 1 bit      
+    input wire mux_out_sel,     //// 1 bit
+    input wire [1:0] mux_dmem_a_sel, //// 2 bits
+    input wire [1:0] mux_dmem_wd_sel, //// 2 bits
+    input wire [1:0] mux_rdata_sel,  //// 2 bits
     input wire f_save,         
     input wire f_restore,      
     input wire is_ret,         
@@ -36,8 +36,8 @@ module ID_EX_Reg (
     // ================= OUTPUTS TO EXECUTE STAGE =================
     output reg [5:0]  alu_control_E,
     output reg        wr_en_regf_E, wr_en_dmem_E, rd_en_E,
-    output reg        rd2_sel_E, mux_out_sel_E, mux_dmem_a_sel_E,
-    output reg        mux_dmem_wd_sel_E, mux_rdata_sel_E,
+    output reg        rd2_sel_E,mux_out_sel_E,
+    output reg [1:0]  mux_dmem_a_sel_E,mux_dmem_wd_sel_E, mux_rdata_sel_E,
     output reg        f_save_E, f_restore_E, is_ret_E,
     output reg        branch_taken_E_out, out_port_sel_E,
     output reg [7:0] RD1_E, RD2_E, imm_E,
@@ -58,9 +58,9 @@ module ID_EX_Reg (
             rd_en_E            <= 1'b0;
             rd2_sel_E          <= 1'b0;
             mux_out_sel_E      <= 1'b0;
-            mux_dmem_a_sel_E   <= 1'b0;
-            mux_dmem_wd_sel_E  <= 1'b0;
-            mux_rdata_sel_E    <= 1'b0;
+            mux_dmem_a_sel_E   <= 2'b0;
+            mux_dmem_wd_sel_E  <= 2'b0;
+            mux_rdata_sel_E    <= 2'b0;
             f_save_E           <= 1'b0;
             f_restore_E        <= 1'b0;
             is_ret_E           <= 1'b0;
@@ -110,4 +110,5 @@ module ID_EX_Reg (
             IN_PORT_E          <= IN_PORT;
         end
     end
+
 endmodule
