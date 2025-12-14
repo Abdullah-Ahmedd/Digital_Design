@@ -9,7 +9,7 @@
 `include "IF_ID_Reg.v"
 `include "Instruction_memory.v"
 `include "MEM_WB_Reg.v"
-`include "mux_2x1_en.v"
+`include "Register_en.v"
 `include "mux_2x1.v" 
 `include "mux_4x1.v"
 `include "mux_4x1_2bits.v"
@@ -143,7 +143,14 @@ wire [ 1 : 0 ] ADDER_internal_Regf_Addr_MUX_EXM_Stage_output;
 wire [ 7 : 0 ] RD_DM_internal;
 
 wire MUX_OUT_Sel_internal_MWB_Stage_output;
-wire MUX_RDATA_Sel_internal_EXM_Stage_output;
+wire OUT_PORT_sel_internal_MWB_Stage_output;
+wire rd_en_internal_MWB_Stage_output;
+wire [ 1 : 0 ] ADDER_internal_Regf_Addr_MUX_MWB_Stage_output;
+wire [ 7 : 0 ] RD_DM_internal_MWB_Stage_output;
+wire [ 7 : 0 ] ALU_OUT_internal_MWB_Stage_output;
+wire [ 7 : 0 ] INSTR_internal_MWB_Stage_output;
+wire [ 7 : 0 ] RD2_internal_MWB_Stage_output;
+wire [ 7 : 0 ] INPUT_MWB_Stage_output;
 
 
 /////////////////////////////////////////////////////////////////////////////////////
@@ -507,16 +514,39 @@ Data_memory DM
 .wr_en_regf_W( wr_en_regf_internal_EXM_Stage_output ), 
 .mux_out_sel_W( MUX_OUT_Sel_internal_MWB_Stage_output ),
 .mux_rdata_sel_W(MUX_RDATA_Sel_internal_MWB_Stage_output),
-.out_port_sel_W(),
-.branch_taken_W(), 
-.rd_en_W(),
-.ADDER_W(),
-.read_data_W(), 
-.alu_out_W(), 
-.instr_W(), 
-.RD2_W(),
-.IN_PORT_W()
+.out_port_sel_W(OUT_PORT_sel_internal_MWB_Stage_output),
+.branch_taken_W(branch_taken_E_internal_MWB_Stage_output), 
+.rd_en_W( rd_en_internal_MWB_Stage_output ),
+.ADDER_W( ADDER_internal_Regf_Addr_MUX_MWB_Stage_output ),
+.read_data_W( RD_DM_internal_MWB_Stage_output ), 
+.alu_out_W( ALU_OUT_internal_MWB_Stage_output ), 
+.instr_W( INSTR_internal_MWB_Stage_output ), 
+.RD2_W( RD2_internal_MWB_Stage_output ),
+.IN_PORT_W( INPUT_MWB_Stage_output )
 );
+
+//MUX_out
+Register_en output_Registered
+(
+.CLK( CLK ),
+.RST( RST ),
+.in( RD2_internal_MWB_Stage_output ),
+.en( OUT_PORT_sel_internal_MWB_Stage_output ),
+.out( OUTPUT )
+);
+
+
+
+//MUX_RD_IM
+mux_2x1 MUX_RD_IM
+ (
+.i0( RD_DM_internal_MWB_Stage_output ),    
+.i1( ALU_OUT_internal_MWB_Stage_output ),   
+.s( MUX_OUT_Sel_internal_MWB_Stage_output ),    
+.out( MUX_OUT_OUTPUT_internal )    
+);
+
+//Hazard unit 
 
 
 endmodule 
