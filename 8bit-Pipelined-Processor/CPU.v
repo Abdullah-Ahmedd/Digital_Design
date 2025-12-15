@@ -152,6 +152,9 @@ wire [ 7 : 0 ] INSTR_internal_MWB_Stage_output;
 wire [ 7 : 0 ] RD2_internal_MWB_Stage_output;
 wire [ 7 : 0 ] INPUT_MWB_Stage_output;
 
+wire [ 1 : 0 ] forward_a_E_internal;
+wire [ 1 : 0 ] forward_b_E_internal;
+
 
 /////////////////////////////////////////////////////////////////////////////////////
                                 // Modules instantiation //
@@ -373,25 +376,25 @@ mux_2x1 MUX_RD2
 //MUX1_ALU
 mux_4x1 MUX1_ALU 
 (
-.i0(  ),    
-.i1(  ),   
-.i2(  ),   //////////////////////////////////////////////////////////////
-.i3(  ),    
-.s0(  ),
-.s1(  ),
-.out(  )
+.i0( RD1_internal_DEX_Stage_output ),    
+.i1( MUX_OUT_OUTPUT_internal ),   
+.i2( ALU_OUT_internal_EXM_Stage_output ),   
+.i3( 8'b0 ),    
+.s0( forward_a_E_internal [ 0 ] ),
+.s1( forward_a_E_internal [ 1 ] ),
+.out( MUX1_ALU_output )
 );
 
 //MUX2_ALU
 mux_4x1 MUX2_ALU
 (
-.i0(  ),    
-.i1(  ),   
-.i2(  ),   //////////////////////////////////////////////////////////////////////
-.i3(  ),    
-.s0( ),
-.s1(  ),
-.out(  )
+.i0( MUX_RD2_output ),    
+.i1(  MUX_OUT_OUTPUT_internal  ),   
+.i2( ALU_OUT_internal_EXM_Stage_output  ),   
+.i3( 8'b0 ),    
+.s0( forward_b_E_internal [ 0 ] ),
+.s1( forward_b_E_internal [ 1 ] ),
+.out( MUX2_ALU_output )
 );
 
 //ALU
@@ -547,6 +550,31 @@ mux_2x1 MUX_RD_IM
 );
 
 //Hazard unit 
+Hazard_Unit HU
+(
+.rs_E( RA_internal_DEX_Stage_output ),       
+.rt_E( RB_internal_DEX_Stage_output ),       
+.rd_M(ADDER_internal_Regf_Addr_MUX_EXM_Stage_output),       
+.reg_write_M( wr_en_regf_internal_EXM_Stage_output ),     
+.rd_W( ADDER_internal_Regf_Addr_MUX_MWB_Stage_output ),       
+.reg_write_W( wr_en_regf_internal_WMB_Stage_output ),      
+.rs_D( RD_IM_internal_FD_Stage_output[ 3 : 2 ] ),       
+.rt_D( RD_IM_internal_FD_Stage_output[ 1 : 0 ] ),       
+.is_2byte_D( is_2byte_D_internal ),
+.rd_E( ADDER_internal_Regf_Addr_MUX_DEX_Stage_output ),       
+.mem_read_E( rd_en_internal_MWB_Stage_output ),       
+.branch_taken_E( branch_taken_E_internal_MWB_Stage_output ),   
+.is_ret_D( is_ret_internal ),     
+.is_ret_E( is_ret_internal_DEX_Stage_output ),      
+.is_ret_M( is_ret_internal_EXM_Stage_output ),       
+.forward_a_E( forward_a_E_internal ), 
+.forward_b_E( forward_b_E_internal ),
+.stall_F( stall_F_internal ),     
+.stall_D( stall_D_internal ),      
+.flush_E( flush_E_internal ),      
+.flush_D( flush_D_internal )    
+);
+
 
 
 endmodule 
