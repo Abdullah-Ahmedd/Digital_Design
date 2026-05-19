@@ -29,3 +29,19 @@ NPTEL
 
  https://youtube.com/playlist?list=PLyqSpQzTE6M_WlKg31y8qI7DMhJS5eHBY&si=kAR1TFdL1oW-EKAM
 
+
+
+
+
+
+
+
+
+
+ السلام عليكم يا شباب
+اظن إن البلاليست دي مغطية كل حاجة في التوبيكس اللي كانوا باعتينها عدا الdigital communication 
+
+https://www.youtube.com/playlist?list=PLgJkZdDFgVPLV7LoB51C-L-xWqDc6lRGQ
+
+من بشمهندس خريج عين شمس اسمه محمد فارس كان واخد كذا دبلومة وكان ماسك هيد ال ASIC IEEE وعامل البلاي ليست دي، لو حد حابب يحضر ومخدش دبلومات لسه ممكن يحضر منها.
+
