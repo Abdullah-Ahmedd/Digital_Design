@@ -5,19 +5,19 @@
 // The class here is then constructed to instantiate the design.
 // See the Verilator manual for examples.
 
-#ifndef VERILATED_VLAB1_H_
-#define VERILATED_VLAB1_H_  // guard
+#ifndef VERILATED_VLAB_FOUR_H_
+#define VERILATED_VLAB_FOUR_H_  // guard
 
 #include "verilated.h"
 
-class Vlab1__Syms;
-class Vlab1___024root;
+class VLab_four__Syms;
+class VLab_four___024root;
 
 // This class is the main interface to the Verilated model
-class alignas(VL_CACHE_LINE_BYTES) Vlab1 VL_NOT_FINAL : public VerilatedModel {
+class alignas(VL_CACHE_LINE_BYTES) VLab_four VL_NOT_FINAL : public VerilatedModel {
   private:
     // Symbol table holding complete model state (owned by this class)
-    Vlab1__Syms* const vlSymsp;
+    VLab_four__Syms* const vlSymsp;
 
   public:
 
@@ -35,19 +35,19 @@ class alignas(VL_CACHE_LINE_BYTES) Vlab1 VL_NOT_FINAL : public VerilatedModel {
 
     // Root instance pointer to allow access to model internals,
     // including inlined /* verilator public_flat_* */ items.
-    Vlab1___024root* const rootp;
+    VLab_four___024root* const rootp;
 
     // CONSTRUCTORS
     /// Construct the model; called by application code
     /// If contextp is null, then the model will use the default global context
     /// If name is "", then makes a wrapper with a
     /// single model invisible with respect to DPI scope names.
-    explicit Vlab1(VerilatedContext* contextp, const char* name = "TOP");
-    explicit Vlab1(const char* name = "TOP");
+    explicit VLab_four(VerilatedContext* contextp, const char* name = "TOP");
+    explicit VLab_four(const char* name = "TOP");
     /// Destroy the model; called (often implicitly) by application code
-    virtual ~Vlab1();
+    virtual ~VLab_four();
   private:
-    VL_UNCOPYABLE(Vlab1);  ///< Copying not allowed
+    VL_UNCOPYABLE(VLab_four);  ///< Copying not allowed
 
   public:
     // API METHODS

@@ -2,7 +2,7 @@
 // DESCRIPTION: Verilator output: main() simulation loop, created with --main
 
 #include "verilated.h"
-#include "Vlab1.h"
+#include "VLab_four.h"
 
 //======================
 
@@ -14,7 +14,7 @@ int main(int argc, char** argv, char**) {
     contextp->commandArgs(argc, argv);
 
     // Construct the Verilated model, from Vtop.h generated from Verilating
-    const std::unique_ptr<Vlab1> topp{new Vlab1{contextp.get(), ""}};
+    const std::unique_ptr<VLab_four> topp{new VLab_four{contextp.get(), ""}};
 
     // Simulate until $finish
     while (VL_LIKELY(!contextp->gotFinish())) {
@@ -22,7 +22,7 @@ int main(int argc, char** argv, char**) {
         topp->eval();
         // Advance time
         if (!topp->eventsPending()) break;
-        contextp->time(contextp->time() + 1);
+        contextp->time(topp->nextTimeSlot());
     }
 
     if (VL_LIKELY(!contextp->gotFinish())) {

@@ -2,13 +2,13 @@
 # DESCRIPTION: Verilator output: Make include file with class lists
 #
 # This file lists generated Verilated files, for including in higher level makefiles.
-# See Vlab1.mk for the caller.
+# See VLab_four.mk for the caller.
 
 ### Switches...
 # C11 constructs required?  0/1 (always on now)
 VM_C11 = 1
 # Timing enabled?  0/1
-VM_TIMING = 0
+VM_TIMING = 1
 # Coverage output mode?  0/1 (from --coverage)
 VM_COVERAGE = 0
 # Parallel builds?  0/1 (from --output-split)
@@ -25,25 +25,26 @@ VM_TRACE_VCD = 0
 ### Object file lists...
 # Generated module classes, fast-path, compile with highest optimization
 VM_CLASSES_FAST += \
-  Vlab1 \
-  Vlab1___024root__0 \
-  Vlab1__main \
+  VLab_four \
+  VLab_four___024root__0 \
+  VLab_four__main \
 
 # Generated module classes, non-fast-path, compile with low/medium optimization
 VM_CLASSES_SLOW += \
-  Vlab1___024root__Slow \
-  Vlab1___024root__0__Slow \
+  VLab_four___024root__Slow \
+  VLab_four___024root__0__Slow \
 
 # Generated support classes, fast-path, compile with highest optimization
 VM_SUPPORT_FAST += \
 
 # Generated support classes, non-fast-path, compile with low/medium optimization
 VM_SUPPORT_SLOW += \
-  Vlab1__Syms__Slow \
+  VLab_four__Syms__Slow \
 
 # Global classes, need linked once per executable, fast-path, compile with highest optimization
 VM_GLOBAL_FAST += \
   verilated \
+  verilated_timing \
   verilated_threads \
 
 # Global classes, need linked once per executable, non-fast-path, compile with low/medium optimization

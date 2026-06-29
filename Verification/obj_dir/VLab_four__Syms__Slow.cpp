@@ -1,9 +1,9 @@
 // Verilated -*- C++ -*-
 // DESCRIPTION: Verilator output: Symbol table implementation internals
 
-#include "Vlab1__pch.h"
+#include "VLab_four__pch.h"
 
-Vlab1__Syms::Vlab1__Syms(VerilatedContext* contextp, const char* namep, Vlab1* modelp)
+VLab_four__Syms::VLab_four__Syms(VerilatedContext* contextp, const char* namep, VLab_four* modelp)
     : VerilatedSyms{contextp}
     // Setup internal state of the Syms class
     , __Vm_modelp{modelp}
@@ -11,7 +11,7 @@ Vlab1__Syms::Vlab1__Syms(VerilatedContext* contextp, const char* namep, Vlab1* m
     , TOP{this, namep}
 {
     // Check resources
-    Verilated::stackCheck(12);
+    Verilated::stackCheck(266);
     // Setup sub module instances
     // Configure time unit / time precision
     _vm_contextp__->timeunit(-12);
@@ -22,7 +22,7 @@ Vlab1__Syms::Vlab1__Syms(VerilatedContext* contextp, const char* namep, Vlab1* m
     // Setup scopes
 }
 
-Vlab1__Syms::~Vlab1__Syms() {
+VLab_four__Syms::~VLab_four__Syms() {
     // Tear down scopes
     // Tear down sub module instances
 }
