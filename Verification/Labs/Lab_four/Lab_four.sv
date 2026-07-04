@@ -1,3 +1,4 @@
+`include "adder.sv"
 module Lab_four();
 
      logic [ 7 : 0 ]   a;

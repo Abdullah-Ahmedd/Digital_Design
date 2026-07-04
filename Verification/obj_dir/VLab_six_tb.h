@@ -5,19 +5,26 @@
 // The class here is then constructed to instantiate the design.
 // See the Verilator manual for examples.
 
-#ifndef VERILATED_VLAB_FOUR_H_
-#define VERILATED_VLAB_FOUR_H_  // guard
+#ifndef VERILATED_VLAB_SIX_TB_H_
+#define VERILATED_VLAB_SIX_TB_H_  // guard
 
 #include "verilated.h"
 
-class VLab_four__Syms;
-class VLab_four___024root;
+class VLab_six_tb__Syms;
+class VLab_six_tb___024root;
+class VLab_six_tb___024unit;
+class VLab_six_tb___024unit__03a__03astimulus;
+class VLab_six_tb___024unit__03a__03astimulus__Vclpkg;
+class VLab_six_tb_std;
+class VLab_six_tb_std__03a__03aprocess__Vclpkg;
+class VLab_six_tb_std__03a__03asemaphore__Vclpkg;
+
 
 // This class is the main interface to the Verilated model
-class alignas(VL_CACHE_LINE_BYTES) VLab_four VL_NOT_FINAL : public VerilatedModel {
+class alignas(VL_CACHE_LINE_BYTES) VLab_six_tb VL_NOT_FINAL : public VerilatedModel {
   private:
     // Symbol table holding complete model state (owned by this class)
-    VLab_four__Syms* const vlSymsp;
+    VLab_six_tb__Syms* const vlSymsp;
 
   public:
 
@@ -32,22 +39,27 @@ class alignas(VL_CACHE_LINE_BYTES) VLab_four VL_NOT_FINAL : public VerilatedMode
     // CELLS
     // Public to allow access to /* verilator public */ items.
     // Otherwise the application code can consider these internals.
+    VLab_six_tb_std* const __PVT__std;
+    VLab_six_tb___024unit* const __PVT____024unit;
+    VLab_six_tb_std__03a__03asemaphore__Vclpkg* const std__03a__03asemaphore__Vclpkg;
+    VLab_six_tb_std__03a__03aprocess__Vclpkg* const std__03a__03aprocess__Vclpkg;
+    VLab_six_tb___024unit__03a__03astimulus__Vclpkg* const __024unit__03a__03astimulus__Vclpkg;
 
     // Root instance pointer to allow access to model internals,
     // including inlined /* verilator public_flat_* */ items.
-    VLab_four___024root* const rootp;
+    VLab_six_tb___024root* const rootp;
 
     // CONSTRUCTORS
     /// Construct the model; called by application code
     /// If contextp is null, then the model will use the default global context
     /// If name is "", then makes a wrapper with a
     /// single model invisible with respect to DPI scope names.
-    explicit VLab_four(VerilatedContext* contextp, const char* name = "TOP");
-    explicit VLab_four(const char* name = "TOP");
+    explicit VLab_six_tb(VerilatedContext* contextp, const char* name = "TOP");
+    explicit VLab_six_tb(const char* name = "TOP");
     /// Destroy the model; called (often implicitly) by application code
-    virtual ~VLab_four();
+    virtual ~VLab_six_tb();
   private:
-    VL_UNCOPYABLE(VLab_four);  ///< Copying not allowed
+    VL_UNCOPYABLE(VLab_six_tb);  ///< Copying not allowed
 
   public:
     // API METHODS

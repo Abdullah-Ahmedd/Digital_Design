@@ -2,7 +2,7 @@
 // DESCRIPTION: Verilator output: main() simulation loop, created with --main
 
 #include "verilated.h"
-#include "VLab_four.h"
+#include "VLab_six_tb.h"
 
 //======================
 
@@ -14,7 +14,7 @@ int main(int argc, char** argv, char**) {
     contextp->commandArgs(argc, argv);
 
     // Construct the Verilated model, from Vtop.h generated from Verilating
-    const std::unique_ptr<VLab_four> topp{new VLab_four{contextp.get(), ""}};
+    const std::unique_ptr<VLab_six_tb> topp{new VLab_six_tb{contextp.get(), ""}};
 
     // Simulate until $finish
     while (VL_LIKELY(!contextp->gotFinish())) {
