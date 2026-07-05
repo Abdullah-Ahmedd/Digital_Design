@@ -2,9 +2,9 @@
 # DESCRIPTION: Verilator output: Makefile for building Verilated archive or executable
 #
 # Execute this makefile from the object directory:
-#    make -f VLab_six_tb.mk
+#    make -f Vmulti_op_processor_tb.mk
 
-default: VLab_six_tb
+default: Vmulti_op_processor_tb
 
 ### Constants...
 # Perl executable (from $PERL, defaults to 'perl' if not set)
@@ -32,9 +32,9 @@ VM_SC_TARGET_ARCH = mingw32
 
 ### Vars...
 # Design prefix (from --prefix)
-VM_PREFIX = VLab_six_tb
+VM_PREFIX = Vmulti_op_processor_tb
 # Module prefix (from --prefix)
-VM_MODPREFIX = VLab_six_tb
+VM_MODPREFIX = Vmulti_op_processor_tb
 # User CFLAGS (from -CFLAGS on Verilator command line)
 VM_USER_CFLAGS = \
   -std=gnu++17 \
@@ -52,7 +52,7 @@ VM_USER_DIR = \
 
 ### Default rules...
 # Include list of all generated classes
-include VLab_six_tb_classes.mk
+include Vmulti_op_processor_tb_classes.mk
 # Include global rules
 include $(VERILATOR_ROOT)/include/verilated.mk
 
@@ -61,7 +61,7 @@ VPATH += $(VM_USER_DIR)
 
 
 ### Link rules... (from --exe)
-VLab_six_tb: $(VK_USER_OBJS) $(VK_GLOBAL_OBJS) $(VM_PREFIX)__ALL.a
+Vmulti_op_processor_tb: $(VK_USER_OBJS) $(VK_GLOBAL_OBJS) $(VM_PREFIX)__ALL.a
 	$(LINK) $(LDFLAGS) $^ $(LOADLIBES) $(LDLIBS) $(LIBS) $(SC_LIBS) -o $@
 
 # Verilated -*- Makefile -*-

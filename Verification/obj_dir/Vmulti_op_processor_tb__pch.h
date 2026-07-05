@@ -3,10 +3,10 @@
 //
 // Internal details; most user sources do not need this header,
 // unless using verilator public meta comments.
-// Suggest use VLab_six_tb.h instead.
+// Suggest use Vmulti_op_processor_tb.h instead.
 
-#ifndef VERILATED_VLAB_SIX_TB__PCH_H_
-#define VERILATED_VLAB_SIX_TB__PCH_H_  // guard
+#ifndef VERILATED_VMULTI_OP_PROCESSOR_TB__PCH_H_
+#define VERILATED_VMULTI_OP_PROCESSOR_TB__PCH_H_  // guard
 
 // GCC and Clang only will precompile headers (PCH) for the first header.
 // So, make sure this is the one and only PCH.
@@ -19,8 +19,8 @@
 
 #include "verilated.h"
 
-#include "VLab_six_tb__Syms.h"
-#include "VLab_six_tb.h"
+#include "Vmulti_op_processor_tb__Syms.h"
+#include "Vmulti_op_processor_tb.h"
 
 // Additional include files added using '--compiler-include'
 

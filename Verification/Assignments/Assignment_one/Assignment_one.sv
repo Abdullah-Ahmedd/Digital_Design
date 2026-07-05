@@ -74,7 +74,6 @@ foreach(  arr_int[ i ]  )
     $display("arr_int[%0d]=%0d",i, arr_int[i] );
   end
 
-
 $display("////////////////DISPLAYING ARR_PACKED////////////////");
 foreach(arr_packed[i])
   begin
@@ -150,8 +149,6 @@ $display("///////////////////////////////Printing all the elements of the dyn_ar
    $display("///////////////////////////////Printing the size of dyn_arr_copy///////////////////////////////");
       $display("the size of dyn_arr_copy is : %0d", dyn_arr_copy.size()); 
     
-
-
 
 
 

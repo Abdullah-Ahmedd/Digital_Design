@@ -1,7 +1,7 @@
 # to run just type make run in the terminal
 
 # here you write the name of the top module (not the file) you need to run
-TOP ?= Lab_six_tb
+TOP ?= multi_op_processor_tb
 
 # here you write the name of the folder that has the files you need to run
 # if the files are in the same path as the makefile just write .

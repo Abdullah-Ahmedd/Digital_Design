@@ -2,7 +2,7 @@
 # DESCRIPTION: Verilator output: Make include file with class lists
 #
 # This file lists generated Verilated files, for including in higher level makefiles.
-# See VLab_six_tb.mk for the caller.
+# See Vmulti_op_processor_tb.mk for the caller.
 
 ### Switches...
 # C11 constructs required?  0/1 (always on now)
@@ -25,35 +25,27 @@ VM_TRACE_VCD = 0
 ### Object file lists...
 # Generated module classes, fast-path, compile with highest optimization
 VM_CLASSES_FAST += \
-  VLab_six_tb \
-  VLab_six_tb___024root__0 \
-  VLab_six_tb_std__03a__03asemaphore__Vclpkg__0 \
-  VLab_six_tb_std__03a__03aprocess__Vclpkg__0 \
-  VLab_six_tb___024unit__03a__03astimulus__Vclpkg__0 \
-  VLab_six_tb__main \
+  Vmulti_op_processor_tb \
+  Vmulti_op_processor_tb___024root__0 \
+  Vmulti_op_processor_tb__main \
 
 # Generated module classes, non-fast-path, compile with low/medium optimization
 VM_CLASSES_SLOW += \
-  VLab_six_tb___024root__Slow \
-  VLab_six_tb___024root__0__Slow \
-  VLab_six_tb_std__Slow \
-  VLab_six_tb___024unit__Slow \
-  VLab_six_tb_std__03a__03asemaphore__Vclpkg__Slow \
-  VLab_six_tb_std__03a__03aprocess__Vclpkg__Slow \
-  VLab_six_tb___024unit__03a__03astimulus__Vclpkg__Slow \
+  Vmulti_op_processor_tb__ConstPool__0__Slow \
+  Vmulti_op_processor_tb___024root__Slow \
+  Vmulti_op_processor_tb___024root__0__Slow \
 
 # Generated support classes, fast-path, compile with highest optimization
 VM_SUPPORT_FAST += \
 
 # Generated support classes, non-fast-path, compile with low/medium optimization
 VM_SUPPORT_SLOW += \
-  VLab_six_tb__Syms__Slow \
+  Vmulti_op_processor_tb__Syms__Slow \
 
 # Global classes, need linked once per executable, fast-path, compile with highest optimization
 VM_GLOBAL_FAST += \
   verilated \
   verilated_timing \
-  verilated_random \
   verilated_threads \
 
 # Global classes, need linked once per executable, non-fast-path, compile with low/medium optimization

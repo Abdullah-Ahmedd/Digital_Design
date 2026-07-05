@@ -1,5 +1,5 @@
-`include "stimulus.sv"
 `include "Lab_six.sv"
+`include "stimulus.sv"
 `timescale 1ns/1ns
 module Lab_six_tb;
 
@@ -11,7 +11,6 @@ module Lab_six_tb;
 //instatiating the module
     Lab_six L6
     (.*);
-
 stimulus stim;
 
 always #10 clk=~clk;
@@ -32,7 +31,6 @@ begin
         end
 
         $finish;
-
 end
 
 
