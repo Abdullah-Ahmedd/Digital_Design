@@ -5,7 +5,7 @@ module multi_op_processor_tb;
 //Declaring the testbench variabeles
      logic [ 7 : 0 ] data_in ;
      logic [ 1 : 0 ] op_sel;
-
+ 
      logic [ 7 : 0 ] data_out;
 	 
 //module instantiation
@@ -32,7 +32,7 @@ module multi_op_processor_tb;
 ///////////////////////////////FUNCTIONS AND TASKS///////////////////////////////
 //configure_stim_storage : it just sets the size of the stimulus (how much tests we are doing)
     function void configure_stim_storage (input int size);
-            dyn_arr = new[ size ];
+            dyn_arr = new[ size ]( dyn_arr );
             data_q.delete();
             expected.delete();
             $display("the stimulus has been configured to %0d locations", size);
@@ -142,7 +142,7 @@ initial
         $display ("///////////////////////////// RUN3:reorder run 2 using reconfigure_stim and run the test again//////////////////////////////////");
         configure_stim_storage(200);
         reconfigure_stim( dyn_arr );
-        //generate_stimulus(dyn_arr);   NOTE: didnt generate stimulus as we want the same values of RUN2 but with different order
+       // generate_stimulus(dyn_arr);  NOTE: didnt generate stimulus as we want the same values of RUN2 but with different order
         drive_stim();
         golden_model(expected);
         check_results(expected, data_q);

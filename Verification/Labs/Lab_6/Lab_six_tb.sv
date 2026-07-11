@@ -28,6 +28,7 @@ begin
             assert(stim.randomize())
             else $error("something is not working correctly");
             stim.drive(data_in,clk);
+            
         end
 
         $finish;
