@@ -1,0 +1,26 @@
+Q) Use concurrent assertions to check the following 
+
+    1) Check that when start rises, ready becomes high exactly 3 cycles later.
+        assert property (@( posedge clk )  $rose(start) |-> ##3 ready )
+    2) Ensure that whenever enable goes high, done eventually follows.
+        assert property (@( posedge clk ) $rose(enable) |-> done )
+    3) When write is high, ack must be high within 2 to 4 cycles.
+        assert property (@( posedge clk ) wite |-> [2:4] ack )
+    4) After a rising edge of rst, valid must stay low for at least 5 cycles.
+        assert property (@( posedge clk ) $rose(rst) |-> !valid [*5] )
+    5) Check that data_out is stable during valid being high
+        assert property (@( posedge clk ) valid |-> $stable( data_out ) )
+    6) Ensure that if data_in changes, valid becomes high the next cycle.
+        assert property (@( posedge clk ) $changed(data_in) |=> valid )
+    7) If error goes high, it must remain high until reset is asserted.
+        assert property (@( posedge clk ) $rose(error) |=> error until reset )
+    8) If lock is high, grant must stay low until unlock goes high.
+        assert property (@( posedge clk ) $rose(error) |=> error until_with reset )
+    9) Check that request is never high for more than 3 cycles without grant.
+        assert property (@( posedge clk )  |=> error until_with reset )
+
+        //this lab is not fully solved so maybe it is not all important 
+
+
+
+

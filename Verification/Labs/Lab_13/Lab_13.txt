@@ -1,0 +1,17 @@
+Q )  Use immediate Assertions to check the following 
+
+    1) How can I assert that two signals a and b are equal?
+        assert( a == b )
+    2)How can I check if a variable value is within the range 0 to 255?
+        assert(  0 < x < 255 )
+    3)How do I ensure that reset_n is not asserted during a check?
+        assert( !reset_n )
+    4)How can I verify that when enable is high, valid is also high?
+        assert( enable && valid )
+    5) How can I check that a signal has a known value (not 'x' or 'z')?
+        assert( ! (sig == 1 or sig == 0) ) //or assert(!$unknown(sig))
+    6) not printed 
+    7) How do I ensure that a counter does not overflow its max value?
+        assert( !(read && empty) )
+    
+    
