@@ -20,6 +20,7 @@ Q) Use concurrent assertions to check the following
         assert property (@( posedge clk )  |=> error until_with reset )
 
         //this lab is not fully solved so maybe it is not all important 
+        //i checked the rest by myself jsut in case though
 
 
 
