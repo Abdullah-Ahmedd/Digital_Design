@@ -1,0 +1,217 @@
+Project/
+│
+├── rtl/
+│   │
+│   ├── axi4_slave.sv
+│   │   Type:
+│   │      Module
+│   │
+│   │   Role:
+│   │      Implements the AXI4 slave protocol.
+│   │      Handles read/write transactions.
+│   │      Controls the memory interface.
+│   │      Contains the Read FSM and Write FSM.
+│   │
+│   │   Main Contents:
+│   │      - Module
+│   │      - FSMs
+│   │      - Sequential & combinational logic
+│   │
+│   ├── axi4_memory.sv
+│   │   Type:
+│   │      Module
+│   │
+│   │   Role:
+│   │      Implements the internal synchronous RAM.
+│   │
+│   │   Main Contents:
+│   │      - Memory array
+│   │      - Read/write logic
+│   │
+│   └── axi_pkg.sv (optional)
+│       Type:
+│          Package
+│
+│       Role:
+│          Stores common definitions used by RTL and/or TB.
+│
+│       Main Contents:
+│          - typedef enum
+│          - localparams
+│          - parameters
+│          - common constants
+│
+├── tb/
+│   │
+│   ├── axi_if.sv
+│   │   Type:
+│   │      Interface
+│   │
+│   │   Role:
+│   │      Connects the DUT with the verification environment.
+│   │      Prevents passing dozens of ports.
+│   │
+│   │   Main Contents:
+│   │      - AXI signals
+│   │      - Clocking block
+│   │      - Modports
+│   │
+│   ├── axi_packet.sv
+│   │   Type:
+│   │      Class
+│   │
+│   │   Role:
+│   │      Represents one AXI transaction.
+│   │      Used for constrained random verification.
+│   │
+│   │   Main Contents:
+│   │      - rand variables
+│   │      - constraints
+│   │      - copy()
+│   │      - display()
+│   │
+│   ├── generator.sv
+│   │   Type:
+│   │      Class
+│   │
+│   │   Role:
+│   │      Creates randomized transactions.
+│   │      Sends them to the driver.
+│   │
+│   │   Main Contents:
+│   │      - mailbox handle
+│   │      - task run()
+│   │      - packet randomization
+│   │
+│   ├── driver.sv
+│   │   Type:
+│   │      Class
+│   │
+│   │   Role:
+│   │      Converts transactions into AXI signal activity.
+│   │      Drives the DUT through the interface.
+│   │
+│   │   Main Contents:
+│   │      - virtual interface
+│   │      - mailbox handle
+│   │      - drive_write() task
+│   │      - drive_read() task
+│   │      - run() task
+│   │
+│   ├── monitor.sv
+│   │   Type:
+│   │      Class
+│   │
+│   │   Role:
+│   │      Passively observes DUT signals.
+│   │      Converts bus activity into transaction objects.
+│   │
+│   │   Main Contents:
+│   │      - virtual interface
+│   │      - mailbox handle
+│   │      - sampling logic
+│   │      - run() task
+│   │
+│   ├── scoreboard.sv
+│   │   Type:
+│   │      Class
+│   │
+│   │   Role:
+│   │      Reference model.
+│   │      Compares expected behavior with DUT behavior.
+│   │
+│   │   Main Contents:
+│   │      - mailbox handle
+│   │      - reference memory
+│   │      - compare() function/task
+│   │      - run() task
+│   │
+│   ├── coverage.sv
+│   │   Type:
+│   │      Class
+│   │
+│   │   Role:
+│   │      Collects functional coverage.
+│   │
+│   │   Main Contents:
+│   │      - covergroup
+│   │      - coverpoints
+│   │      - crosses
+│   │      - sample() function
+│   │
+│   ├── assertions.sv
+│   │   Type:
+│   │      Module
+│   │
+│   │   Role:
+│   │      Contains SystemVerilog Assertions.
+│   │      Bound to the DUT using 'bind'.
+│   │
+│   │   Main Contents:
+│   │      - properties
+│   │      - sequences
+│   │      - assert property
+│   │      - cover property
+│   │
+│   ├── environment.sv
+│   │   Type:
+│   │      Class
+│   │
+│   │   Role:
+│   │      Creates and connects all verification components.
+│   │
+│   │   Main Contents:
+│   │      - generator object
+│   │      - driver object
+│   │      - monitor object
+│   │      - scoreboard object
+│   │      - coverage object
+│   │      - mailboxes
+│   │      - build() task
+│   │      - run() task
+│   │
+│   ├── test.sv
+│   │   Type:
+│   │      Class
+│   │
+│   │   Role:
+│   │      Defines the verification scenario.
+│   │      Controls how many transactions are generated and what test is executed.
+│   │
+│   │   Main Contents:
+│   │      - environment object
+│   │      - build() task
+│   │      - run() task
+│   │      - test configuration
+│   │
+│   └── top_tb.sv
+│       Type:
+│          Module
+│
+│       Role:
+│          Top-level testbench.
+│          Instantiates everything and starts simulation.
+│
+│       Main Contents:
+│          - Clock generation
+│          - Reset generation
+│          - Interface instance
+│          - DUT instance
+│          - bind statement
+│          - Test object
+│          - initial block
+│
+├── run.do
+│   Type:
+│      Questa/ModelSim Script
+│
+│   Role:
+│      Automates compilation, simulation, waveform loading,
+│      coverage collection, and report generation.
+│
+└── Makefile (optional)
+    Type:
+       Makefile
+
+    Role:
+       Automates the complete build process from the command line.
