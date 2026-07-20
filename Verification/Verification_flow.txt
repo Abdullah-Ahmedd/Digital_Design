@@ -1,46 +1,3 @@
-Project/
-│
-├── rtl/
-│   │
-│   ├── axi4_slave.sv
-│   │   Type:
-│   │      Module
-│   │
-│   │   Role:
-│   │      Implements the AXI4 slave protocol.
-│   │      Handles read/write transactions.
-│   │      Controls the memory interface.
-│   │      Contains the Read FSM and Write FSM.
-│   │
-│   │   Main Contents:
-│   │      - Module
-│   │      - FSMs
-│   │      - Sequential & combinational logic
-│   │
-│   ├── axi4_memory.sv
-│   │   Type:
-│   │      Module
-│   │
-│   │   Role:
-│   │      Implements the internal synchronous RAM.
-│   │
-│   │   Main Contents:
-│   │      - Memory array
-│   │      - Read/write logic
-│   │
-│   └── axi_pkg.sv (optional)
-│       Type:
-│          Package
-│
-│       Role:
-│          Stores common definitions used by RTL and/or TB.
-│
-│       Main Contents:
-│          - typedef enum
-│          - localparams
-│          - parameters
-│          - common constants
-│
 ├── tb/
 │   │
 │   ├── axi_if.sv
@@ -145,13 +102,25 @@ Project/
 │   │
 │   │   Role:
 │   │      Contains SystemVerilog Assertions.
-│   │      Bound to the DUT using 'bind'.
+│   │      Defines protocol properties and checks the DUT behavior.
 │   │
 │   │   Main Contents:
-│   │      - properties
 │   │      - sequences
+│   │      - properties
 │   │      - assert property
 │   │      - cover property
+│   │
+│   ├── bind.sv
+│   │   Type:
+│   │      Bind File
+│   │
+│   │   Role:
+│   │      Binds the assertion module to the DUT without modifying
+│   │      the RTL source code. Keeps the design and verification
+│   │      code completely separate.
+│   │
+│   │   Main Contents:
+│   │      - bind statements
 │   │
 │   ├── environment.sv
 │   │   Type:
@@ -197,21 +166,5 @@ Project/
 │          - Reset generation
 │          - Interface instance
 │          - DUT instance
-│          - bind statement
 │          - Test object
 │          - initial block
-│
-├── run.do
-│   Type:
-│      Questa/ModelSim Script
-│
-│   Role:
-│      Automates compilation, simulation, waveform loading,
-│      coverage collection, and report generation.
-│
-└── Makefile (optional)
-    Type:
-       Makefile
-
-    Role:
-       Automates the complete build process from the command line.
